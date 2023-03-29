@@ -1,0 +1,63 @@
+.container {
+  min-width: 190px;
+  background-color: #2e3136;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 44px;
+  padding: 0 15px;
+  border-bottom: 2px solid #222527;
+}
+
+.channels {
+  width: 100%;
+  padding: 10px;
+}
+
+.channel {
+  display: flex;
+  align-items: center;
+  margin: 1px 0;
+  padding: 7px 5px;
+  border-radius: 4px;
+  color: #d5d5d5;
+  cursor: pointer;
+}
+
+.channel {
+  display: flex;
+  align-items: center;
+}
+
+.channel_icon {
+  font-size: 15px;
+}
+
+.channel_text {
+  margin-left: 5px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+/*
+
+.channels_top h3 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.channels_bot {
+  padding: 15px;
+}
+
+
+.channel.active {
+  background-color: #42464E;
+}
+
+
+*/

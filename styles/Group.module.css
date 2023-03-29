@@ -1,0 +1,8 @@
+.main {
+  flex-grow: 1;
+}
+
+.flex {
+  display: flex;
+  height: calc(100vh - 44px);
+}

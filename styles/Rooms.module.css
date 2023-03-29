@@ -1,0 +1,64 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 85px;
+  background-color: #202225;
+  padding: 20px 0;
+}
+
+.direct {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.line {
+  width: 60%;
+  height: 2px;
+  margin: 15px 0;
+  background-color: #363a3f;
+}
+
+.direct_img {
+  width: 60px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.direct:hover .direct_img {
+  border-radius: 30%;
+}
+
+.rooms {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.room {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.room_img {
+  width: 60px;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.room:hover .room_img {
+  border-radius: 30%;
+}
