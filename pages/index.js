@@ -16,9 +16,70 @@ const reducer = (state, action) => {
   }
 };
 
-const Home = () => {
+const Home = (props) => {
+  const { session, user } = props;
 
-  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  const [state, dispatch] = useReducer(reducer, {
+    count: 0,
+    messages: [],
+    rooms: [{
+      id: '001',
+      name: 'First Channel',
+      img: '/img/default.jpg'
+    },{
+      id: '002',
+      name: 'Second Room',
+      img: '/img/default.jpg'
+    },{
+      id: '003',
+      name: 'Third Room',
+      img: '/img/default.jpg'
+    },{
+      id: '004',
+      name: 'Fourth Room',
+      img: '/img/default.jpg'
+    }],
+    channels: [{
+      id: '001',
+      name: 'First Channel'
+    },{
+      id: '002',
+      name: 'Second Channel'
+    },{
+      id: '003',
+      name: 'Third Channel'
+    },{
+      id: '004',
+      name: 'Fourth Channel'
+    },{
+      id: '005',
+      name: 'Fifth Channel'
+    }]
+  });
+
+  const [content, setContent] = useState('');
+
+
+  // const [socket, setSocket] = useState(null);
+  // const group = useRef({});
+  // const direct = useRef({
+  //   messages: {},
+  //   users: {}
+  // });
+  // const [state, dispatch] = useReducer(reducer, {
+  //   view: 'group',
+  //   direct: {
+  //     notifications: 0
+  //   },
+  //   rooms: [],
+  //   room: {},
+  //   channels: [],
+  //   channel: {},
+  //   friends: [],
+  //   friend: {},
+  //   messages: [],
+  //   users: []
+  // });
 
   const change = () => {
     dispatch({
@@ -26,15 +87,19 @@ const Home = () => {
     });
   };
 
+  const updateContent = (e) => {
+    setContent(e.target.value);
+  };
+
   return (
     <div className={styles.container}>
-      <div onClick={change}>{state.count}</div>
-      <Group />
+      <Group state={state} content={content} updateContent={updateContent} />
     </div>
   );
 };
 
 export default Home;
+
 
 export const getServerSideProps = async (context) => {
   const session = await getSession(context);

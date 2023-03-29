@@ -6,14 +6,16 @@ import Bar from './bar/Bar';
 import Chat from './chat/Chat';
 
 const Group = (props) => {
+  const { state, content, updateContent } = props;
+
   return (
     <Fragment>
-      <Rooms />
-      <Channels />
+      <Rooms rooms={state.rooms} />
+      <Channels channels={state.channels} />
       <div className={styles.main}>
         <Bar />
         <div className={styles.flex}>
-          <Chat />
+          <Chat content={content} updateContent={updateContent} />
           <div className={styles.user}></div>
         </div>
       </div>

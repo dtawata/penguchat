@@ -2,6 +2,8 @@ import styles from '@/styles/Rooms.module.css';
 import Image from 'next/image';
 
 const Rooms = (props) => {
+  const { rooms } = props;
+
   return (
     <div className={styles.container}>
       <div className={styles.direct}>
@@ -9,18 +11,20 @@ const Rooms = (props) => {
       </div>
       <div className={styles.line}></div>
       <div className={styles.rooms}>
-        <Room />
-        <Room />
-        <Room />
+        {rooms.map((room, index) => {
+          return <Room room={room} key={room.id} />
+        })}
       </div>
     </div>
   );
 };
 
 const Room = (props) => {
+  const { room } = props;
+
   return (
     <div className={styles.room}>
-      <Image className={styles.room_img} src='/img/default.jpg' alt='' width='60' height='60' />
+      <Image className={styles.room_img} src={room.img} alt='' width='60' height='60' />
     </div>
   );
 };
