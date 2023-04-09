@@ -9,8 +9,7 @@ const Handler = async (req, res) => {
       ...req.body,
       password: hashedPassword
     });
-    await addJoinedRoom(user.insertId, 1);
-    await addJoinedRoom(user.insertId, 2);
+    await Promise.all([addJoinedRoom(user.insertId, 1), addJoinedRoom(user.insertId, 2)]);
     res.status(200).send('success');
   } catch(error) {
     res.status(400).send(error);

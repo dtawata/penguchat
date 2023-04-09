@@ -9,6 +9,33 @@ const io = new Server(server, {
   }
 });
 
-io.on('connection', (socket) => {
-  console.log('connected!');
+const { getRooms, getChannels } = require('./lib/mysql_socket');
+// getFriends, addRoomMessage, addDirectMessage
+
+io.use((socket, next) => {
+  const { id, username } = socket.handshake.auth;
+  socket.user_id = id;
+  socket.username = username;
+  next();
+});
+
+io.on('connection', async (socket) => {
+  const rooms = await getRooms(socket.user_id);
+  const roomIds = [];
+  for (const room of rooms) {
+    socket.join(room.id);
+    roomIds.push(room.id);
+  }
+  const channels = await getChannels(roomIds);
+  socket.emit('initialize', { rooms, channels });
+
+  socket.on('send_message', (message) => {
+    io.emit('receive_message', message);
+  });
+
+});
+
+const port = 3003;
+server.listen(port, () => {
+  console.log('Listening on http://localhost:' + port);
 });

@@ -8,3 +8,7 @@
   background-color: #36393e;
   border-bottom: 2px solid #2c2f33;
 }
+
+.sign_out {
+  cursor: pointer;
+}

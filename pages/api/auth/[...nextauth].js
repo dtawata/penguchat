@@ -11,13 +11,9 @@ export default NextAuth({
       try {
         const { username, password } = credentials;
         const user = await getPassword(username);
-        if (!user) {
-          throw new Error('User not found!');
-        }
+        if (!user) throw new Error('User not found!');
         const isValid = await verifyPassword(password, user.password);
-        if (!isValid) {
-          throw new Error('Password is not valid!');
-        }
+        if (!isValid) throw new Error('Password is not valid!');
         return {
           name: user.username,
           email: user.email,

@@ -14,8 +14,8 @@ const Register = (props) => {
   });
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       await axios.post('/api/auth/register', credentials);
       signIn('credentials', {
         username: credentials.username,
@@ -39,13 +39,13 @@ const Register = (props) => {
     <div className={styles.container}>
       <form onSubmit={handleSubmit} className={styles.form}>
         <h2 className={styles.title}>Create an Account</h2>
-        <input onChange={handleChange} className={styles.input} name='email' type='text' placeholder='Email' required />
-        <input onChange={handleChange} className={styles.input} name='fname' type='text' placeholder='First Name' required />
-        <input onChange={handleChange} className={styles.input} name='lname' type='text' placeholder='Last Name' required />
-        <input onChange={handleChange} className={styles.input} name='username' type='text' placeholder='Username' required />
-        <input onChange={handleChange} className={styles.input} name='password' type='password' placeholder='Password' required />
+        <input onChange={handleChange} className={styles.input} name='email' type='text' value={credentials.email} placeholder='Email' required />
+        <input onChange={handleChange} className={styles.input} name='fname' type='text' value={credentials.fname} placeholder='First Name' required />
+        <input onChange={handleChange} className={styles.input} name='lname' type='text' value={credentials.lname} placeholder='Last Name' required />
+        <input onChange={handleChange} className={styles.input} name='username' type='text' value={credentials.username} placeholder='Username' required />
+        <input onChange={handleChange} className={styles.input} name='password' type='password' value={credentials.password} placeholder='Password' required />
         <button className={styles.button}>Sign Up</button>
-        <Link href='/login' passHref>Login</Link>
+        <Link className={styles.link} href='/login' passHref>Login</Link>
       </form>
     </div>
   );

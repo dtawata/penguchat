@@ -45,3 +45,9 @@
   font-size: 18px;
   outline: none;
 }
+
+.link {
+  margin: 20px auto 0 auto;
+  color: #fff;
+  text-decoration: none;
+}
