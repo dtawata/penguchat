@@ -21,6 +21,13 @@ const getChannels = async (roomIds) => {
   return data[0];
 };
 
+const addRoomMessage = async ({ created_at, user_id, room_id, channel_id, content }) => {
+  const queryString = 'INSERT INTO room_messages (created_at, user_id, room_id, channel_id, content) VALUES ?';
+  const queryArgs = [[created_at, user_id, room_id, channel_id, content]];
+  const data = await connection.query(queryString, [queryArgs]);
+  return data[0];
+};
+
 
 
 // const getFriends = async (user_id) => {
@@ -30,12 +37,7 @@ const getChannels = async (roomIds) => {
 //   return data[0];
 // };
 
-// const addRoomMessage = async ({ user_id, room_id, channel_id, content }) => {
-//   const queryString = 'INSERT INTO room_messages (user_id, room_id, channel_id, content) VALUES ?';
-//   const queryArgs = [[user_id, room_id, channel_id, content]];
-//   const data = await connection.query(queryString, [queryArgs]);
-//   return data[0];
-// };
+
 
 // const addDirectMessage = async ({ user_id, room_id, content }) => {
 //   const queryString = 'INSERT INTO direct_messages (user_id, room_id, content) VALUES ?';
@@ -48,6 +50,6 @@ module.exports = {
   getRooms,
   getChannels,
   // getFriends,
-  // addRoomMessage,
+  addRoomMessage,
   // addDirectMessage
 };

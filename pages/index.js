@@ -1,84 +1,3 @@
-
-// import Direct from '@/components/direct/Direct';
-// import Group from '@/components/group/Group';
-
-
-// const reducer = (state, action) => {
-//   const { view, direct, rooms, room, channels, channel, friends, friend, messages, users } = action.payload;
-//   switch (action.type) {
-//     case 'rooms':
-//       return { ...state, rooms, channels };
-//     default:
-//       return state;
-//   }
-// };
-
-// const Home = (props) => {
-
-
-//   const [state, dispatch] = useReducer(reducer, {
-//     view: 'group',
-//     rooms: [],
-//     room: {},
-//     channels: [],
-//     channel: {},
-//     direct: {},
-//     friends: [],
-//     friend: {},
-//     messages: [],
-//     users: []
-//   });
-
-
-//   // const group = useRef({});
-//   // const direct = useRef({
-//   //   messages: {},
-//   //   users: {}
-//   // });
-
-
-//   const wsInitialize = (ws) => {
-//     console.log('ws', ws);
-//     dispatch({
-//       type: 'rooms',
-//       payload: {
-//         rooms: ws.rooms,
-//         channels: ws.channels
-//       }
-//     });
-//   };
-
-//   const wsReceiveGroupMessage = (w) => {
-//     console.log('ws', ws);
-//   };
-
-
-//   useEffect(() => {
-//     if (socket) {
-//       socket.on('initialize', wsInitialize);
-//       socket.auth = user;
-//       socket.connect();
-
-//       return () => {
-//         socket.off('initialize', wsInitialize);
-//       };
-//     }
-//   }, [socket])
-
-//   const changeChannel = async (channel) => {
-//     const { data } = await axios.get('http://localhost:3000/api/messages', {
-//       params: {
-//         room_id: state.room.id,
-//         channel_id: channel.id
-//       }
-//     });
-//     console.log('yo', data);
-//   };
-
-
-
-
-
 import styles from '@/styles/Home.module.css'
 import { useState, useRef, useEffect, useReducer } from 'react';
 import { getSession, signOut } from 'next-auth/react';
@@ -89,22 +8,30 @@ import Sidebar from '@/components/sidebar/Sidebar';
 import Room from '@/components/room/Room';
 
 const reducer = (state, action) => {
-  const { rooms, room, channels, channel, message } = action.payload;
+  const { rooms, room, channels, channel, message, messages } = action.payload;
   switch (action.type) {
-    case 'rooms:channels': {
+    case 'initialize': {
       return {
         ...state,
         rooms,
         room,
         channels,
-        channel
-      }
+        channel,
+        messages
+      };
     }
-    case 'messages': {
+    case 'receive_message': {
       return {
         ...state,
         messages: state.messages.concat(message)
-      }
+      };
+    }
+    case 'change_channel': {
+      return {
+        ...state,
+        channel,
+        messages
+      };
     }
     default: {
       return state;
@@ -112,8 +39,8 @@ const reducer = (state, action) => {
   }
 };
 
-const Home = (props) => {
 
+const Home = (props) => {
   const { session, user } = props;
   const [socket, setSocket] = useState(null);
   const [state, dispatch] = useReducer(reducer, {
@@ -121,15 +48,32 @@ const Home = (props) => {
     room: {},
     channels: [],
     channel: {},
-    messages: ['','2']
+    messages: []
   });
-  const channelsRef = useRef({});
   const [content, setContent] = useState('');
+  const channelsRef = useRef({});
 
   useEffect(() => {
     const connection = io('http://localhost:3003/', { autoConnect: false });
     setSocket(connection);
   }, [])
+
+  const changeChannel = async (channel) => {
+    const { data } = await axios.get('http://localhost:3000/api/messages', {
+      params: {
+        room_id: state.room.id,
+        channel_id: channel.id
+      }
+    });
+
+    dispatch({
+      type: 'change_channel',
+      payload: {
+        channel,
+        messages: data.messages
+      }
+    });
+  };
 
   const wsInitialize = async (ws) => {
     const { rooms } = ws;
@@ -146,25 +90,21 @@ const Home = (props) => {
         channel_id: channel.id
       }
     });
-
-    console.log('data', data);
-
-
     dispatch({
-      type: 'rooms:channels',
+      type: 'initialize',
       payload: {
         rooms,
         room,
         channels,
-        channel
+        channel,
+        messages: data.messages
       }
     });
   };
 
   const wsReceiveMessage = (message) => {
-    console.log(message);
     dispatch({
-      type: 'messages',
+      type: 'receive_message',
       payload: {
         message
       }
@@ -172,7 +112,6 @@ const Home = (props) => {
   };
 
   useEffect(() => {
-    console.log('user', user);
     if (socket) {
       socket.on('initialize', wsInitialize);
       socket.on('receive_message', wsReceiveMessage);
@@ -191,7 +130,6 @@ const Home = (props) => {
   const sendMessage = (e) => {
     e.preventDefault();
     if (!content) return;
-    console.log('hello', content);
     socket.emit('send_message', {
       username: user.username,
       image: user.image,
@@ -200,13 +138,13 @@ const Home = (props) => {
       channel_id: state.channel.id,
       content
     });
+    setContent('');
   };
 
   return (
     <div className={styles.container}>
       <Sidebar rooms={state.rooms} />
-      <Room channels={state.channels} content={content} updateContent={updateContent} sendMessage={sendMessage} messages={state.messages} />
-      {/* <Group state={state} content={content} updateContent={updateContent} changeChannel={changeChannel} /> */}
+      <Room channels={state.channels} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} />
     </div>
   );
 };
@@ -232,3 +170,17 @@ export const getServerSideProps = async (context) => {
     }
   };
 };
+
+
+//   const [state, dispatch] = useReducer(reducer, {
+//     view: 'group',
+//     rooms: [],
+//     room: {},
+//     channels: [],
+//     channel: {},
+//     direct: {},
+//     friends: [],
+//     friend: {},
+//     messages: [],
+//     users: []
+//   });

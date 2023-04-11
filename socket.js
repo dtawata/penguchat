@@ -9,8 +9,8 @@ const io = new Server(server, {
   }
 });
 
-const { getRooms, getChannels } = require('./lib/mysql_socket');
-// getFriends, addRoomMessage, addDirectMessage
+const { getRooms, getChannels, addRoomMessage } = require('./mysql');
+// getFriends, , addDirectMessage
 
 io.use((socket, next) => {
   const { id, username } = socket.handshake.auth;
@@ -29,7 +29,9 @@ io.on('connection', async (socket) => {
   const channels = await getChannels(roomIds);
   socket.emit('initialize', { rooms, channels });
 
-  socket.on('send_message', (message) => {
+  socket.on('send_message', async (message) => {
+    message.created_at = new Date();
+    await addRoomMessage(message);
     io.emit('receive_message', message);
   });
 

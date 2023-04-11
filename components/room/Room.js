@@ -1,15 +1,15 @@
 import styles from '@/styles/Room.module.css';
 import { Fragment } from 'react';
-import Channels from './channels/Channels';
-import Bar from './bar/Bar';
-import Chat from './chat/Chat';
+import Channels from './Channels';
+import Bar from './Bar';
+import Chat from './Chat';
 
 const Room = (props) => {
-  const { channels, content, updateContent, sendMessage, messages } = props;
+  const { channels, changeChannel, content, updateContent, sendMessage, messages } = props;
 
   return (
     <Fragment>
-      <Channels channels={channels} />
+      <Channels channels={channels} changeChannel={changeChannel} />
       <div className={styles.main}>
         <Bar />
         <div className={styles.flex}>
@@ -22,14 +22,8 @@ const Room = (props) => {
 
 export default Room;
 
-// import styles from '@/styles/Group.module.css';
-// import { Fragment } from 'react';
-// import Rooms from './rooms/Rooms';
-// import Channels from './channels/Channels';
-// import Bar from './bar/Bar';
-// import Chat from './chat/Chat';
-// // import Users from '../users/Users';
 
+// // import Users from '../users/Users';
 // const Group = (props) => {
 //   const { state, content, updateContent, changeChannel } = props;
 
