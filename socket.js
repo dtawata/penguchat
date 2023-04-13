@@ -46,6 +46,19 @@ io.on('connection', async (socket) => {
     io.emit('receive_message', message);
   });
 
+  socket.on('request_users', async (room) => {
+    const sockets = await io.in(room.id).fetchSockets();
+    const users = [];
+    for (const user of sockets) {
+      users.push({
+        id: user.user_id,
+        username: user.username,
+        room_id: room.id
+      });
+    }
+    socket.emit('change_room', { room, users });
+  });
+
 });
 
 const port = 3003;

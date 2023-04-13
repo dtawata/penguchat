@@ -8,7 +8,7 @@ import Sidebar from '@/components/sidebar/Sidebar';
 import Room from '@/components/room/Room';
 
 const reducer = (state, action) => {
-  const { rooms, room, channels, channel, message, messages, users } = action.payload;
+  const { rooms, room, channels, channel, messages, users } = action.payload;
   switch (action.type) {
     case 'initialize': {
       return {
@@ -24,13 +24,6 @@ const reducer = (state, action) => {
     case 'receive_message': {
       return {
         ...state,
-        messages: state.messages.concat(message)
-      };
-    }
-    case 'change_channel': {
-      return {
-        ...state,
-        channel,
         messages
       };
     }
@@ -44,15 +37,21 @@ const reducer = (state, action) => {
         users
       };
     }
+    case 'change_channel': {
+      return {
+        ...state,
+        channel,
+        messages
+      };
+    }
     default: {
       return state;
     }
   }
 };
 
-
 const Home = (props) => {
-  const { session, user } = props;
+  const { session, myuser } = props;
   const [socket, setSocket] = useState(null);
   const [state, dispatch] = useReducer(reducer, {
     rooms: [],
@@ -67,37 +66,32 @@ const Home = (props) => {
   const messagesRef = useRef({});
   const usersRef = useRef({});
 
-  useEffect(() => {
-    const connection = io('http://localhost:3003/', { autoConnect: false });
-    setSocket(connection);
-  }, [])
-
   const changeRoom = async (room) => {
-    const channels = Object.values(channelsRef.current[room.id]);
-    const channel = channels[0];
-    const { data } = await axios.get('http://localhost:3000/api/messages', {
-      params: {
-        room_id: state.room.id,
-        channel_id: channel.id
-      }
-    });
-
-    dispatch({
-      type: 'change_room',
-      payload: {
-        room,
-        channels,
-        channel,
-        messages: data.messages,
-        users: data.users
-      }
-    });
+    if (state.room.id === room.id) return;
+    if (!messagesRef.current[room.id]) {
+      socket.emit('request_users', room);
+    } else {
+      const channels = Object.values(channelsRef.current[room.id]);
+      const channel = channels[0];
+      const messages = messagesRef.current[room.id][channel.id].slice();
+      const users = Object.values(usersRef.current[room.id]);
+      dispatch({
+        type: 'change_room',
+        payload: {
+          room,
+          channels,
+          channel,
+          messages,
+          users
+        }
+      });
+    }
   };
 
   const changeChannel = async (channel) => {
     if (state.channel.id === channel.id) return;
     if (!messagesRef.current[state.room.id][channel.id]) {
-      const { data } = await axios.get('http://localhost:3000/api/messages', {
+      const { data } = await axios.get('/api/messages', {
         params: {
           room_id: state.room.id,
           channel_id: channel.id
@@ -113,6 +107,24 @@ const Home = (props) => {
         messages
       }
     });
+  };
+
+  const updateContent = (e) => {
+    setContent(e.target.value);
+  };
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (!content) return;
+    socket.emit('send_message', {
+      username: user.username,
+      image: user.image,
+      user_id: user.id,
+      room_id: state.room.id,
+      channel_id: state.channel.id,
+      content
+    });
+    setContent('');
   };
 
   const wsInitialize = async (ws) => {
@@ -134,13 +146,13 @@ const Home = (props) => {
     messagesRef.current[room.id][channel.id] = data.messages;
     const messages = messagesRef.current[room.id][channel.id].slice();
     usersRef.current[room.id] = {}
-    const users = data.users;
-    for (const user of users) {
+    for (const user of data.users) {
       usersRef.current[room.id][user.id] = user;
     }
     for (const user of ws.users) {
       usersRef.current[room.id][user.id].online = true;
     }
+    const users = Object.values(usersRef.current[room.id]);
     dispatch({
       type: 'initialize',
       payload: {
@@ -158,40 +170,63 @@ const Home = (props) => {
     dispatch({
       type: 'receive_message',
       payload: {
-        message
+        messages: state.messages.concat(message)
+      }
+    });
+  };
+
+  const wsChangeRoom = async (ws) => {
+    const { room } = ws;
+    const channels = Object.values(channelsRef.current[room.id]);
+    const channel = channels[0];
+    const { data } = await axios.get('/api/initialize', {
+      params: {
+        room_id: room.id,
+        channel_id: channel.id
+      }
+    });
+    messagesRef.current[room.id] = {};
+    messagesRef.current[room.id][channel.id] = data.messages;
+    usersRef.current[room.id] = {};
+    for (const user of data.users) {
+      usersRef.current[room.id][user.id] = user;
+    }
+    for (const user of ws.users) {
+      usersRef.current[room.id][user.id].online = true;
+    }
+    const messages = messagesRef.current[room.id][channel.id].slice();
+    const users = Object.values(usersRef.current[room.id]);
+    dispatch({
+      type: 'change_room',
+      payload: {
+        room,
+        channels,
+        channel,
+        messages,
+        users
       }
     });
   };
 
   useEffect(() => {
+    const connection = io('http://localhost:3003/', { autoConnect: false });
+    setSocket(connection);
+  }, [])
+
+  useEffect(() => {
     if (socket) {
       socket.on('initialize', wsInitialize);
       socket.on('receive_message', wsReceiveMessage);
-      socket.auth = user;
+      socket.on('change_room', wsChangeRoom);
+      socket.auth = myuser;
       socket.connect();
       return () => {
         socket.off('initialize', wsInitialize);
+        socket.off('receive_message', wsReceiveMessage);
+        socket.off('change_room', wsChangeRoom);
       };
     }
-  }, [socket, user])
-
-  const updateContent = (e) => {
-    setContent(e.target.value);
-  };
-
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (!content) return;
-    socket.emit('send_message', {
-      username: user.username,
-      image: user.image,
-      user_id: user.id,
-      room_id: state.room.id,
-      channel_id: state.channel.id,
-      content
-    });
-    setContent('');
-  };
+  }, [socket, myuser])
 
   return (
     <div className={styles.container}>
@@ -214,11 +249,11 @@ export const getServerSideProps = async (context) => {
     };
   }
 
-  const user = await getUser(session.user.name);
+  const myuser = await getUser(session.user.name);
   return {
     props: {
       session,
-      user
+      myuser
     }
   };
 };
