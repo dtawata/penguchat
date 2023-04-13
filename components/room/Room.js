@@ -3,9 +3,10 @@ import { Fragment } from 'react';
 import Channels from './Channels';
 import Bar from './Bar';
 import Chat from './Chat';
+import Users from './Users';
 
 const Room = (props) => {
-  const { channels, changeChannel, content, updateContent, sendMessage, messages } = props;
+  const { channels, changeChannel, content, updateContent, sendMessage, messages, users } = props;
 
   return (
     <Fragment>
@@ -14,6 +15,7 @@ const Room = (props) => {
         <Bar />
         <div className={styles.flex}>
           <Chat content={content} updateContent={updateContent} messages={messages} sendMessage={sendMessage} />
+          <Users users={users} />
         </div>
       </div>
     </Fragment>

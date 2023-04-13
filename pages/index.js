@@ -8,7 +8,7 @@ import Sidebar from '@/components/sidebar/Sidebar';
 import Room from '@/components/room/Room';
 
 const reducer = (state, action) => {
-  const { rooms, room, channels, channel, message, messages } = action.payload;
+  const { rooms, room, channels, channel, message, messages, users } = action.payload;
   switch (action.type) {
     case 'initialize': {
       return {
@@ -17,7 +17,8 @@ const reducer = (state, action) => {
         room,
         channels,
         channel,
-        messages
+        messages,
+        users
       };
     }
     case 'receive_message': {
@@ -31,6 +32,16 @@ const reducer = (state, action) => {
         ...state,
         channel,
         messages
+      };
+    }
+    case 'change_room': {
+      return {
+        ...state,
+        room,
+        channels,
+        channel,
+        messages,
+        users
       };
     }
     default: {
@@ -48,17 +59,22 @@ const Home = (props) => {
     room: {},
     channels: [],
     channel: {},
-    messages: []
+    messages: [],
+    users: []
   });
   const [content, setContent] = useState('');
   const channelsRef = useRef({});
+  const messagesRef = useRef({});
+  const usersRef = useRef({});
 
   useEffect(() => {
     const connection = io('http://localhost:3003/', { autoConnect: false });
     setSocket(connection);
   }, [])
 
-  const changeChannel = async (channel) => {
+  const changeRoom = async (room) => {
+    const channels = Object.values(channelsRef.current[room.id]);
+    const channel = channels[0];
     const { data } = await axios.get('http://localhost:3000/api/messages', {
       params: {
         room_id: state.room.id,
@@ -67,10 +83,34 @@ const Home = (props) => {
     });
 
     dispatch({
+      type: 'change_room',
+      payload: {
+        room,
+        channels,
+        channel,
+        messages: data.messages,
+        users: data.users
+      }
+    });
+  };
+
+  const changeChannel = async (channel) => {
+    if (state.channel.id === channel.id) return;
+    if (!messagesRef.current[state.room.id][channel.id]) {
+      const { data } = await axios.get('http://localhost:3000/api/messages', {
+        params: {
+          room_id: state.room.id,
+          channel_id: channel.id
+        }
+      });
+      messagesRef.current[state.room.id][channel.id] = data.messages;
+    }
+    const messages = messagesRef.current[state.room.id][channel.id].slice();
+    dispatch({
       type: 'change_channel',
       payload: {
         channel,
-        messages: data.messages
+        messages
       }
     });
   };
@@ -84,12 +124,23 @@ const Home = (props) => {
     }
     const channels = Object.values(channelsRef.current[room.id]);
     const channel = channels[0];
-    const { data } = await axios.get('/api/messages', {
+    const { data } = await axios.get('/api/initialize', {
       params: {
         room_id: room.id,
         channel_id: channel.id
       }
     });
+    messagesRef.current[room.id] = {};
+    messagesRef.current[room.id][channel.id] = data.messages;
+    const messages = messagesRef.current[room.id][channel.id].slice();
+    usersRef.current[room.id] = {}
+    const users = data.users;
+    for (const user of users) {
+      usersRef.current[room.id][user.id] = user;
+    }
+    for (const user of ws.users) {
+      usersRef.current[room.id][user.id].online = true;
+    }
     dispatch({
       type: 'initialize',
       payload: {
@@ -97,7 +148,8 @@ const Home = (props) => {
         room,
         channels,
         channel,
-        messages: data.messages
+        messages,
+        users
       }
     });
   };
@@ -143,8 +195,8 @@ const Home = (props) => {
 
   return (
     <div className={styles.container}>
-      <Sidebar rooms={state.rooms} />
-      <Room channels={state.channels} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} />
+      <Sidebar rooms={state.rooms} changeRoom={changeRoom} />
+      <Room channels={state.channels} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} />
     </div>
   );
 };

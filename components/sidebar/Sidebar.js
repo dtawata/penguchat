@@ -2,7 +2,7 @@ import styles from '@/styles/Sidebar.module.css';
 import Image from 'next/image';
 
 const Sidebar = (props) => {
-  const { rooms } = props;
+  const { rooms, changeRoom } = props;
 
   return (
     <div className={styles.container}>
@@ -12,7 +12,7 @@ const Sidebar = (props) => {
       <div className={styles.line}></div>
       <div className={styles.rooms}>
         {rooms.map((room, index) => {
-          return <Room room={room} key={room.id} />
+          return <Room room={room} changeRoom={changeRoom} key={room.id} />
         })}
       </div>
     </div>
@@ -20,10 +20,10 @@ const Sidebar = (props) => {
 };
 
 const Room = (props) => {
-  const { room } = props;
+  const { room, changeRoom } = props;
 
   return (
-    <div className={styles.room}>
+    <div onClick={() => { changeRoom(room); }} className={styles.room}>
       <Image className={styles.room_img} src={room.image} alt='' width='60' height='60' />
     </div>
   );

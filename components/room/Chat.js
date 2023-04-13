@@ -63,7 +63,4 @@ const MessageAlt = (props) => {
   );
 };
 
-
-
-
 export default Chat;

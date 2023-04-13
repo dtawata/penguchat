@@ -27,7 +27,18 @@ io.on('connection', async (socket) => {
     roomIds.push(room.id);
   }
   const channels = await getChannels(roomIds);
-  socket.emit('initialize', { rooms, channels });
+
+  const onlineUsers = await io.in(roomIds[0]).fetchSockets();
+  const users = [];
+  for (const onlineUser of onlineUsers) {
+    users.push({
+      id: onlineUser.user_id,
+      username: onlineUser.username,
+      room_id: roomIds[0]
+    });
+  }
+
+  socket.emit('initialize', { rooms, channels, users });
 
   socket.on('send_message', async (message) => {
     message.created_at = new Date();

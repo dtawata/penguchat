@@ -1,0 +1,16 @@
+.container {
+  min-width: 240px;
+  height: calc(100vh - 44px);
+  padding: 10px 20px;
+  background-color: #2E3136;
+}
+
+.users {
+  width: 0%;
+  background-color: darkblue;
+}
+
+.user {
+  margin: 8px 0;
+  cursor: pointer;
+}
