@@ -25,6 +25,7 @@ const Room = (props) => {
   return (
     <div onClick={() => { changeRoom(room); }} className={styles.room}>
       <Image className={styles.room_img} src={room.image} alt='' width='60' height='60' />
+      {room.notifications !== 0 && <div className={styles.room_notifications}>{room.notifications}</div>}
     </div>
   );
 };

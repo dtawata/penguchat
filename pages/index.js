@@ -39,6 +39,8 @@ const reducer = (state, action) => {
     case 'change_channel': {
       return {
         ...state,
+        rooms,
+        channels,
         messages
       };
     }
@@ -53,6 +55,19 @@ const reducer = (state, action) => {
         ...state,
         users
       };
+    }
+    case 'update_notifications': {
+      return {
+        ...state,
+        rooms,
+        channels
+      };
+    }
+    case 'update_room_notifications': {
+      return {
+        ...state,
+        rooms
+      }
     }
     default: {
       return state;
@@ -71,9 +86,10 @@ const Home = (props) => {
     users: []
   });
   const [content, setContent] = useState('');
+  const roomsRef = useRef({});
   const roomRef = useRef({});
-  const channelRef = useRef({});
   const channelsRef = useRef({});
+  const channelRef = useRef({});
   const messagesRef = useRef({});
   const usersRef = useRef({});
 
@@ -95,6 +111,8 @@ const Home = (props) => {
       const channels = Object.values(channelsRef.current[room.id]);
       channelRef.current = channels[0];
       const channel = channelRef.current;
+      roomsRef.current[room.id].notifications -= channel.notifications;
+      channel.notifications = 0;
       const messages = messagesRef.current[room.id][channel.id].slice();
       const users = Object.values(usersRef.current[room.id]);
       dispatch({
@@ -111,8 +129,12 @@ const Home = (props) => {
 
   const changeChannel = async (channel) => {
     if (channelRef.current.id === channel.id) return;
-    const room = roomRef.current;
     channelRef.current = channel;
+    const room = roomRef.current;
+    roomsRef.current[room.id].notifications -= channel.notifications;
+    channel.notifications = 0;
+    const rooms = Object.values(roomsRef.current);
+    const channels = Object.values(channelsRef.current[room.id]);
     if (!messagesRef.current[room.id][channel.id]) {
       const { data } = await axios.get('/api/messages', {
         params: {
@@ -126,6 +148,8 @@ const Home = (props) => {
     dispatch({
       type: 'change_channel',
       payload: {
+        rooms,
+        channels,
         messages
       }
     });
@@ -150,16 +174,23 @@ const Home = (props) => {
   };
 
   const wsInitialize = async ({ wsRooms, wsChannels, wsUsers }) => {
-    const rooms = wsRooms;
+    for (const room of wsRooms) {
+      roomsRef.current[room.id] = room;
+      room.notifications = 0;
+    }
+    const rooms = Object.values(roomsRef.current);
     roomRef.current = rooms[0];
     const room = roomRef.current;
+
     for (const channel of wsChannels) {
       channelsRef.current[channel.room_id] = channelsRef.current[channel.room_id] || {};
       channelsRef.current[channel.room_id][channel.id] = channel;
+      channel.notifications = 0;
     }
     const channels = Object.values(channelsRef.current[room.id]);
     channelRef.current = channels[0];
     const channel = channelRef.current;
+
     const { data } = await axios.get('/api/initialize', {
       params: {
         room_id: room.id,
@@ -190,14 +221,39 @@ const Home = (props) => {
   };
 
   const wsReceiveMessage = (wsMessage) => {
-    messagesRef.current[wsMessage.room_id][wsMessage.channel_id].push(wsMessage);
-    const messages = messagesRef.current[wsMessage.room_id][wsMessage.channel_id].slice();
-    dispatch({
-      type: 'receive_message',
-      payload: {
-        messages
+    const room = roomRef.current;
+    const channel = channelRef.current;
+    if (room.id === wsMessage.room_id && channel.id === wsMessage.channel_id) {
+      messagesRef.current[room.id][channel.id].push(wsMessage);
+      const messages = messagesRef.current[room.id][channel.id].slice();
+      dispatch({
+        type: 'receive_message',
+        payload: {
+          messages
+        }
+      });
+    } else {
+      roomsRef.current[wsMessage.room_id].notifications++;
+      const rooms = Object.values(roomsRef.current);
+      channelsRef.current[wsMessage.room_id][wsMessage.channel_id].notifications++;
+      if (room.id === wsMessage.room_id) {
+        const channels = Object.values(channelsRef.current[wsMessage.room_id]);
+        dispatch({
+          type: 'update_notifications',
+          payload: {
+            rooms,
+            channels
+          }
+        });
+      } else {
+        dispatch({
+          type: 'update_room_notifications',
+          payload: {
+            rooms
+          }
+        });
       }
-    });
+    }
   };
 
   const wsChangeRoom = async ({ wsRoom, wsUsers }) => {
@@ -206,6 +262,8 @@ const Home = (props) => {
     const channels = Object.values(channelsRef.current[room.id]);
     channelRef.current = channels[0];
     const channel = channelRef.current;
+    roomsRef.current[room.id].notifications -= channel.notifications;
+    channel.notifications = 0;
     const { data } = await axios.get('/api/initialize', {
       params: {
         room_id: room.id,
@@ -302,17 +360,3 @@ export const getServerSideProps = async (context) => {
     }
   };
 };
-
-
-//   const [state, dispatch] = useReducer(reducer, {
-//     view: 'group',
-//     rooms: [],
-//     room: {},
-//     channels: [],
-//     channel: {},
-//     direct: {},
-//     friends: [],
-//     friend: {},
-//     messages: [],
-//     users: []
-//   });

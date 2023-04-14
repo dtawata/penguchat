@@ -29,35 +29,14 @@ const Channel = (props) => {
       {channel.id === selected ?
       <div className={`${styles.channel} ${styles.active}`}>
         <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
-        <div className={styles.channel_text}>{channel.name}</div>
+        <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
       </div> :
       <div onClick={() => { changeChannel(channel); }} className={styles.channel}>
         <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
-        <div className={styles.channel_text}>{channel.name}</div>
+        <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
       </div>}
     </Fragment>
   );
 };
 
 export default Channels;
-
-
-
-// const Channel = (props) => {
-//   const { channel, selected, changeChannel } = props;
-
-//   return (
-//     <Fragment>
-//       {channel.id === selected ?
-//         <li className={`${styles.channel} ${styles.active}`}>
-//           <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
-//           <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
-//         </li> :
-//         <li onClick={() => { changeChannel(channel); }} className={styles.channel}>
-//           <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
-//           <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
-//         </li>
-//       }
-//     </Fragment>
-//   );
-// };
