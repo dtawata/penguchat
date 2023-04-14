@@ -6,34 +6,43 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import Sidebar from '@/components/Sidebar';
 import Room from '@/components/room/Room';
+import Direct from '@/components/direct/Direct';
 
 const reducer = (state, action) => {
-  const { rooms, channels, messages, users } = action.payload;
+  const { view, rooms, channels, messages, users } = action.payload;
   switch (action.type) {
     case 'initialize': {
       return {
         ...state,
+        view,
         rooms,
         channels,
         messages,
         users
       };
     }
-    case 'receive_message': {
+    case 'change_view': {
       return {
         ...state,
-        messages
-      };
+        view
+      }
     }
     case 'change_room': {
       return {
         ...state,
+        view,
         channels,
         messages,
         users
       };
     }
     case 'change_channel': {
+      return {
+        ...state,
+        messages
+      };
+    }
+    case 'receive_message': {
       return {
         ...state,
         messages
@@ -55,6 +64,7 @@ const Home = (props) => {
   const { session, myuser } = props;
   const [socket, setSocket] = useState(null);
   const [state, dispatch] = useReducer(reducer, {
+    view: 'room',
     rooms: [],
     channels: [],
     messages: [],
@@ -67,8 +77,17 @@ const Home = (props) => {
   const messagesRef = useRef({});
   const usersRef = useRef({});
 
+  const changeView = async (view) => {
+    dispatch({
+      type: 'change_view',
+      payload: {
+        view
+      }
+    });
+  };
+
   const changeRoom = async (room) => {
-    if (roomRef.current.id === room.id) return;
+    if (state.view === 'room' && roomRef.current.id === room.id) return;
     roomRef.current = room;
     if (!messagesRef.current[room.id]) {
       socket.emit('to:server:change_room', room);
@@ -81,6 +100,7 @@ const Home = (props) => {
       dispatch({
         type: 'change_room',
         payload: {
+          view: 'room',
           channels,
           messages,
           users
@@ -160,6 +180,7 @@ const Home = (props) => {
     dispatch({
       type: 'initialize',
       payload: {
+        view: 'room',
         rooms,
         channels,
         messages,
@@ -205,6 +226,7 @@ const Home = (props) => {
     dispatch({
       type: 'change_room',
       payload: {
+        view: 'room',
         channels,
         messages,
         users
@@ -251,8 +273,10 @@ const Home = (props) => {
 
   return (
     <div className={styles.container}>
-      <Sidebar rooms={state.rooms} room={roomRef.current} changeRoom={changeRoom} />
-      <Room room={roomRef.current} channels={state.channels} channel={channelRef.current} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} />
+      <Sidebar changeView={changeView} rooms={state.rooms} room={roomRef.current} changeRoom={changeRoom} />
+      {state.view === 'room' ?
+      <Room room={roomRef.current} channels={state.channels} channel={channelRef.current} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} /> :
+      <Direct />}
     </div>
   );
 };
