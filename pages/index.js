@@ -4,19 +4,17 @@ import { getSession, signOut } from 'next-auth/react';
 import { getUser } from '../lib/mysql';
 import { io } from 'socket.io-client';
 import axios from 'axios';
-import Sidebar from '@/components/sidebar/Sidebar';
+import Sidebar from '@/components/Sidebar';
 import Room from '@/components/room/Room';
 
 const reducer = (state, action) => {
-  const { rooms, room, channels, channel, messages, users } = action.payload;
+  const { rooms, channels, messages, users } = action.payload;
   switch (action.type) {
     case 'initialize': {
       return {
         ...state,
         rooms,
-        room,
         channels,
-        channel,
         messages,
         users
       };
@@ -30,9 +28,7 @@ const reducer = (state, action) => {
     case 'change_room': {
       return {
         ...state,
-        room,
         channels,
-        channel,
         messages,
         users
       };
@@ -40,8 +36,13 @@ const reducer = (state, action) => {
     case 'change_channel': {
       return {
         ...state,
-        channel,
         messages
+      };
+    }
+    case 'update_users': {
+      return {
+        ...state,
+        users
       };
     }
     default: {
@@ -55,32 +56,32 @@ const Home = (props) => {
   const [socket, setSocket] = useState(null);
   const [state, dispatch] = useReducer(reducer, {
     rooms: [],
-    room: {},
     channels: [],
-    channel: {},
     messages: [],
     users: []
   });
   const [content, setContent] = useState('');
+  const roomRef = useRef({});
+  const channelRef = useRef({});
   const channelsRef = useRef({});
   const messagesRef = useRef({});
   const usersRef = useRef({});
 
   const changeRoom = async (room) => {
-    if (state.room.id === room.id) return;
+    if (roomRef.current.id === room.id) return;
+    roomRef.current = room;
     if (!messagesRef.current[room.id]) {
-      socket.emit('request_users', room);
+      socket.emit('to:server:change_room', room);
     } else {
       const channels = Object.values(channelsRef.current[room.id]);
-      const channel = channels[0];
+      channelRef.current = channels[0];
+      const channel = channelRef.current;
       const messages = messagesRef.current[room.id][channel.id].slice();
       const users = Object.values(usersRef.current[room.id]);
       dispatch({
         type: 'change_room',
         payload: {
-          room,
           channels,
-          channel,
           messages,
           users
         }
@@ -89,53 +90,56 @@ const Home = (props) => {
   };
 
   const changeChannel = async (channel) => {
-    if (state.channel.id === channel.id) return;
-    if (!messagesRef.current[state.room.id][channel.id]) {
+    if (channelRef.current.id === channel.id) return;
+    const room = roomRef.current;
+    channelRef.current = channel;
+    if (!messagesRef.current[room.id][channel.id]) {
       const { data } = await axios.get('/api/messages', {
         params: {
-          room_id: state.room.id,
+          room_id: room.id,
           channel_id: channel.id
         }
       });
-      messagesRef.current[state.room.id][channel.id] = data.messages;
+      messagesRef.current[room.id][channel.id] = data.messages;
     }
-    const messages = messagesRef.current[state.room.id][channel.id].slice();
+    const messages = messagesRef.current[room.id][channel.id].slice();
     dispatch({
       type: 'change_channel',
       payload: {
-        channel,
         messages
       }
     });
+  };
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (!content) return;
+    socket.emit('to:server:send_message', {
+      username: myuser.username,
+      image: myuser.image,
+      user_id: myuser.id,
+      room_id: roomRef.current.id,
+      channel_id: channelRef.current.id,
+      content
+    });
+    setContent('');
   };
 
   const updateContent = (e) => {
     setContent(e.target.value);
   };
 
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (!content) return;
-    socket.emit('send_message', {
-      username: user.username,
-      image: user.image,
-      user_id: user.id,
-      room_id: state.room.id,
-      channel_id: state.channel.id,
-      content
-    });
-    setContent('');
-  };
-
-  const wsInitialize = async (ws) => {
-    const { rooms } = ws;
-    const room = rooms[0];
-    for (const channel of ws.channels) {
+  const wsInitialize = async ({ wsRooms, wsChannels, wsUsers }) => {
+    const rooms = wsRooms;
+    roomRef.current = rooms[0];
+    const room = roomRef.current;
+    for (const channel of wsChannels) {
       channelsRef.current[channel.room_id] = channelsRef.current[channel.room_id] || {};
       channelsRef.current[channel.room_id][channel.id] = channel;
     }
     const channels = Object.values(channelsRef.current[room.id]);
-    const channel = channels[0];
+    channelRef.current = channels[0];
+    const channel = channelRef.current;
     const { data } = await axios.get('/api/initialize', {
       params: {
         room_id: room.id,
@@ -145,11 +149,11 @@ const Home = (props) => {
     messagesRef.current[room.id] = {};
     messagesRef.current[room.id][channel.id] = data.messages;
     const messages = messagesRef.current[room.id][channel.id].slice();
-    usersRef.current[room.id] = {}
+    usersRef.current[room.id] = {};
     for (const user of data.users) {
       usersRef.current[room.id][user.id] = user;
     }
-    for (const user of ws.users) {
+    for (const user of wsUsers) {
       usersRef.current[room.id][user.id].online = true;
     }
     const users = Object.values(usersRef.current[room.id]);
@@ -157,28 +161,30 @@ const Home = (props) => {
       type: 'initialize',
       payload: {
         rooms,
-        room,
         channels,
-        channel,
         messages,
         users
       }
     });
   };
 
-  const wsReceiveMessage = (message) => {
+  const wsReceiveMessage = (wsMessage) => {
+    messagesRef.current[wsMessage.room_id][wsMessage.channel_id].push(wsMessage);
+    const messages = messagesRef.current[wsMessage.room_id][wsMessage.channel_id].slice();
     dispatch({
       type: 'receive_message',
       payload: {
-        messages: state.messages.concat(message)
+        messages
       }
     });
   };
 
-  const wsChangeRoom = async (ws) => {
-    const { room } = ws;
+  const wsChangeRoom = async ({ wsRoom, wsUsers }) => {
+    roomRef.current = wsRoom;
+    const room = roomRef.current;
     const channels = Object.values(channelsRef.current[room.id]);
-    const channel = channels[0];
+    channelRef.current = channels[0];
+    const channel = channelRef.current;
     const { data } = await axios.get('/api/initialize', {
       params: {
         room_id: room.id,
@@ -191,7 +197,7 @@ const Home = (props) => {
     for (const user of data.users) {
       usersRef.current[room.id][user.id] = user;
     }
-    for (const user of ws.users) {
+    for (const user of wsUsers) {
       usersRef.current[room.id][user.id].online = true;
     }
     const messages = messagesRef.current[room.id][channel.id].slice();
@@ -199,10 +205,23 @@ const Home = (props) => {
     dispatch({
       type: 'change_room',
       payload: {
-        room,
         channels,
-        channel,
         messages,
+        users
+      }
+    });
+  };
+
+  const wsUpdateUsers = ({ wsStatus, wsUser }) => {
+    if (!usersRef.current[wsUser.room_id]) return;
+    const user = wsUser;
+    usersRef.current[user.room_id][user.id].online = wsStatus;
+    const room = roomRef.current;
+    if (user.room_id !== room.id) return;
+    const users = Object.values(usersRef.current[room.id]);
+    dispatch({
+      type: 'update_users',
+      payload: {
         users
       }
     });
@@ -215,15 +234,17 @@ const Home = (props) => {
 
   useEffect(() => {
     if (socket) {
-      socket.on('initialize', wsInitialize);
-      socket.on('receive_message', wsReceiveMessage);
-      socket.on('change_room', wsChangeRoom);
+      socket.on('to:client:initialize', wsInitialize);
+      socket.on('to:client:receive_message', wsReceiveMessage);
+      socket.on('to:client:change_room', wsChangeRoom);
+      socket.on('to:client:update_users', wsUpdateUsers);
       socket.auth = myuser;
       socket.connect();
       return () => {
         socket.off('initialize', wsInitialize);
         socket.off('receive_message', wsReceiveMessage);
-        socket.off('change_room', wsChangeRoom);
+        socket.off('to:client:change_room', wsChangeRoom);
+        socket.off('update_users', wsUpdateUsers);
       };
     }
   }, [socket, myuser])
