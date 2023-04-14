@@ -77,7 +77,6 @@ io.on('connection', async (socket) => {
       io.to(room_id).emit('to:client:update_users', { wsStatus: false, wsUser: user });
     });
   });
-
 });
 
 const port = 3003;

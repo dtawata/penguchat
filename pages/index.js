@@ -251,8 +251,8 @@ const Home = (props) => {
 
   return (
     <div className={styles.container}>
-      <Sidebar rooms={state.rooms} changeRoom={changeRoom} />
-      <Room channels={state.channels} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} />
+      <Sidebar rooms={state.rooms} room={roomRef.current} changeRoom={changeRoom} />
+      <Room room={roomRef.current} channels={state.channels} channel={channelRef.current} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} />
     </div>
   );
 };

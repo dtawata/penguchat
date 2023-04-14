@@ -6,7 +6,7 @@ const Chat = (props) => {
   const { content, updateContent, sendMessage, messages } = props;
   let username = null;
   let date_time = null;
-  console.log('messages', messages);
+
   return (
     <div className={styles.container}>
       <div className={styles.messages}>

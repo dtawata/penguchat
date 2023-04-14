@@ -1,24 +1,5 @@
 import styles from '@/styles/Users.module.css';
 
-//   const { users, changeView } = props;
-
-
-// const User = (props) => {
-//   const { user, changeView } = props;
-
-//   return (
-//     <div onClick={() => {changeView(user); }} className={styles.user}>{user.username}</div>
-//   );
-// };
-
-// const Offline = (props) => {
-//   const { user, changeView } = props;
-
-//   return (
-//     <div onClick={() => {changeView(user); }} className={styles.user}>{user.username}</div>
-//   );
-// };
-
 const Users = (props) => {
   const { users } = props;
 
@@ -27,19 +8,32 @@ const Users = (props) => {
       <div>Online</div>
       {users.map((user) => {
         if (user.online) {
-          // return <User user={user} changeView={changeView} key={user.id} />
-          return <div key={user.id}>{user.username}</div>
+          return <Online user={user} key={user.id} />
         }
        })}
        <br/>
        <div>Offline</div>
        {users.map((user) => {
         if (!user.online) {
-          // return <Offline user={user} changeView={changeView} key={user.id} />
-          return <div key={user.id}>{user.username}</div>
+          return <Offline user={user} key={user.id} />
         }
        })}
     </div>
+  );
+};
+
+const Online = (props) => {
+  const { user } = props;
+  return (
+    <div className={styles.user}>{user.username}</div>
+  );
+};
+
+const Offline = (props) => {
+  const { user } = props;
+
+  return (
+    <div className={styles.user}>{user.username}</div>
   );
 };
 

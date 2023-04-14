@@ -12,9 +12,16 @@
   border-bottom: 2px solid #222527;
 }
 
+.bar h3 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
 .channels {
   width: 100%;
-  padding: 10px;
+  /* padding: 10px; */
+  padding: 15px;
 }
 
 .channel {
@@ -30,6 +37,15 @@
 .channel {
   display: flex;
   align-items: center;
+  margin: 1px 0;
+  padding: 7px 5px;
+  border-radius: 4px;
+  color: #d5d5d5;
+  cursor: pointer;
+}
+
+.channel.active {
+  background-color: #42464e;
 }
 
 .channel_icon {
@@ -41,23 +57,3 @@
   font-size: 15px;
   letter-spacing: 0.5px;
 }
-
-/*
-
-.channels_top h3 {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.channels_bot {
-  padding: 15px;
-}
-
-
-.channel.active {
-  background-color: #42464E;
-}
-
-
-*/

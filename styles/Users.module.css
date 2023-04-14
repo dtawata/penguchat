@@ -3,6 +3,7 @@
   height: calc(100vh - 44px);
   padding: 10px 20px;
   background-color: #2E3136;
+  color: #fff;
 }
 
 .users {
