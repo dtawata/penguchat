@@ -9,8 +9,7 @@ const io = new Server(server, {
   }
 });
 
-const { getRooms, getChannels, addRoomMessage } = require('./mysql');
-// getFriends, , addDirectMessage
+const { getRooms, getChannels, getFriends, addRoomMessage, addDirectMessage } = require('./mysql');
 
 io.use((socket, next) => {
   const { id, username } = socket.handshake.auth;
@@ -20,7 +19,10 @@ io.use((socket, next) => {
 });
 
 io.on('connection', async (socket) => {
-  const rooms = await getRooms(socket.user_id);
+  const [rooms, friends] = await Promise.all([getRooms(socket.user_id), getFriends(socket.user_id)]);
+  for (const friend of friends) {
+    socket.join(friend.id);
+  }
   const roomIds = [];
   const user = {
     id: socket.user_id,
@@ -44,13 +46,20 @@ io.on('connection', async (socket) => {
       room_id: roomIds[0]
     });
   }
-  socket.emit('to:client:initialize', { wsRooms: rooms, wsChannels: channels, wsUsers: users });
+  socket.emit('to:client:initialize', { wsRooms: rooms, wsChannels: channels, wsFriends: friends, wsUsers: users });
 
   socket.on('to:server:send_message', async (message) => {
     message.created_at = new Date();
     const { insertId } = await addRoomMessage(message);
     message.id = insertId;
-    io.emit('to:client:receive_message', message);
+    socket.to(message.room_id).emit('to:client:receive_message', message);
+  });
+
+  socket.on('to:server:direct:send_message', async (message) => {
+    message.created_at = new Date();
+    const { insertId } = await addDirectMessage(message);
+    message.id = insertId;
+    io.emit('to:client:direct:receive_message', message);
   });
 
   socket.on('to:server:change_room', async (room) => {

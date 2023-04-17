@@ -1,4 +1,4 @@
-import { getRoomMessages, getUsersInRoom } from '@/lib/mysql';
+import { getRoomMessages } from '@/lib/mysql';
 
 const Handler = async (req, res) => {
   const { room_id, channel_id } = req.query;

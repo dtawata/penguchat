@@ -1,4 +1,8 @@
+.main {
+  flex-grow: 1;
+}
 
-.container {
-  background-color: beige;
+.flex {
+  display: flex;
+  height: calc(100vh - 44px);
 }

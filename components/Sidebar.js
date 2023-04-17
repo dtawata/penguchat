@@ -2,16 +2,16 @@ import styles from '@/styles/Sidebar.module.css';
 import Image from 'next/image';
 
 const Sidebar = (props) => {
-  const { changeView, rooms, changeRoom } = props;
+  const { changeDirect, rooms, changeRoom } = props;
 
   return (
     <div className={styles.container}>
-      <div onClick={changeView} className={styles.direct}>
+      <div onClick={changeDirect} className={styles.direct}>
         <Image className={styles.direct_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='60' height='60' />
       </div>
       <div className={styles.line}></div>
       <div className={styles.rooms}>
-        {rooms.map((room, index) => {
+        {rooms.map((room) => {
           return <Room room={room} changeRoom={changeRoom} key={room.id} />
         })}
       </div>

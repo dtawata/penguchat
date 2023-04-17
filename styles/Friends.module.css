@@ -18,13 +18,12 @@
   letter-spacing: 0.5px;
 }
 
-.channels {
+.friends {
   width: 100%;
-  /* padding: 10px; */
   padding: 15px;
 }
 
-.channel {
+.friend {
   display: flex;
   align-items: center;
   margin: 1px 0;
@@ -34,15 +33,15 @@
   cursor: pointer;
 }
 
-.channel.active {
+.friend.active {
   background-color: #42464e;
 }
 
-.channel_icon {
+.friend_icon {
   font-size: 15px;
 }
 
-.channel_text {
+.friend_text {
   margin-left: 5px;
   font-size: 15px;
   letter-spacing: 0.5px;
