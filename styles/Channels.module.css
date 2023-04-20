@@ -1,5 +1,5 @@
 .container {
-  min-width: 190px;
+  min-width: 230px;
   background-color: #2e3136;
 }
 
@@ -12,10 +12,11 @@
   border-bottom: 2px solid #222527;
 }
 
-.bar h3 {
-  font-size: 15px;
+.title {
+  color: #fff;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .channels {

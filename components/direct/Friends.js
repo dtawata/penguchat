@@ -1,20 +1,32 @@
 import styles from '@/styles/Friends.module.css';
 import { Fragment } from 'react';
+import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHashtag } from '@fortawesome/free-solid-svg-icons';
+import { faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const Friends = (props) => {
-  const { friends, friend, changeFriend } = props;
+  const { friends, friend, changeFriend, openFriends } = props;
   const selected = friend.id;
 
   return (
     <div className={styles.container}>
       <div className={styles.bar}>
-        <h3>Friends</h3>
+        <div onClick={openFriends} className={styles.input}>Find or start a conversation</div>
       </div>
       <div className={styles.friends}>
+        {selected === 'default' ?
+        <div className={`${styles.default} ${styles.active}`}>
+          <FontAwesomeIcon icon={faUser} className={styles.default_icon} />
+          <div className={styles.default_text}>Friends</div>
+        </div> :
+        <div onClick={() => { changeFriend({ id: 'default' }); }} className={styles.default}>
+          <FontAwesomeIcon icon={faUser} className={styles.default_icon} />
+          <div className={styles.default_text}>Friends</div>
+        </div>}
+        <div className={styles.title}>Direct Messages</div>
         {friends.map((friend) => {
-          return <Friend friend={friend} selected={selected} changeFriend={changeFriend} key={friend.id} />
+          if (friend.id === selected) return <Selected friend={friend} key={friend.id} />
+          return <Friend friend={friend} changeFriend={changeFriend} key={friend.id} />
         })}
       </div>
     </div>
@@ -22,20 +34,36 @@ const Friends = (props) => {
 };
 
 const Friend = (props) => {
-  const { friend, selected, changeFriend } = props;
+  const { friend, changeFriend } = props;
+  const css = friend.online ? `${styles.friend} ${styles.online}` : styles.friend;
 
   return (
-    <Fragment>
-      {friend.id === selected ?
-      <div onClick={() => { changeFriend(friend); }} className={`${styles.friend} ${styles.active}`}>
-        <FontAwesomeIcon icon={faHashtag} className={styles.friend_icon} />
-        <div className={styles.friend_text}>{friend.username} {friend.notifications !== 0 && friend.notifications}</div>
-      </div> :
-      <div onClick={() => { changeFriend(friend); }} className={styles.friend}>
-        <FontAwesomeIcon icon={faHashtag} className={styles.friend_icon} />
-        <div className={styles.friend_text}>{friend.username} {friend.notifications !== 0 && friend.notifications}</div>
-      </div>}
-    </Fragment>
+    <div onClick={() => { changeFriend(friend); }} className={css}>
+      <div className={styles.friend_left}>
+        <Image className={styles.friend_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='30' height='30' />
+        <div className={styles.friend_bubble}>
+          <div className={styles.friend_bubble_color}></div>
+        </div>
+      </div>
+      <div className={styles.friend_text}>{friend.username} {friend.notifications !== 0 && friend.notifications}</div>
+    </div>
+  );
+};
+
+const Selected = (props) => {
+  const { friend } = props;
+  const css = friend.online ? `${styles.friend} ${styles.online} ${styles.active}` : `${styles.friend} ${styles.active}`;
+
+  return (
+    <div className={css}>
+      <div className={styles.friend_left}>
+        <Image className={styles.friend_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='30' height='30' />
+        <div className={styles.friend_bubble}>
+          <div className={styles.friend_bubble_color}></div>
+        </div>
+      </div>
+      <div className={styles.friend_text}>{friend.username} {friend.notifications !== 0 && friend.notifications}</div>
+    </div>
   );
 };
 

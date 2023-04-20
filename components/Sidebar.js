@@ -7,7 +7,7 @@ const Sidebar = (props) => {
   return (
     <div className={styles.container}>
       <div onClick={changeDirect} className={styles.direct}>
-        <Image className={styles.direct_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='60' height='60' />
+        <Image className={styles.direct_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='50' height='50' />
       </div>
       <div className={styles.line}></div>
       <div className={styles.rooms}>
@@ -24,7 +24,7 @@ const Room = (props) => {
 
   return (
     <div onClick={() => { changeRoom(room); }} className={styles.room}>
-      <Image className={styles.room_img} src={room.image} alt='' width='60' height='60' />
+      <Image className={styles.room_img} src={room.image} alt='' width='50' height='50' />
       {room.notifications !== 0 && <div className={styles.room_notifications}>{room.notifications}</div>}
     </div>
   );

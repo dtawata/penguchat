@@ -34,7 +34,7 @@ const Login = (props) => {
         <input onChange={handleChange} className={styles.input} name='username' type='text' placeholder='Username' required />
         <input onChange={handleChange} className={styles.input} name='password' type='password' placeholder='Password' required />
         <button className={styles.button}>Sign In</button>
-        <Link href='/register' passHref>Register</Link>
+        <Link className={styles.link} href='/register' passHref>Register</Link>
       </form>
     </div>
   );

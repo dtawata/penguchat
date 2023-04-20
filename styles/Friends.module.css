@@ -1,6 +1,6 @@
 .container {
-  min-width: 190px;
-  background-color: #2e3136;
+  min-width: 230px;
+  background-color: hsl(217, 8%, 20%);
 }
 
 .bar {
@@ -8,7 +8,7 @@
   align-items: center;
   width: 100%;
   height: 44px;
-  padding: 0 15px;
+  padding: 0 10px;
   border-bottom: 2px solid #222527;
 }
 
@@ -18,31 +18,118 @@
   letter-spacing: 0.5px;
 }
 
+.input {
+  width: 100%;
+  padding: 7px 10px;
+  background-color: #1e1f22;
+  border-radius: 4px;
+  border: none;
+  color: #939ba4;
+  cursor: pointer;
+  font-size: 13px;
+  outline: none;
+}
+
 .friends {
   width: 100%;
   padding: 15px;
 }
 
+.title {
+  margin: 20px 0 8px 0;
+  color: #d3d6d9;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
 .friend {
+  position: relative;
   display: flex;
   align-items: center;
-  margin: 1px 0;
-  padding: 7px 5px;
+  margin: 3px 0;
+  padding: 7px 8px;
   border-radius: 4px;
   color: #d5d5d5;
   cursor: pointer;
+}
+
+.friend:hover {
+  background-color: rgba(66, 69, 75, 0.5);
 }
 
 .friend.active {
   background-color: #42464e;
 }
 
-.friend_icon {
-  font-size: 15px;
+.friend_left {
+  position: relative;
+}
+
+.friend_img {
+  border-radius: 50%;
+  margin-right: 5px;
 }
 
 .friend_text {
   margin-left: 5px;
   font-size: 15px;
   letter-spacing: 0.5px;
+}
+
+.friend_bubble {
+  position: absolute;
+  bottom: 0;
+  right: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #2A2D31;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.friend_bubble_color {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #767A83;
+}
+
+
+.friend.online .friend_bubble_color {
+  background-color: #209D55;
+}
+
+.default {
+  font-size: 15px;
+  letter-spacing: 0.5px;
+
+  display: flex;
+  align-items: center;
+  margin: 1px 0;
+  padding: 7px 8px;
+  border-radius: 4px;
+  color: #d5d5d5;
+  cursor: pointer;
+}
+
+.default:hover {
+  background-color: rgba(66, 69, 75, 0.5);
+}
+
+.default.active {
+  background-color: #42464e;
+}
+
+.default_icon {
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+.default_text {
+  margin-top: 1px;
+  font-size: 16px;
 }

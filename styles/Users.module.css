@@ -1,17 +1,74 @@
 .container {
   min-width: 240px;
   height: calc(100vh - 44px);
-  padding: 10px 20px;
-  background-color: #2E3136;
+  padding: 15px;
+  background-color: #2e3136;
   color: #fff;
 }
 
+.title {
+  margin-top: 20px;
+  color: #DCDCDC;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 .users {
-  width: 0%;
-  background-color: darkblue;
+  width: 100%;
 }
 
 .user {
-  margin: 8px 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 3px 0;
+  padding: 7px 8px;
+  border-radius: 4px;
+  color: #d5d5d5;
   cursor: pointer;
+}
+
+.user:hover {
+  background-color: rgba(66, 69, 75, 0.5);
+}
+
+.user_left {
+  position: relative;
+}
+
+.user_img {
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.user_text {
+  margin-left: 5px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.user_bubble {
+  position: absolute;
+  bottom: 0;
+  right: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #2A2D31;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user_bubble_color {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #767A83;
+}
+
+.user.online .user_bubble_color {
+  background-color: #209D55;
 }

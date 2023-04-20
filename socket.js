@@ -48,18 +48,30 @@ io.on('connection', async (socket) => {
   }
   socket.emit('to:client:initialize', { wsRooms: rooms, wsChannels: channels, wsFriends: friends, wsUsers: users });
 
-  socket.on('to:server:send_message', async (message) => {
+  socket.on('to:server:room:send_message', async (message) => {
     message.created_at = new Date();
     const { insertId } = await addRoomMessage(message);
     message.id = insertId;
-    socket.to(message.room_id).emit('to:client:receive_message', message);
+    io.to(message.room_id).emit('to:client:room:receive_message', message);
+  });
+
+  socket.on('to:server:change_direct', async (friends) => {
+    // const items = Object.values(friends);
+    for (const friend of Object.values(friends)) {
+      const sockets = await io.in(friend.id).fetchSockets();
+      for (const user of sockets) {
+        if (socket.user_id === user.user_id) continue;
+        friend.online = true;
+      }
+    }
+    socket.emit('to:client:change_direct', { wsFriends: Object.values(friends) });
   });
 
   socket.on('to:server:direct:send_message', async (message) => {
     message.created_at = new Date();
     const { insertId } = await addDirectMessage(message);
     message.id = insertId;
-    io.emit('to:client:direct:receive_message', message);
+    io.to(message.room_id).emit('to:client:direct:receive_message', message);
   });
 
   socket.on('to:server:change_room', async (room) => {

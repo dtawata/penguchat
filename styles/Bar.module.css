@@ -7,8 +7,15 @@
   padding: 0 15px;
   background-color: #36393e;
   border-bottom: 2px solid #2c2f33;
+  color: #fff;
+}
+
+.title {
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .sign_out {
   cursor: pointer;
+  font-weight: 700;
 }

@@ -1,17 +1,14 @@
 .container {
   width: 100%;
   height: 100vh;
-  display: flex;
-  justify-content: center;
 }
 
 .form {
   display: flex;
   flex-direction: column;
   width: 800px;
-  height: 50vh;
-  margin-top: 80px;
-  padding: 30px;
+  margin: 80px auto 0 auto;
+  padding: 30px 30px 50px 30px;
   background-color: #36393e;
   border-radius: 4px;
 }
@@ -47,7 +44,7 @@
 }
 
 .link {
-  margin: 20px auto 0 auto;
+  margin-top: 30px;
   color: #fff;
-  text-decoration: none;
+  text-align: center;
 }

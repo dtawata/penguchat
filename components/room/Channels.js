@@ -10,7 +10,7 @@ const Channels = (props) => {
   return (
     <div className={styles.container}>
       <div className={styles.bar}>
-        <h3>{room.name}</h3>
+        <h3 className={styles.title}>{room.name}</h3>
       </div>
       <div className={styles.channels}>
         {channels.map((channel) => {

@@ -1,0 +1,157 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #36393e;
+  color: #dcdcdc;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.friends {
+  flex-grow: 1;
+  margin: 15px 10px 0 0;
+  overflow-y: scroll;
+  padding: 15px;
+}
+
+/* Width */
+.friends::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.friends::-webkit-scrollbar-track {
+  background-color: #2e3337;
+  border-radius: 4px;
+}
+
+/* Handle */
+.friends::-webkit-scrollbar-thumb {
+  background-color: #202225;
+  border-radius: 4px;
+}
+
+.friend {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #3E4147;
+  cursor: pointer;
+}
+
+.friend_img {
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.friend_right {
+  margin-top: 5px;
+}
+
+.friend_username {
+  font-weight: 700;
+}
+
+.friend_status {
+  font-size: 12px;
+}
+
+.chat_bot {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  padding: 0 20px;
+}
+
+.form {
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 15px;
+  background-color: #40444b;
+  border: none;
+  border-radius: 4px;
+  color: #dcdcdc;
+  font-size: 16px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: #565a61;
+  font-size: 16px;
+}
+
+.message {
+  display: flex;
+  width: calc(100% - 10px);
+  margin-top: 10px;
+  padding: 8px 10px;
+}
+
+.message:hover {
+  background-color: #31353a;
+}
+
+.message_left {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.message_image {
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.message_username {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+.message_datetime {
+  font-size: 12px;
+  color: #9ea1a5;
+}
+
+.message_content {
+  margin-top: 5px;
+  font-size: 16px;
+}
+
+.message_alt {
+  display: flex;
+  align-items: center;
+  width: calc(100% - 10px);
+  padding: 5px 10px;
+}
+
+.message_alt:hover {
+  background-color: #31353a;
+}
+
+.message_alt_left {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.message_alt_datetime {
+  font-size: 8px;
+  color: transparent;
+  text-align: center;
+}
+
+.message_alt:hover .message_alt_datetime {
+  color: #9ea1a5;
+}
+
+.message_alt_content {
+  font-size: 16px;
+}
