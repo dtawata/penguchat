@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'gentoo'
+  database: 'untitled_chat'
 }).promise();
 
 const getRooms = async (user_id) => {

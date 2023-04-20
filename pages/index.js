@@ -321,6 +321,7 @@ const Home = (props) => {
     for (const user of data.users) {
       usersRef.current[room.id][user.id] = user;
     }
+    console.log(wsUsers);
     for (const user of wsUsers) {
       usersRef.current[room.id][user.id].online = true;
     }
@@ -447,6 +448,7 @@ const Home = (props) => {
   const wsUpdateUsers = ({ wsStatus, wsUser }) => {
     if (!usersRef.current[wsUser.room_id]) return;
     const user = wsUser;
+    usersRef.current[user.room_id][user.id] = usersRef.current[user.room_id][user.id] || wsUser;
     usersRef.current[user.room_id][user.id].online = wsStatus;
     const room = roomRef.current;
     if (user.room_id !== room.id) return;
@@ -460,7 +462,6 @@ const Home = (props) => {
   };
 
   const openFriends = () => {
-    console.log('open friends');
     setModal(true);
   };
 

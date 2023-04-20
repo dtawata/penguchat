@@ -69,23 +69,43 @@ CREATE TABLE direct_messages (
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
-INSERT INTO rooms (name) VALUES
-('Lobby'),
-('Music');
+INSERT INTO rooms (name, image) VALUES
+('Lobby','/img/room1.jpg'),
+('Music','/img/room2.jpg'),
+('Travels','/img/room3.jpg');
 
 INSERT INTO channels (name, room_id) VALUES
 ('general', 1),
-('anime', 1),
+('hello world', 1),
 ('travel', 1),
 ('general', 2),
 ('alternative', 2),
-('lofi', 2);
+('lofi', 2),
+('hip hop', 2),
+('tokyo', 3),
+('seoul', 3),
+('new york', 3);
 
+INSERT INTO users (email, fname, lname, username, password, image) VALUES
+('email1@gmail.com', 'f', 'l', 'daniel', 'pass', '/img/user1.jpg'),
+('email2@gmail.com', 'f', 'l', 'ashley', 'pass', '/img/user2.jpg'),
+('email3@gmail.com', 'f', 'l', 'john', 'pass', '/img/user3.jpg');
 
+INSERT INTO joined_rooms (user_id, room_id) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 1),
+(2, 2),
+(2, 3),
+(3, 1),
+(3, 2),
+(3, 3);
 
 -- INSERT INTO friends (user_id, other_id, room_id) VALUES
--- (1, 3, '1:3'),
--- (2, 1, '1:2'),
+-- (4, 1, '1:4'),
+-- (4, 2, '2:4'),
+-- (4, 3, '3:4'),
 -- (1, 3, '1:3'),
 -- (3, 1, '1:3');
 

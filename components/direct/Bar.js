@@ -6,7 +6,7 @@ const Bar = (props) => {
 
   return (
     <div className={styles.container}>
-      <h3># {title ? title.name : 'Empty'}</h3>
+      <h3># {title ? title.name : ''}</h3>
       <div onClick={signOut} className={styles.sign_out}>Sign Out</div>
     </div>
   );
