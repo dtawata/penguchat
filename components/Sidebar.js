@@ -2,7 +2,7 @@ import styles from '@/styles/Sidebar.module.css';
 import Image from 'next/image';
 
 const Sidebar = (props) => {
-  const { changeDirect, rooms, changeRoom } = props;
+  const { changeDirect, rooms, changeRoom, updateModal } = props;
 
   return (
     <div className={styles.container}>
@@ -15,6 +15,7 @@ const Sidebar = (props) => {
           return <Room room={room} changeRoom={changeRoom} key={room.id} />
         })}
       </div>
+      <div onClick={() => { updateModal(true); }}>Open</div>
     </div>
   );
 };
@@ -23,7 +24,7 @@ const Room = (props) => {
   const { room, changeRoom } = props;
 
   return (
-    <div onClick={() => { changeRoom(room); }} className={styles.room}>
+    <div onClick={() => { changeRoom(room.id); }} className={styles.room}>
       <Image className={styles.room_img} src={room.image} alt='' width='50' height='50' />
       {room.notifications !== 0 && <div className={styles.room_notifications}>{room.notifications}</div>}
     </div>

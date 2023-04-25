@@ -5,13 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const Friends = (props) => {
-  const { friends, friend, changeFriend, openFriends } = props;
+  const { friends, friend, changeFriend, updateModal } = props;
   const selected = friend.id;
 
   return (
     <div className={styles.container}>
       <div className={styles.bar}>
-        <div onClick={openFriends} className={styles.input}>Find or start a conversation</div>
+        <div onClick={() => { updateModal(true); }} className={styles.input}>Find or start a conversation</div>
       </div>
       <div className={styles.friends}>
         {selected === 'default' ?
@@ -19,7 +19,7 @@ const Friends = (props) => {
           <FontAwesomeIcon icon={faUser} className={styles.default_icon} />
           <div className={styles.default_text}>Friends</div>
         </div> :
-        <div onClick={() => { changeFriend({ id: 'default' }); }} className={styles.default}>
+        <div onClick={() => { changeFriend('default'); }} className={styles.default}>
           <FontAwesomeIcon icon={faUser} className={styles.default_icon} />
           <div className={styles.default_text}>Friends</div>
         </div>}
@@ -38,7 +38,7 @@ const Friend = (props) => {
   const css = friend.online ? `${styles.friend} ${styles.online}` : styles.friend;
 
   return (
-    <div onClick={() => { changeFriend(friend); }} className={css}>
+    <div onClick={() => { changeFriend(friend.id); }} className={css}>
       <div className={styles.friend_left}>
         <Image className={styles.friend_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='30' height='30' />
         <div className={styles.friend_bubble}>
@@ -57,7 +57,7 @@ const Selected = (props) => {
   return (
     <div className={css}>
       <div className={styles.friend_left}>
-        <Image className={styles.friend_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='30' height='30' />
+        <Image className={styles.friend_img} src={friend.image} alt='' width='30' height='30' />
         <div className={styles.friend_bubble}>
           <div className={styles.friend_bubble_color}></div>
         </div>

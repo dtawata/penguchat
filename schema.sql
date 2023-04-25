@@ -69,6 +69,16 @@ CREATE TABLE direct_messages (
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
+CREATE TABLE friend_requests (
+  id INT NOT NULL auto_increment,
+  requestee_id INT NOT NULL,
+  requester_id INT NOT NULL,
+  pending BOOLEAN NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (requestee_id) REFERENCES users(id)
+  FOREIGN KEY (requester_id) REFERENCES users(id)
+);
+
 INSERT INTO rooms (name, image) VALUES
 ('Lobby','/img/room1.jpg'),
 ('Music','/img/room2.jpg'),

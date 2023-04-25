@@ -15,6 +15,14 @@
   letter-spacing: 1px;
 }
 
+.add_friend {
+  padding: 2px 10px;
+  background-color: #248046;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .sign_out {
   cursor: pointer;
   font-weight: 700;

@@ -31,7 +31,7 @@ const Channel = (props) => {
         <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
         <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
       </div> :
-      <div onClick={() => { changeChannel(channel); }} className={styles.channel}>
+      <div onClick={() => { changeChannel(channel.id); }} className={styles.channel}>
         <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
         <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
       </div>}

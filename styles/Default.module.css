@@ -65,25 +65,7 @@
   padding: 0 20px;
 }
 
-.form {
-  width: 100%;
-}
 
-.input {
-  width: 100%;
-  padding: 15px;
-  background-color: #40444b;
-  border: none;
-  border-radius: 4px;
-  color: #dcdcdc;
-  font-size: 16px;
-  outline: none;
-}
-
-.input::placeholder {
-  color: #565a61;
-  font-size: 16px;
-}
 
 .message {
   display: flex;
@@ -155,3 +137,38 @@
 .message_alt_content {
   font-size: 16px;
 }
+
+.add_friend {
+  padding: 15px;
+}
+
+.title {
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.form {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.input {
+  width: 100%;
+  padding: 15px;
+  background-color: #40444b;
+  border: none;
+  border-radius: 4px;
+  color: #dcdcdc;
+  font-size: 16px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: #565a61;
+  font-size: 16px;
+}
+
+/* .input {
+  background-color: #1E1F22;
+  color: #DBDEE1;
+} */
