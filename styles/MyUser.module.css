@@ -1,0 +1,52 @@
+.container {
+  width: 100%;
+  background-color: #1e1f22;
+  color: #f2f3f5;
+  padding: 10px;
+}
+
+.myuser {
+  display: flex;
+  align-items: center;
+}
+
+.myuser_left {
+  display: flex;
+  align-items: center;
+  width: 55%;
+}
+
+.myuser_img {
+  margin-right: 9px;
+  border-radius: 50%;
+}
+
+.myuser_mid {
+  margin-top: 0;
+  margin-top: -1px;
+}
+
+.myuser_username {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.myuser_numbers {
+  margin-top: 1px;
+  color: #d3ded3;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  width: 45%;
+}
+
+.icon {
+  margin: 0 8px;
+  cursor: pointer;
+  font-size: 17px;
+}

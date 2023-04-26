@@ -5,19 +5,20 @@ const Users = (props) => {
 
   return (
     <div className={styles.container}>
-      <div>Online</div>
-      {users.map((user) => {
-        if (user.online) {
-          return <Online user={user} key={user.id} />
-        }
-       })}
-       <br/>
-       <div>Offline</div>
-       {users.map((user) => {
-        if (!user.online) {
-          return <Offline user={user} key={user.id} />
-        }
-       })}
+
+        {/* <div className={styles.title}>Online</div>
+        {users.map((user) => {
+          if (user.online) {
+            return <Online user={user} key={user.id} />
+          }
+        })}
+        <div className={styles.title}>Offline</div>
+        {users.map((user) => {
+          if (!user.online) {
+            return <Offline user={user} key={user.id} />
+          }
+        })} */}
+
     </div>
   );
 };

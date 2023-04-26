@@ -3,9 +3,10 @@ import { Fragment } from 'react';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
+import MyUser from '@/components/MyUser';
 
 const Friends = (props) => {
-  const { friends, friend, changeFriend, updateModal } = props;
+  const { myuser, friends, friend, changeFriend, updateModal } = props;
   const selected = friend.id;
 
   return (
@@ -29,12 +30,7 @@ const Friends = (props) => {
           return <Friend friend={friend} changeFriend={changeFriend} key={friend.id} />
         })}
       </div>
-      {/* <div className={styles.friends}>
-        {friends.map((friend) => {
-          if (friend.id === selected) return <Selected friend={friend} key={friend.id} />
-          return <Friend friend={friend} changeFriend={changeFriend} key={friend.id} />
-        })}
-      </div> */}
+      <MyUser myuser={myuser} />
     </div>
   );
 };

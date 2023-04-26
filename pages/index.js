@@ -608,7 +608,7 @@ const Home = (props) => {
       <Sidebar changeDirect={changeDirect} rooms={state.rooms} room={roomRef.current} changeRoom={changeRoom} updateModal={updateModal} />
       {state.view === 'room' ?
       <Room room={roomRef.current} channels={state.channels} channel={channelRef.current} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} changeFriend={changeFriend} /> :
-      <Direct friends={state.friends} friend={friendRef.current} changeFriend={changeFriend} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} updateModal={updateModal} users={state.users} sendFriendRequest={sendFriendRequest} friendContent={friendContent} updateFriendContent={updateFriendContent} />}
+      <Direct myuser={myuser} friends={state.friends} friend={friendRef.current} changeFriend={changeFriend} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} updateModal={updateModal} users={state.users} sendFriendRequest={sendFriendRequest} friendContent={friendContent} updateFriendContent={updateFriendContent} />}
       {state.modal && <Modal requests={state.requests} updateModal={updateModal} sendFriendRequestResponse={sendFriendRequestResponse} />}
     </div>
   );

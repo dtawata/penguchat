@@ -1,22 +1,50 @@
 .container {
   min-width: 240px;
   height: calc(100vh - 44px);
-  padding: 15px;
+  padding: 15px 8px 15px 15px;
   background-color: #2e3136;
   color: #fff;
 }
 
-.title {
-  margin-top: 20px;
-  color: #DCDCDC;
+.users {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+/* Width */
+.users::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.users::-webkit-scrollbar-track {
+  background-color: #2e3337;
+  border-radius: 4px;
+}
+
+/* Handle */
+.users::-webkit-scrollbar-thumb {
+  background-color: #202225;
+  border-radius: 4px;
+}
+
+.title_online {
+  color: #dcdcdc;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
-.users {
-  width: 100%;
+.title_offline {
+  margin-top: 20px;
+  color: #dcdcdc;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .user {
@@ -24,7 +52,8 @@
   display: flex;
   align-items: center;
   margin: 3px 0;
-  padding: 7px 8px;
+  /* padding: 7px 8px; */
+  padding: 7px 0px;
   border-radius: 4px;
   color: #d5d5d5;
   cursor: pointer;

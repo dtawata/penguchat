@@ -6,18 +6,14 @@ const Users = (props) => {
 
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>Online</h3>
       <div className={styles.users}>
+        <h3 className={styles.title_online}>Online</h3>
         {users.map((user) => {
           if (user.online) return <Online user={user} changeFriend={changeFriend} key={user.id} />
         })}
-      </div>
-      <h3 className={styles.title}>Offline</h3>
-      <div className={styles.users}>
+        <h3 className={styles.title_offline}>Offline</h3>
         {users.map((user) => {
-          if (!user.online) {
-            return <Offline user={user} changeFriend={changeFriend} key={user.id} />
-          }
+          if (!user.online) return <Offline user={user} changeFriend={changeFriend} key={user.id} />
         })}
       </div>
     </div>

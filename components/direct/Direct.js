@@ -6,7 +6,7 @@ import Friends from './Friends';
 import Default from './Default';
 
 const Direct = (props) => {
-  const { friends, friend, changeFriend, content, updateContent, messages, sendMessage, updateModal, users, sendFriendRequest, updateFriendContent, friendContent } = props;
+  const { myuser, friends, friend, changeFriend, content, updateContent, messages, sendMessage, updateModal, users, sendFriendRequest, updateFriendContent, friendContent } = props;
 
 
   const [friendsSetting, setFriendsSetting] = useState('all');
@@ -17,7 +17,7 @@ const Direct = (props) => {
 
   return (
     <Fragment>
-      <Friends friends={friends} friend={friend} changeFriend={changeFriend} updateModal={updateModal} />
+      <Friends myuser={myuser} friends={friends} friend={friend} changeFriend={changeFriend} updateModal={updateModal} />
       {friend.id === 'default' ?
       <div className={styles.main}>
         <Bar addFriend={addFriend} />
