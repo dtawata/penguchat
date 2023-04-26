@@ -29,6 +29,12 @@ const Friends = (props) => {
           return <Friend friend={friend} changeFriend={changeFriend} key={friend.id} />
         })}
       </div>
+      {/* <div className={styles.friends}>
+        {friends.map((friend) => {
+          if (friend.id === selected) return <Selected friend={friend} key={friend.id} />
+          return <Friend friend={friend} changeFriend={changeFriend} key={friend.id} />
+        })}
+      </div> */}
     </div>
   );
 };

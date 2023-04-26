@@ -1,6 +1,9 @@
 .container {
+  display: flex;
+  flex-direction: column;
   min-width: 230px;
-  background-color: hsl(217, 8%, 20%);
+  background-color: #2f3237;
+  /* background-color: hsl(217, 8%, 20%); */
 }
 
 .bar {
@@ -10,12 +13,6 @@
   height: 44px;
   padding: 0 10px;
   border-bottom: 2px solid #222527;
-}
-
-.bar h3 {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
 .input {
@@ -31,8 +28,55 @@
 }
 
 .friends {
-  width: 100%;
-  padding: 15px;
+  flex-grow: 1;
+  margin: 1px 5px 0 0;
+  padding: 5px 5px 15px 7px;
+  overflow-y: scroll;
+}
+
+/* Width */
+.friends::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.friends::-webkit-scrollbar-track {
+  background-color: #2e3337;
+  border-radius: 4px;
+}
+
+/* Handle */
+.friends::-webkit-scrollbar-thumb {
+  background-color: #202225;
+  border-radius: 4px;
+}
+
+.default {
+  display: flex;
+  align-items: center;
+  margin: 1px 0;
+  padding: 7px 8px;
+  border-radius: 4px;
+  color: #d5d5d5;
+  cursor: pointer;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+
+.default:hover {
+  background-color: rgba(66, 69, 75, 0.5);
+}
+
+.default.active {
+  background-color: #42464e;
+}
+
+.default_icon {
+  margin-right: 12px;
+}
+
+.default_text {
+  margin-top: 1px;
 }
 
 .title {
@@ -98,38 +142,6 @@
   background-color: #767A83;
 }
 
-
 .friend.online .friend_bubble_color {
   background-color: #209D55;
-}
-
-.default {
-  font-size: 15px;
-  letter-spacing: 0.5px;
-
-  display: flex;
-  align-items: center;
-  margin: 1px 0;
-  padding: 7px 8px;
-  border-radius: 4px;
-  color: #d5d5d5;
-  cursor: pointer;
-}
-
-.default:hover {
-  background-color: rgba(66, 69, 75, 0.5);
-}
-
-.default.active {
-  background-color: #42464e;
-}
-
-.default_icon {
-  margin-right: 12px;
-  font-size: 16px;
-}
-
-.default_text {
-  margin-top: 1px;
-  font-size: 16px;
 }

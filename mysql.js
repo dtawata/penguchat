@@ -44,15 +44,15 @@ const addDirectMessage = async ({ user_id, room_id, content }) => {
 };
 
 const getFriendRequests = async (user_id) => {
-  const queryString = 'SELECT friend_requests.*, users.username, users.image FROM friend_requests INNER JOIN users ON friend_requests.other_id = users.id WHERE user_id = ?';
+  const queryString = 'SELECT friend_requests.*, users.username, users.image FROM friend_requests INNER JOIN users ON friend_requests.requester_id = users.id WHERE friend_requests.requestee_id = ?';
   const queryArgs = [user_id];
   const data = await connection.query(queryString, queryArgs);
   return data[0];
 };
 
-const getFriendRequest = async (user_id, other_id) => {
-  const queryString = 'SELECT friend_requests.*, users.username, users.image FROM friend_requests INNER JOIN users ON friend_requests.other_id = users.id WHERE friend_requests.user_id = ? AND friend_requests.other_id = ?';
-  const queryArgs = [user_id, other_id];
+const getFriendRequest = async (requestee_id, requester_id) => {
+  const queryString = 'SELECT friend_requests.*, users.username, users.image FROM friend_requests INNER JOIN users ON friend_requests.requester_id = users.id WHERE friend_requests.requestee_id = ? AND friend_requests.requester_id = ?';
+  const queryArgs = [requestee_id, requester_id];
   const data = await connection.query(queryString, queryArgs);
   return data[0][0];
 };
@@ -64,9 +64,9 @@ const addFriend = async (user_id, other_id, room_id) => {
   return data[0];
 };
 
-const addFriendRequest = async (user_id, other_id) => {
-  const queryString = 'INSERT INTO friend_requests (user_id, other_id, pending) VALUES ?';
-  const queryArgs = [[user_id, other_id, true]];
+const addFriendRequest = async (requestee_id, requester_id) => {
+  const queryString = 'INSERT INTO friend_requests (requestee_id, requester_id, pending) VALUES ?';
+  const queryArgs = [[requestee_id, requester_id, true]];
   const data = await connection.query(queryString, [queryArgs]);
   return data[0];
 };

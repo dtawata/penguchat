@@ -75,7 +75,7 @@ CREATE TABLE friend_requests (
   requester_id INT NOT NULL,
   pending BOOLEAN NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (requestee_id) REFERENCES users(id)
+  FOREIGN KEY (requestee_id) REFERENCES users(id),
   FOREIGN KEY (requester_id) REFERENCES users(id)
 );
 
@@ -112,7 +112,7 @@ INSERT INTO joined_rooms (user_id, room_id) VALUES
 (3, 2),
 (3, 3);
 
--- INSERT INTO friends (user_id, other_id, room_id) VALUES
+--  (user_id, other_id, room_id) VALUES
 -- (4, 1, '1:4'),
 -- (4, 2, '2:4'),
 -- (4, 3, '3:4'),
