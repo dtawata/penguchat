@@ -54,7 +54,7 @@ io.on('connection', async (socket) => {
     userIds.push(user.user_id);
   }
   const requests = await getFriendRequests(socket.user_id);
-  socket.emit('to:client:initialize', { rooms, wsChannels: channels, friends, userIds, requests });
+  socket.emit('to:client:initialize', { wsRooms: rooms, wsChannels: channels, wsFriends: friends, userIds, requests });
 
 
   socket.on('to:server:change_direct', async (friends) => {
