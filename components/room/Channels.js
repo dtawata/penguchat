@@ -2,9 +2,10 @@ import styles from '@/styles/Channels.module.css';
 import { Fragment } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons';
+import MyUser from '@/components/MyUser';
 
 const Channels = (props) => {
-  const { room, channels, channel, changeChannel } = props;
+  const { myuser, room, channels, channel, changeChannel } = props;
   const selected = channel.id;
 
   return (
@@ -17,6 +18,7 @@ const Channels = (props) => {
           return <Channel channel={channel} selected={selected} changeChannel={changeChannel} key={channel.id} />
         })}
       </div>
+      <MyUser myuser={myuser} />
     </div>
   );
 };

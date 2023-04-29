@@ -6,11 +6,11 @@ import Chat from './Chat';
 import Users from './Users';
 
 const Room = (props) => {
-  const { room, channels, channel, changeChannel, content, updateContent, messages, sendMessage, users, changeFriend } = props;
+  const { myuser, room, channels, channel, changeChannel, content, updateContent, messages, sendMessage, users, changeFriend } = props;
 
   return (
     <Fragment>
-      <Channels room={room} channels={channels} channel={channel} changeChannel={changeChannel} />
+      <Channels myuser={myuser} room={room} channels={channels} channel={channel} changeChannel={changeChannel} />
       <div className={styles.main}>
         <Bar />
         <div className={styles.flex}>
