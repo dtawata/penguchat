@@ -17,6 +17,7 @@ const Channels = (props) => {
         {channels.map((channel) => {
           return <Channel channel={channel} selected={selected} changeChannel={changeChannel} key={channel.id} />
         })}
+        <div>Add Channel</div>
       </div>
       <MyUser myuser={myuser} />
     </div>
@@ -30,12 +31,18 @@ const Channel = (props) => {
     <Fragment>
       {channel.id === selected ?
       <div className={`${styles.channel} ${styles.active}`}>
-        <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
-        <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
+        <div className={styles.flex}>
+          <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
+          <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
+        </div>
       </div> :
       <div onClick={() => { changeChannel(channel.id); }} className={styles.channel}>
-        <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
-        <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
+        <div className={styles.flex}>
+          <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
+          <div className={styles.channel_text}>{channel.name}</div>
+        </div>
+        {/* <div className={styles.channel_notifications}>{channel.notifications}</div> */}
+        {channel.notifications !== 0 && <div className={styles.channel_notifications}>{channel.notifications}</div>}
       </div>}
     </Fragment>
   );

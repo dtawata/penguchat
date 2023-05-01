@@ -62,3 +62,24 @@
 .room:hover .room_img {
   border-radius: 30%;
 }
+
+.room_notifications {
+  position: absolute;
+  width: 30px;
+  bottom: -4px;
+  right: -3px;
+  padding: 2px 4px;
+  background-color: #f23f42;
+  border: 5px solid #202225;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+}
+
+.icon {
+  margin: 20px 0;
+  font-size: 30px;
+  color: #fff;
+  cursor: pointer;
+}

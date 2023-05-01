@@ -1,8 +1,10 @@
 import styles from '@/styles/Sidebar.module.css';
 import Image from 'next/image';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = (props) => {
-  const { changeDirect, rooms, changeRoom, updateModal } = props;
+  const { changeDirect, rooms, changeRoom, updateModal, updateCreate } = props;
 
   return (
     <div className={styles.container}>
@@ -15,6 +17,7 @@ const Sidebar = (props) => {
           return <Room room={room} changeRoom={changeRoom} key={room.id} />
         })}
       </div>
+      <FontAwesomeIcon icon={faPlus} className={styles.icon} onClick={() => { updateCreate(true); }} />
       <div onClick={() => { updateModal(true); }}>Open</div>
     </div>
   );

@@ -92,7 +92,31 @@ const updateFriendRequest = async (request_id) => {
   return data[0];
 };
 
+const addRoom = async (room_name, user_id) => {
+  const queryString = 'INSERT INTO rooms (name, created_by) VALUES ?';
+  const queryArgs = [[room_name, user_id]];
+  const data = await connection.query(queryString, [queryArgs]);
+  return data[0];
+};
+
+const addJoinedRoom = async (user_id, room_id) => {
+  const queryString = 'INSERT INTO joined_rooms (user_id, room_id) VALUES ?';
+  const queryArgs = [[user_id, room_id]];
+  const data = await connection.query(queryString, [queryArgs]);
+  return data[0];
+};
+
+const addChannel = async (name, room_id) => {
+  const queryString = 'INSERT INTO channels (name, room_id) VALUES ?';
+  const queryArgs = [[name, room_id]];
+  const data = await connection.query(queryString, [queryArgs]);
+  return data[0];
+};
+
 module.exports = {
+  addChannel,
+  addJoinedRoom,
+  addRoom,
   getRooms,
   getUserById,
   updateFriendRequest,

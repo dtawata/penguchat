@@ -8,12 +8,13 @@ import Sidebar from '@/components/Sidebar';
 import Room from '@/components/room/Room';
 import Direct from '@/components/direct/Direct';
 import Modal from '@/components/Modal';
+import CreateGroup from '@/components/CreateGroup';
 import useTest from '@/lib/hooks/useTest';
 import useSave from '@/lib/hooks/useSave';
 import { initializeFriends, getDirectMessages, initializeRooms, initializeChannels, updateFriendsStatus, updateRoomsChannels, getMessages, getUsers } from '@/lib/helper/helper';
 
 const reducer = (state, action) => {
-  const { view, rooms, room, channels, channel, friends, friend, messages, users, requests, modal } = action.payload;
+  const { view, rooms, room, channels, channel, friends, friend, messages, users, requests, modal, create } = action.payload;
   switch (action.type) {
     case 'initialize': {
       return {
@@ -41,6 +42,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         friends,
+        friend,
         messages
       };
     }
@@ -137,7 +139,23 @@ const reducer = (state, action) => {
     case 'change_default': {
       return {
         ...state,
-        friends
+        friends,
+        friend
+      };
+    }
+    case 'change_create': {
+      return {
+        ...state,
+        create
+      };
+    }
+    case 'update_rooms': {
+      return {
+        ...state,
+        rooms,
+        room,
+        channels,
+        channel
       };
     }
     default: {
@@ -151,6 +169,7 @@ const Home = (props) => {
   const [socket, setSocket] = useState(null);
   const [state, dispatch] = useReducer(reducer, {
     view: 'room',
+    create: false,
     modal: false,
     rooms: [],
     room: { id: null },
@@ -174,6 +193,7 @@ const Home = (props) => {
   const requestsRef = useRef({});
   const [content, setContent] = useState('');
   const [friendContent, setFriendContent] = useState('');
+  const [groupContent, setGroupContent] = useState('');
 
   // const [state, setState, changeChannel, wsChangeDirect, changeRoom, wsChangeRoom, wsReceiveRoomMessage, wsReceiveDirectMessage, wsReceiveFriendRequest, wsReceiveFriendRequestResponse, wsUpdateUsers, wsUpdateFriends, changeDirect, changeFriend] = useSave({
   //   view: 'room',
@@ -187,6 +207,56 @@ const Home = (props) => {
   //   users: []
   // }, socket);
 
+  const changeDirect = async () => {
+    if (!usersRef.current.direct) {
+      const friends = Object.values(friendsRef.current);
+      socket.emit('to:server:change_direct', friends);
+    } else {
+      const { friend } = state;
+      if (!messagesRef.current[friend.id]) {
+        await getDirectMessages({ messagesRef, friend_id: friend.id });
+      }
+      const messages = messagesRef.current[friend.id].slice();
+      view.current = 'direct';
+      dispatch({
+        type: 'change_direct',
+        payload: {
+          view: view.current,
+          messages
+        }
+      });
+    }
+  };
+
+  const changeFriend = async (friend_id) => {
+    if (friend_id === state.friend.id) return;
+    if (friend_id === 'default') {
+      const friends = Object.values(friendsRef.current);
+      const friend = friendRef.current = { id: 'default' };
+      dispatch({
+        type: 'change_default',
+        payload: {
+          friends,
+          friend
+        }
+      });
+      return;
+    }
+    // this should be a direct.current keeping track of the notifications
+    // friendsRef.current[friend.id].notifications -= friend.notifications;
+    // friend.notifications = 0;
+    const friends = Object.values(friendsRef.current);
+    const friend = friendRef.current = friendsRef.current[friend_id];
+    const messages = await getDirectMessages({ messagesRef, friend_id: friend.id });
+    dispatch({
+      type: 'change_friend',
+      payload: {
+        friends,
+        friend,
+        messages
+      }
+    });
+  };
 
   const changeRoom = async (room_id) => {
     if (state.view === 'room' && room_id === state.room.id) return;
@@ -282,7 +352,6 @@ const Home = (props) => {
     const messages = await getMessages({ messagesRef, room_id: room.id, channel_id: channel.id });
     const users = await getUsers({ messagesRef, room_id: room.id, channel_id: channel.id, usersRef, userIds });
     view.current = 'room';
-    console.log('channel', channel);
     dispatch({
       type: 'change_room',
       payload: {
@@ -297,13 +366,16 @@ const Home = (props) => {
     });
   };
 
-
   const updateContent = (e) => {
     setContent(e.target.value);
   };
 
   const updateFriendContent = (e) => {
     setFriendContent(e.target.value);
+  };
+
+  const updateGroupContent = (e) => {
+    setGroupContent(e.target.value);
   };
 
   const updateModal = (status) => {
@@ -319,8 +391,6 @@ const Home = (props) => {
     e.preventDefault();
     if (!content) return;
     if (state.view === 'room') {
-      console.log('room', state.room);
-      console.log('channel', state.channel);
       socket.emit('to:server:room:send_message', {
         username: myuser.username,
         image: myuser.image,
@@ -341,10 +411,6 @@ const Home = (props) => {
     setContent('');
   };
 
-  useEffect(() => {
-    console.log('!!!', state);
-  }, [state])
-
   const sendFriendRequest = async (e) => {
     e.preventDefault();
     socket.emit('to:server:send_friend_request', {
@@ -362,12 +428,14 @@ const Home = (props) => {
     socket.emit('to:server:send_friend_request_response', { request, status });
   };
 
-
   const wsReceiveRoomMessage = ({ message }) => {
-    console.log('receive', state.room, roomRef.current);
+    console.log('message received', message);
+    console.log('message received', roomRef.current);
+    console.log('message received', channelRef.current);
     const room = roomRef.current;
     const channel = channelRef.current;
     if (message.room_id === room.id && message.channel_id === channel.id) {
+      console.log('this one?');
       messagesRef.current[room.id][channel.id].push(message);
       const messages = messagesRef.current[room.id][channel.id].slice();
       dispatch({
@@ -377,6 +445,7 @@ const Home = (props) => {
         }
       });
     } else {
+      console.log('no this one?');
       roomsRef.current[message.room_id].notifications++;
       const rooms = Object.values(roomsRef.current);
       channelsRef.current[message.room_id][message.channel_id].notifications++;
@@ -481,67 +550,6 @@ const Home = (props) => {
     });
   };
 
-  const changeDirect = async () => {
-    if (!usersRef.current.direct) {
-      const friends = Object.values(friendsRef.current);
-      socket.emit('to:server:change_direct', friends);
-    } else {
-      const { friend } = state;
-      if (!messagesRef.current[friend.id]) {
-        await getDirectMessages({ messagesRef, friend_id: friend.id });
-      }
-      const messages = messagesRef.current[friend.id].slice();
-      view.current = 'direct';
-      dispatch({
-        type: 'change_direct',
-        payload: {
-          view: view.current,
-          messages
-        }
-      });
-    }
-  };
-
-  const changeFriend = async (friend_id) => {
-    if (friend_id === friendRef.current.id) return;
-    if (friend_id === 'default') {
-      const friend = friendRef.current = { id: 'default' };
-      const friends = Object.values(friendsRef.current);
-      dispatch({
-        type: 'change_default',
-        payload: {
-          friends,
-          friend
-        }
-      });
-      return;
-    }
-    friendRef.current = friendsRef.current[friend_id];
-    const friend = friendRef.current;
-    // this should be a direct.current keeping track of the notifications
-    // friendsRef.current[friend.id].notifications -= friend.notifications;
-    // friend.notifications = 0;
-    const friends = Object.values(friendsRef.current);
-    if (!messagesRef.current[friend.id]) {
-      const { data } = await axios.get('/api/direct', {
-        params: {
-          friend_id: friend.id
-        }
-      });
-      messagesRef.current[friend.id] = data.messages;
-    }
-    const messages = messagesRef.current[friend.id].slice();
-    dispatch({
-      type: 'change_friend',
-      payload: {
-        friends,
-        messages
-      }
-    });
-  };
-
-
-
   useEffect(() => {
     const connection = io('http://localhost:3003/', { autoConnect: false });
     setSocket(connection);
@@ -558,6 +566,7 @@ const Home = (props) => {
       socket.on('to:client:send_friend_request', wsReceiveFriendRequest);
       socket.on('to:client:receive_friend_request_response', wsReceiveFriendRequestResponse);
       socket.on('to:client:update_friends', wsUpdateFriends);
+      socket.on('to:client:create_room', wsCreateRoom);
       socket.auth = myuser;
       socket.connect();
       return () => {
@@ -570,17 +579,72 @@ const Home = (props) => {
         socket.off('to:client:send_friend_request', wsReceiveFriendRequest);
         socket.off('to:client:receive_friend_request_response', wsReceiveFriendRequestResponse);
         socket.off('to:client:update_friends', wsUpdateFriends);
+        socket.off('to:client:create_room', wsCreateRoom);
       };
     }
   }, [socket, myuser])
 
+  const createGroup = async (e) => {
+    e.preventDefault();
+    socket.emit('to:server:create_room', {
+      myuser: myuser,
+      room_name: groupContent
+    });
+  };
+
+  const wsCreateRoom = ({ wsRoom, wsChannel }) => {
+    const rooms = initializeRooms([wsRoom], roomsRef);
+    const room = roomRef.current = roomsRef.current[wsRoom.id];
+    const channels = initializeChannels([wsChannel], channelsRef, room.id);
+    const channel = channelRef.current = channels[0];
+    messagesRef.current[wsRoom.id] = {};
+    const messages = messagesRef.current[wsRoom.id][channel.id] = [];
+    const user = {
+      id: myuser.id,
+      username: myuser.username,
+      image: myuser.image,
+      online: true
+    };
+    const users = [user];
+    usersRef.current[wsRoom.id] = {
+      [user.id]: user
+    };
+    view.current = 'room';
+    dispatch({
+      type: 'change_room',
+      payload: {
+        view: view.current,
+        rooms,
+        room,
+        channels,
+        channel,
+        messages,
+        users
+      }
+    });
+  };
+
+  const updateCreate = async (status) => {
+    dispatch({
+      type: 'change_create',
+      payload: {
+        create: status
+      }
+    });
+  };
+
+  const addChannel = async () => {
+
+  };
+
   return (
     <div className={styles.container}>
-      <Sidebar changeDirect={changeDirect} rooms={state.rooms} room={state.room} changeRoom={changeRoom} updateModal={updateModal} />
+      <Sidebar changeDirect={changeDirect} rooms={state.rooms} room={state.room} changeRoom={changeRoom} updateModal={updateModal} updateCreate={updateCreate} />
       {state.view === 'room' ?
       <Room myuser={myuser} room={state.room} channels={state.channels} channel={state.channel} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} changeFriend={changeFriend} /> :
       <Direct myuser={myuser} friends={state.friends} friend={state.friend} changeFriend={changeFriend} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} updateModal={updateModal} users={state.users} sendFriendRequest={sendFriendRequest} friendContent={friendContent} updateFriendContent={updateFriendContent} />}
       {state.modal && <Modal requests={state.requests} updateModal={updateModal} sendFriendRequestResponse={sendFriendRequestResponse} />}
+      {state.create && <CreateGroup createGroup={createGroup} groupContent={groupContent} updateGroupContent={updateGroupContent} updateCreate={updateCreate} />}
     </div>
   );
 };

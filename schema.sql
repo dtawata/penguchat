@@ -18,7 +18,9 @@ CREATE TABLE rooms (
   id INT NOT NULL auto_increment,
   name VARCHAR(255) NOT NULL,
   image VARCHAR(255) NULL DEFAULT '/img/default.jpg',
-  PRIMARY KEY (id)
+  created_by INT,
+  PRIMARY KEY (id),
+  FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 CREATE TABLE channels (
@@ -26,7 +28,7 @@ CREATE TABLE channels (
   name VARCHAR(255) NOT NULL,
   room_id INT NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY(room_id) REFERENCES rooms(id)
+  FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
 
 CREATE TABLE joined_rooms (
@@ -45,9 +47,9 @@ CREATE TABLE room_messages (
   channel_id INT NOT NULL,
   content VARCHAR(255) NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY(user_id) REFERENCES users(id),
-  FOREIGN KEY(room_id) REFERENCES rooms(id),
-  FOREIGN KEY(channel_id) REFERENCES channels(id)
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (room_id) REFERENCES rooms(id),
+  FOREIGN KEY (channel_id) REFERENCES channels(id)
 );
 
 CREATE TABLE friends (
@@ -66,7 +68,7 @@ CREATE TABLE direct_messages (
   room_id VARCHAR(255) NOT NULL,
   content VARCHAR(255) NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY(user_id) REFERENCES users(id)
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE friend_requests (
@@ -79,10 +81,15 @@ CREATE TABLE friend_requests (
   FOREIGN KEY (requester_id) REFERENCES users(id)
 );
 
-INSERT INTO rooms (name, image) VALUES
-('Lobby','/img/room1.jpg'),
-('Music','/img/room2.jpg'),
-('Travels','/img/room3.jpg');
+INSERT INTO users (email, fname, lname, username, password, image) VALUES
+('email1@gmail.com', 'f', 'l', 'daniel', 'pass', '/img/user1.jpg'),
+('email2@gmail.com', 'f', 'l', 'ashley', 'pass', '/img/user2.jpg'),
+('email3@gmail.com', 'f', 'l', 'john', 'pass', '/img/user3.jpg');
+
+INSERT INTO rooms (name, image, created_by) VALUES
+('Lobby','/img/room1.jpg',1),
+('Music','/img/room2.jpg',1),
+('Travels','/img/room3.jpg',1);
 
 INSERT INTO channels (name, room_id) VALUES
 ('general', 1),
@@ -95,11 +102,6 @@ INSERT INTO channels (name, room_id) VALUES
 ('tokyo', 3),
 ('seoul', 3),
 ('new york', 3);
-
-INSERT INTO users (email, fname, lname, username, password, image) VALUES
-('email1@gmail.com', 'f', 'l', 'daniel', 'pass', '/img/user1.jpg'),
-('email2@gmail.com', 'f', 'l', 'ashley', 'pass', '/img/user2.jpg'),
-('email3@gmail.com', 'f', 'l', 'john', 'pass', '/img/user3.jpg');
 
 INSERT INTO joined_rooms (user_id, room_id) VALUES
 (1, 1),
