@@ -9,8 +9,7 @@ import Room from '@/components/room/Room';
 import Direct from '@/components/direct/Direct';
 import Modal from '@/components/Modal';
 import CreateGroup from '@/components/CreateGroup';
-import useTest from '@/lib/hooks/useTest';
-import useSave from '@/lib/hooks/useSave';
+import CreateChannel from '@/components/CreateChannel';
 import { initializeFriends, getDirectMessages, initializeRooms, initializeChannels, updateFriendsStatus, updateRoomsChannels, getMessages, getUsers } from '@/lib/helper/helper';
 
 const reducer = (state, action) => {
@@ -156,6 +155,13 @@ const reducer = (state, action) => {
         room,
         channels,
         channel
+      };
+    }
+    case 'create_channel': {
+      return {
+        ...state,
+        modal,
+        channels
       };
     }
     default: {
@@ -378,15 +384,6 @@ const Home = (props) => {
     setGroupContent(e.target.value);
   };
 
-  const updateModal = (status) => {
-    dispatch({
-      type: 'update_modal',
-      payload: {
-        modal: status
-      }
-    });
-  };
-
   const sendMessage = (e) => {
     e.preventDefault();
     if (!content) return;
@@ -429,13 +426,9 @@ const Home = (props) => {
   };
 
   const wsReceiveRoomMessage = ({ message }) => {
-    console.log('message received', message);
-    console.log('message received', roomRef.current);
-    console.log('message received', channelRef.current);
     const room = roomRef.current;
     const channel = channelRef.current;
     if (message.room_id === room.id && message.channel_id === channel.id) {
-      console.log('this one?');
       messagesRef.current[room.id][channel.id].push(message);
       const messages = messagesRef.current[room.id][channel.id].slice();
       dispatch({
@@ -445,7 +438,6 @@ const Home = (props) => {
         }
       });
     } else {
-      console.log('no this one?');
       roomsRef.current[message.room_id].notifications++;
       const rooms = Object.values(roomsRef.current);
       channelsRef.current[message.room_id][message.channel_id].notifications++;
@@ -567,6 +559,7 @@ const Home = (props) => {
       socket.on('to:client:receive_friend_request_response', wsReceiveFriendRequestResponse);
       socket.on('to:client:update_friends', wsUpdateFriends);
       socket.on('to:client:create_room', wsCreateRoom);
+      socket.on('to:client:create_channel', wsCreateChannel);
       socket.auth = myuser;
       socket.connect();
       return () => {
@@ -580,6 +573,7 @@ const Home = (props) => {
         socket.off('to:client:receive_friend_request_response', wsReceiveFriendRequestResponse);
         socket.off('to:client:update_friends', wsUpdateFriends);
         socket.off('to:client:create_room', wsCreateRoom);
+        socket.off('to:client:create_channel', wsCreateChannel);
       };
     }
   }, [socket, myuser])
@@ -624,27 +618,49 @@ const Home = (props) => {
     });
   };
 
-  const updateCreate = async (status) => {
+  const [channelContent, setChannelContent] = useState('');
+  const updateChannelContent = (e) => {
+    setChannelContent(e.target.value);
+  };
+
+  const createChannel = async (e) => {
+    e.preventDefault();
+    socket.emit('to:server:create_channel', {
+      room_id: state.room.id,
+      channel_name: channelContent
+    });
+    setChannelContent('');
+  };
+
+  const updateModal = (status) => {
     dispatch({
-      type: 'change_create',
+      type: 'update_modal',
       payload: {
-        create: status
+        modal: status
       }
     });
   };
 
-  const addChannel = async () => {
-
+  const wsCreateChannel = (channel) => {
+    const channels = initializeChannels([channel], channelsRef, channel.room_id);
+    dispatch({
+      type: 'create_channel',
+      payload: {
+        modal: false,
+        channels
+      }
+    });
   };
 
   return (
     <div className={styles.container}>
-      <Sidebar changeDirect={changeDirect} rooms={state.rooms} room={state.room} changeRoom={changeRoom} updateModal={updateModal} updateCreate={updateCreate} />
+      <Sidebar changeDirect={changeDirect} rooms={state.rooms} room={state.room} changeRoom={changeRoom} updateModal={updateModal} />
       {state.view === 'room' ?
-      <Room myuser={myuser} room={state.room} channels={state.channels} channel={state.channel} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} changeFriend={changeFriend} /> :
+      <Room myuser={myuser} room={state.room} channels={state.channels} channel={state.channel} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} changeFriend={changeFriend} updateModal={updateModal} /> :
       <Direct myuser={myuser} friends={state.friends} friend={state.friend} changeFriend={changeFriend} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} updateModal={updateModal} users={state.users} sendFriendRequest={sendFriendRequest} friendContent={friendContent} updateFriendContent={updateFriendContent} />}
-      {state.modal && <Modal requests={state.requests} updateModal={updateModal} sendFriendRequestResponse={sendFriendRequestResponse} />}
-      {state.create && <CreateGroup createGroup={createGroup} groupContent={groupContent} updateGroupContent={updateGroupContent} updateCreate={updateCreate} />}
+      {state.modal === 'notification' && <Modal requests={state.requests} updateModal={updateModal} sendFriendRequestResponse={sendFriendRequestResponse} />}
+      {state.modal === 'room' && <CreateGroup createGroup={createGroup} groupContent={groupContent} updateGroupContent={updateGroupContent} updateModal={updateModal} />}
+      {state.modal === 'channel' && <CreateChannel createChannel={createChannel} channelContent={channelContent} updateChannelContent={updateChannelContent} updateModal={updateModal} />}
     </div>
   );
 };

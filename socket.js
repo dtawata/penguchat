@@ -149,6 +149,17 @@ io.on('connection', async (socket) => {
     }
   });
 
+  socket.on('to:server:create_channel', async ({ room_id, channel_name }) => {
+    console.log('channel_name', channel_name);
+    const { insertId } = await addChannel(channel_name, room_id);
+    const channel = {
+      id: insertId,
+      name: channel_name,
+      room_id
+    }
+    io.to(room_id).emit('to:client:create_channel', channel);
+  });
+
   socket.on('disconnecting', () => {
     const roomIds = [...socket.rooms.values()];
     const user = {

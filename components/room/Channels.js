@@ -5,7 +5,7 @@ import { faHashtag } from '@fortawesome/free-solid-svg-icons';
 import MyUser from '@/components/MyUser';
 
 const Channels = (props) => {
-  const { myuser, room, channels, channel, changeChannel } = props;
+  const { myuser, room, channels, channel, changeChannel, updateModal } = props;
   const selected = channel.id;
 
   return (
@@ -17,7 +17,7 @@ const Channels = (props) => {
         {channels.map((channel) => {
           return <Channel channel={channel} selected={selected} changeChannel={changeChannel} key={channel.id} />
         })}
-        <div>Add Channel</div>
+        <div onClick={() => { updateModal('channel'); }}>Add Channel</div>
       </div>
       <MyUser myuser={myuser} />
     </div>
