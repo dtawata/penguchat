@@ -1,13 +1,13 @@
 import styles from '@/styles/Channels.module.css';
 import { Fragment } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHashtag } from '@fortawesome/free-solid-svg-icons';
+import { faHashtag, faPlus } from '@fortawesome/free-solid-svg-icons';
 import MyUser from '@/components/MyUser';
 
 const Channels = (props) => {
   const { myuser, room, channels, channel, changeChannel, updateModal } = props;
   const selected = channel.id;
-
+  console.log('room', room);
   return (
     <div className={styles.container}>
       <div className={styles.bar}>
@@ -17,7 +17,16 @@ const Channels = (props) => {
         {channels.map((channel) => {
           return <Channel channel={channel} selected={selected} changeChannel={changeChannel} key={channel.id} />
         })}
-        <div onClick={() => { updateModal('channel'); }}>Add Channel</div>
+        {myuser.id === room.created_by &&
+        <div onClick={() => { updateModal('channel'); }} className={styles.update}>
+          <FontAwesomeIcon icon={faPlus} className={styles.update_icon} />
+          <div className={styles.update_text}>Add Channel</div>
+        </div>}
+        {myuser.id === room.created_by &&
+        <div onClick={() => { updateModal('friend'); }} className={styles.update}>
+          <FontAwesomeIcon icon={faPlus} className={styles.update_icon} />
+          <div className={styles.update_text}>Invite Friends</div>
+        </div>}
       </div>
       <MyUser myuser={myuser} />
     </div>

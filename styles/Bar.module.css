@@ -10,20 +10,46 @@
   color: #fff;
 }
 
-.title {
-  font-weight: 700;
-  letter-spacing: 1px;
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.option {
+  margin: 0 8px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+
+.option:hover {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .add_friend {
-  padding: 2px 10px;
+  margin: 0 8px;
+  padding: 3px 10px;
   background-color: #248046;
   color: #fff;
   border-radius: 4px;
   cursor: pointer;
+  letter-spacing: 0.5px;
 }
 
 .sign_out {
   cursor: pointer;
   font-weight: 700;
 }
+/*
+
+.title {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+
+
+
+ */

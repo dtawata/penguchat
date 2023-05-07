@@ -9,7 +9,7 @@ const Handler = async (req, res) => {
       ...req.body,
       password: hashedPassword
     });
-    await Promise.all([addJoinedRoom(user.insertId, 1), addJoinedRoom(user.insertId, 2), addJoinedRoom(user.insertId, 3)]);
+    // await Promise.all([addJoinedRoom(user.insertId, 1), addJoinedRoom(user.insertId, 2), addJoinedRoom(user.insertId, 3)]);
     // for (let i = 1; i < user.insertId; i++) {
     //   await Promise.all([addFriends(user.insertId, i, `${i}:${user.insertId}`), addFriends(i, user.insertId, `${i}:${user.insertId}`)]);
     // }

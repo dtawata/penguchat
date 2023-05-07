@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-width: 230px;
-  background-color: #2e3136;
+  background-color: #2a2d31;
 }
 
 .bar {
@@ -15,22 +15,100 @@
 }
 
 .title {
-  color: #fff;
+  color: #f2f3f5;
   font-size: 16px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.75px;
 }
-
-/* .channels {
-  width: 100%;
-  padding: 15px;
-} */
 
 .channels {
   flex-grow: 1;
-  margin: 1px 5px 5px 0;
+  /* margin: 1px 5px 5px 0; */
+  padding: 5px 5px 15px 5px;
+  /* padding: 5px 5px 15px 7px; */
+  /* margin: 1px 5px 5px 0;
   padding: 5px 5px 15px 7px;
-  overflow-y: scroll;
+  overflow-y: scroll; */
+}
+
+.channel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2px 0;
+  padding: 7px 5px;
+  border-radius: 4px;
+  color: #c0c3c6;
+  cursor: pointer;
+}
+
+.channel:hover {
+  background-color: #3f4248;
+  color: #fff;
+}
+
+.channel.active {
+  background-color: #3f4248;
+  color: #fff;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.channel_icon {
+  margin-right: 6px;
+  color: #797d87;
+  font-size: 15px;
+}
+
+.channel_text {
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.update {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  padding: 7px 5px;
+  border-radius: 4px;
+  color: #c0c3c6;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.update:hover {
+  background-color: #3f4248;
+  color: #fff;
+}
+
+.update_icon {
+  margin-right: 6px;
+  color: #797d87;
+  font-size: 15px;
+}
+
+.update_text {
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+/* End of Reviewed */
+
+
+
+.channel_notifications {
+  width: 20px;
+  aspect-ratio: 1/1;
+  background-color: #f23f42;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Width */
@@ -48,48 +126,4 @@
 .channels::-webkit-scrollbar-thumb {
   background-color: #202225;
   border-radius: 4px;
-}
-
-.channel {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  margin: 2px 0;
-  padding: 7px 5px;
-  border-radius: 4px;
-  color: #d5d5d5;
-  cursor: pointer;
-}
-
-.channel.active {
-  background-color: #42464e;
-}
-
-.channel_icon {
-  font-size: 15px;
-}
-
-.channel_text {
-  margin-left: 5px;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-}
-
-.flex {
-  display: flex;
-  align-items: center;
-}
-
-.channel_notifications {
-  width: 20px;
-  aspect-ratio: 1/1;
-  background-color: #f23f42;
-  border-radius: 50%;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }

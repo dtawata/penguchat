@@ -81,38 +81,50 @@ CREATE TABLE friend_requests (
   FOREIGN KEY (requester_id) REFERENCES users(id)
 );
 
-INSERT INTO users (email, fname, lname, username, password, image) VALUES
-('email1@gmail.com', 'f', 'l', 'daniel', 'pass', '/img/user1.jpg'),
-('email2@gmail.com', 'f', 'l', 'ashley', 'pass', '/img/user2.jpg'),
-('email3@gmail.com', 'f', 'l', 'john', 'pass', '/img/user3.jpg');
+CREATE TABLE room_invites (
+  id INT NOT NULL auto_increment,
+  requestee_id INT NOT NULL,
+  requester_id INT NOT NULL,
+  room_id INT NOT NULL,
+  pending BOOLEAN NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (requestee_id) REFERENCES users(id),
+  FOREIGN KEY (requester_id) REFERENCES users(id),
+  FOREIGN KEY (room_id) REFERENCES rooms(id)
+);
 
-INSERT INTO rooms (name, image, created_by) VALUES
-('Lobby','/img/room1.jpg',1),
-('Music','/img/room2.jpg',1),
-('Travels','/img/room3.jpg',1);
+-- INSERT INTO users (email, fname, lname, username, password, image) VALUES
+-- ('email1@gmail.com', 'f', 'l', 'daniel', 'pass', '/img/user1.jpg'),
+-- ('email2@gmail.com', 'f', 'l', 'ashley', 'pass', '/img/user2.jpg'),
+-- ('email3@gmail.com', 'f', 'l', 'john', 'pass', '/img/user3.jpg');
 
-INSERT INTO channels (name, room_id) VALUES
-('general', 1),
-('hello world', 1),
-('travel', 1),
-('general', 2),
-('alternative', 2),
-('lofi', 2),
-('hip hop', 2),
-('tokyo', 3),
-('seoul', 3),
-('new york', 3);
+-- INSERT INTO rooms (name, image, created_by) VALUES
+-- ('Lobby','/img/room1.jpg',1),
+-- ('Music','/img/room2.jpg',1),
+-- ('Travels','/img/room3.jpg',1);
 
-INSERT INTO joined_rooms (user_id, room_id) VALUES
-(1, 1),
-(1, 2),
-(1, 3),
-(2, 1),
-(2, 2),
-(2, 3),
-(3, 1),
-(3, 2),
-(3, 3);
+-- INSERT INTO channels (name, room_id) VALUES
+-- ('general', 1),
+-- ('hello world', 1),
+-- ('travel', 1),
+-- ('general', 2),
+-- ('alternative', 2),
+-- ('lofi', 2),
+-- ('hip hop', 2),
+-- ('tokyo', 3),
+-- ('seoul', 3),
+-- ('new york', 3);
+
+-- INSERT INTO joined_rooms (user_id, room_id) VALUES
+-- (1, 1),
+-- (1, 2),
+-- (1, 3),
+-- (2, 1),
+-- (2, 2),
+-- (2, 3),
+-- (3, 1),
+-- (3, 2),
+-- (3, 3);
 
 --  (user_id, other_id, room_id) VALUES
 -- (4, 1, '1:4'),

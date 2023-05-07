@@ -113,6 +113,13 @@ const addChannel = async (name, room_id) => {
   return data[0];
 };
 
+const addRoomInvite = async (requestee_id, requester_id, room_id, pending) => {
+  const queryString = 'INSERT INTO room_invites (requestee_id, requester_id, room_id, pending) VALUES ?';
+  const queryArgs = [[requestee_id, requester_id, room_id, pending]];
+  const data = await connection.query(queryString, [queryArgs]);
+  return data[0];
+};
+
 module.exports = {
   addChannel,
   addJoinedRoom,
@@ -127,6 +134,7 @@ module.exports = {
   addRoomMessage,
   addDirectMessage,
   addFriendRequest,
+  addRoomInvite,
   getFriendRequests,
   getFriendRequest
 };
