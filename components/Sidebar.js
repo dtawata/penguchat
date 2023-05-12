@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = (props) => {
-  const { changeDirect, rooms, changeRoom, updateModal } = props;
+  const { rooms, room } = props;
+  const { changeDirect, changeRoom, updateModal } = props;
 
   return (
     <div className={styles.container}>

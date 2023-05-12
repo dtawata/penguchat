@@ -9,10 +9,10 @@ import Room from '@/components/room/Room';
 import Direct from '@/components/direct/Direct';
 import Modal from '@/components/modal/Modal';
 
-import { initializeFriends, getDirectMessages, initializeRooms, initializeChannels, updateFriendsStatus, updateRoomsChannels, getMessages, getUsers } from '@/lib/helper/helper';
+import { initializeFriends, getDirectMessages, initializeRooms, initializeChannels, updateFriendsStatus, updateRoomsChannels, getMessages, getUsers, initializeRequests, initializeInvites, initializeUsers } from '@/lib/helper/helper';
 
 const reducer = (state, action) => {
-  const { view, rooms, room, channels, channel, friends, friend, messages, users, requests, modal, create } = action.payload;
+  const { view, rooms, room, channels, channel, friends, friend, messages, users, requests, modal, invites } = action.payload;
   switch (action.type) {
     case 'initialize': {
       return {
@@ -26,7 +26,20 @@ const reducer = (state, action) => {
         friend,
         messages,
         users,
-        requests
+        requests,
+        invites
+      };
+    }
+    case 'initialize_room': {
+      return {
+        ...state,
+        view,
+        rooms,
+        room,
+        channels,
+        channel,
+        messages,
+        users
       };
     }
     case 'change_direct': {
@@ -142,12 +155,6 @@ const reducer = (state, action) => {
         friend
       };
     }
-    case 'change_create': {
-      return {
-        ...state,
-        create
-      };
-    }
     case 'update_rooms': {
       return {
         ...state,
@@ -170,6 +177,18 @@ const reducer = (state, action) => {
         requests
       };
     }
+    case 'update_users': {
+      return {
+        ...state,
+        users
+      }
+    }
+    case 'update_invites': {
+      return {
+        ...state,
+        invites
+      };
+    }
     default: {
       return state;
     }
@@ -177,21 +196,27 @@ const reducer = (state, action) => {
 };
 
 const Home = (props) => {
-  const { session, myuser } = props;
+  const { session, credentials } = props;
   const [socket, setSocket] = useState(null);
+  const [myUser, setMyUser] = useState({
+    id: credentials.id,
+    username: credentials.username,
+    image: credentials.image,
+    online: true
+  });
   const [state, dispatch] = useReducer(reducer, {
     view: 'room',
-    create: false,
     modal: false,
     rooms: [],
     room: { id: null },
     channels: [],
     channel: { id: null },
     friends: [],
-    friend: { id: null },
+    friend: { id: 'default' },
     messages: [],
     users: [],
-    requests: []
+    requests: [],
+    invites: []
   });
   const view = useRef('room');
   const roomsRef = useRef({});
@@ -204,19 +229,113 @@ const Home = (props) => {
   const messagesRef = useRef({});
   const usersRef = useRef({});
   const requestsRef = useRef({});
-
+  const invitesRef = useRef({});
 
   const [content, setContent] = useState('');
   const updateContent = (e) => {
     setContent(e.target.value);
   };
 
+
+  // Checked START
+  const sendRoomInvite = (username) => {
+    socket.emit('to:server:send_room_invite', {
+      room: state.room,
+      requester: myUser,
+      username
+    });
+  };
+
+  const wsReceiveRoomInvite = (invite) => {
+    invitesRef.current[invite.id] = invite;
+    const invites = Object.values(invitesRef.current);
+    dispatch({
+      type: 'update_invites',
+      payload: {
+        invites
+      }
+    });
+  };
+
+  const respondRoomInvite = ({ invite, status }) => {
+    socket.emit('to:server:respond_room_invite', { myUser, invite, status });
+  };
+
+  const wsRespondRoomInvite = ({ room_id, user }) => {
+    usersRef.current[room_id][user.id] = user;
+    if (room_id === roomRef.current.id) {
+      const users = Object.values(usersRef.current[room_id]);
+      dispatch({
+        type: 'update_users',
+        payload: {
+          users
+        }
+      });
+    }
+  };
+
+  const wsUpdateRoomInvite = ({ invite_id }) => {
+    delete invitesRef.current[invite_id];
+    const invites = Object.values(invitesRef.current);
+    dispatch({
+      type: 'update_invites',
+      payload: {
+        invites
+      }
+    });
+  };
+
+  const wsJoinedRoom = async ({ wsRoom, wsChannels, onlineUserIds } ) => {
+    const rooms = initializeRooms({ rooms: [wsRoom], roomsRef });
+    const room = roomRef.current = roomsRef.current[wsRoom.id];
+    const channels = initializeChannels({ room_id: room.id, channels: wsChannels, channelsRef });
+    const channel = channelRef.current = channels[0];
+    const messages = await getMessages({ room_id: room.id, channel_id: channel.id, messagesRef });
+    const users = await getUsers({ room_id: room.id, usersRef, onlineUserIds });
+    view.current = 'room';
+    dispatch({
+      type: 'initialize_room',
+      payload: {
+        view: view.current,
+        rooms,
+        room,
+        channels,
+        channel,
+        messages,
+        users
+      }
+    });
+  };
+
   const createRoom = async (room_name) => {
     socket.emit('to:server:create_room', {
       room_name,
-      myuser
+      myUser
     });
     updateModal(false);
+  };
+
+  const wsCreateRoom = ({ wsRoom, wsChannel }) => {
+    const rooms = initializeRooms({ rooms: [wsRoom], roomsRef });
+    const room = roomRef.current = roomsRef.current[wsRoom.id];
+    const channels = initializeChannels({ room_id: room.id, channels: [wsChannel], channelsRef });
+    const channel = channelRef.current = channels[0];
+    messagesRef.current[room.id] = {};
+    const messages = messagesRef.current[room.id][channel.id] = [];
+    const users = initializeUsers({ room_id: room.id, users: [myUser], usersRef, onlineUserIds: [myUser.id] });
+    view.current = 'room';
+    dispatch({
+      type: 'change_room',
+      payload: {
+        view: view.current,
+        rooms,
+        room,
+        channels,
+        channel,
+        messages,
+        users
+      }
+    });
   };
 
   const createChannel = async (channel_name) => {
@@ -227,11 +346,14 @@ const Home = (props) => {
     updateModal(false);
   };
 
-  const sendFriendInvite = (username) => {
-    socket.emit('to:server:friend_invite', {
-      room_id: state.room.id,
-      username,
-      myuser
+  const wsCreateChannel = (channel) => {
+    const channels = initializeChannels({ room_id: channel.room_id, channels: [channel], channelsRef });
+    dispatch({
+      type: 'create_channel',
+      payload: {
+        modal: false,
+        channels
+      }
     });
   };
 
@@ -239,6 +361,30 @@ const Home = (props) => {
     const connection = io('http://localhost:3003/', { autoConnect: false });
     setSocket(connection);
   }, [])
+  // CHECKED END
+
+
+
+
+
+
+
+
+
+  const sendFriendRequest = async (username) => {
+    socket.emit('to:server:send_friend_request', {
+      username,
+      requester: {
+        id: myUser.id,
+        username: myUser.username,
+        image: myUser.image
+      }
+    });
+  };
+
+  const sendFriendResponse = ({ request, status }) => {
+    socket.emit('to:server:send_friend_response', { request, status });
+  };
 
 
 
@@ -343,17 +489,19 @@ const Home = (props) => {
     });
   };
 
-  const wsInitialize = async ({ wsRooms, wsChannels, wsFriends, userIds, requests }) => {
-    const friends = initializeFriends(wsFriends, friendsRef);
+  const wsInitialize = async ({ wsRooms, wsChannels, wsFriends, wsRequests, wsInvites, onlineUserIds }) => {
+    const friends = initializeFriends({ friends: wsFriends, friendsRef });
     const friend = friendRef.current = { id: 'default' };
-    requestsRef.current = requests;
+    const requests = initializeRequests({ requests: wsRequests, requestsRef });
+    const invites = initializeInvites({ invites: wsInvites, invitesRef });
+
     if (wsRooms.length) {
-      const rooms = initializeRooms(wsRooms, roomsRef);
+      const rooms = initializeRooms({ rooms: wsRooms, roomsRef });
       const room = roomRef.current = rooms[0];
-      const channels = initializeChannels(wsChannels, channelsRef, room.id);
+      const channels = initializeChannels({ room_id: room.id, channels: wsChannels, channelsRef });
       const channel = channelRef.current = channels[0];
       const messages = await getMessages({ room_id: room.id, channel_id: channel.id, messagesRef });
-      const users = await getUsers({ room_id: room.id, usersRef, userIds });
+      const users = await getUsers({ room_id: room.id, usersRef, onlineUserIds });
       view.current = 'room';
       dispatch({
         type: 'initialize',
@@ -367,14 +515,16 @@ const Home = (props) => {
           friend,
           messages,
           users,
-          requests
+          requests,
+          invites
         }
       });
     } else {
       dispatch({
         type: 'update_requests',
         payload: {
-          requests
+          requests,
+          invites
         }
       });
       changeDirect();
@@ -396,10 +546,10 @@ const Home = (props) => {
     });
   };
 
-  const wsChangeRoom = async ({ room_id, userIds }) => {
-    const { rooms, room, channels, channel } = updateRoomsChannels({ roomsRef, roomRef, channelsRef, channelRef, room_id });
-    const messages = await getMessages({ messagesRef, room_id: room.id, channel_id: channel.id });
-    const users = await getUsers({ messagesRef, room_id: room.id, channel_id: channel.id, usersRef, userIds });
+  const wsChangeRoom = async ({ room_id, onlineUserIds }) => {
+    const { rooms, room, channels, channel } = updateRoomsChannels({ roomsRef, roomRef, room_id, channelsRef, channelRef });
+    const messages = await getMessages({ room_id: room.id, channel_id: channel.id, messagesRef });
+    const users = await getUsers({ room_id: room.id, channel_id: channel.id, messagesRef, usersRef, onlineUserIds });
     view.current = 'room';
     dispatch({
       type: 'change_room',
@@ -420,40 +570,23 @@ const Home = (props) => {
     if (!content) return;
     if (state.view === 'room') {
       socket.emit('to:server:room:send_message', {
-        username: myuser.username,
-        image: myuser.image,
-        user_id: myuser.id,
+        username: myUser.username,
+        image: myUser.image,
+        user_id: myUser.id,
         room_id: state.room.id,
         channel_id: state.channel.id,
         content
       });
     } else {
       socket.emit('to:server:direct:send_message', {
-        username: myuser.username,
-        image: myuser.image,
-        user_id: myuser.id,
+        username: myUser.username,
+        image: myUser.image,
+        user_id: myUser.id,
         room_id: state.friend.id,
         content
       });
     }
     setContent('');
-  };
-
-  const sendFriendRequest = async (e) => {
-    e.preventDefault();
-    socket.emit('to:server:send_friend_request', {
-      username: friendContent,
-      requester: {
-        id: myuser.id,
-        username: myuser.username,
-        image: myuser.image
-      }
-    });
-    setFriendContent('');
-  };
-
-  const sendFriendRequestResponse = ({ request, status }) => {
-    socket.emit('to:server:send_friend_request_response', { request, status });
   };
 
   const wsReceiveRoomMessage = ({ message }) => {
@@ -533,7 +666,7 @@ const Home = (props) => {
     });
   };
 
-  const wsReceiveFriendRequestResponse = ({ friend, request }) => {
+  const wsReceiveFriendResponse = ({ friend, request }) => {
     friendsRef.current[friend.id] = friend;
     const friends = Object.values(friendsRef.current);
     delete requestsRef.current[request.id];
@@ -582,12 +715,15 @@ const Home = (props) => {
       socket.on('to:client:update_users', wsUpdateUsers);
       socket.on('to:client:change_direct', wsChangeDirect);
       socket.on('to:client:send_friend_request', wsReceiveFriendRequest);
-      socket.on('to:client:receive_friend_request_response', wsReceiveFriendRequestResponse);
+      socket.on('to:client:receive_friend_response', wsReceiveFriendResponse);
       socket.on('to:client:update_friends', wsUpdateFriends);
       socket.on('to:client:create_room', wsCreateRoom);
       socket.on('to:client:create_channel', wsCreateChannel);
-      socket.on('to:client:receive_friend_invite', wsReceiveFriendInvite);
-      socket.auth = myuser;
+      socket.on('to:client:receive_room_invite', wsReceiveRoomInvite);
+      socket.on('to:client:respond_room_invite', wsRespondRoomInvite);
+      socket.on('to:client:joined_room', wsJoinedRoom);
+      socket.on('to:client:update_room_invite', wsUpdateRoomInvite);
+      socket.auth = myUser;
       socket.connect();
       return () => {
         socket.off('to:client:initialize', wsInitialize);
@@ -597,46 +733,19 @@ const Home = (props) => {
         socket.off('to:client:update_users', wsUpdateUsers);
         socket.off('to:client:change_direct', wsChangeDirect);
         socket.off('to:client:send_friend_request', wsReceiveFriendRequest);
-        socket.off('to:client:receive_friend_request_response', wsReceiveFriendRequestResponse);
+        socket.off('to:client:receive_friend_response', wsReceiveFriendResponse);
         socket.off('to:client:update_friends', wsUpdateFriends);
         socket.off('to:client:create_room', wsCreateRoom);
         socket.off('to:client:create_channel', wsCreateChannel);
-        socket.off('to:client:receive_friend_invite', wsReceiveFriendInvite);
+        socket.off('to:client:receive_room_invite', wsReceiveRoomInvite);
+        socket.off('to:client:respond_room_invite', wsRespondRoomInvite);
+        socket.off('to:client:joined_room', wsJoinedRoom);
+        socket.off('to:client:update_room_invite', wsUpdateRoomInvite);
       };
     }
-  }, [socket, myuser])
+  }, [socket, myUser])
 
-  const wsCreateRoom = ({ wsRoom, wsChannel }) => {
-    const rooms = initializeRooms([wsRoom], roomsRef);
-    const room = roomRef.current = roomsRef.current[wsRoom.id];
-    const channels = initializeChannels([wsChannel], channelsRef, room.id);
-    const channel = channelRef.current = channels[0];
-    messagesRef.current[wsRoom.id] = {};
-    const messages = messagesRef.current[wsRoom.id][channel.id] = [];
-    const user = {
-      id: myuser.id,
-      username: myuser.username,
-      image: myuser.image,
-      online: true
-    };
-    const users = [user];
-    usersRef.current[wsRoom.id] = {
-      [user.id]: user
-    };
-    view.current = 'room';
-    dispatch({
-      type: 'change_room',
-      payload: {
-        view: view.current,
-        rooms,
-        room,
-        channels,
-        channel,
-        messages,
-        users
-      }
-    });
-  };
+
 
   const updateModal = (status) => {
     dispatch({
@@ -647,41 +756,40 @@ const Home = (props) => {
     });
   };
 
-  const wsCreateChannel = (channel) => {
-    const channels = initializeChannels([channel], channelsRef, channel.room_id);
-    dispatch({
-      type: 'create_channel',
-      payload: {
-        modal: false,
-        channels
-      }
-    });
-  };
-
-  const wsReceiveFriendInvite = (request) => {
-    console.log('ws receive friend invite');
-    console.log('test', requestsRef.current);
-    requestsRef.current.push(request);
-    const requests = requestsRef.current.slice();
-    dispatch({
-      type: 'update_requests',
-      payload: {
-        requests
-      }
-    });
-  };
-
   return (
     <div className={styles.container}>
       <Sidebar changeDirect={changeDirect} rooms={state.rooms} room={state.room} changeRoom={changeRoom} updateModal={updateModal} />
       {state.view === 'room' ?
-      <Room myuser={myuser} room={state.room} channels={state.channels} channel={state.channel} changeChannel={changeChannel} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} users={state.users} changeFriend={changeFriend} updateModal={updateModal} /> :
-      <Direct myuser={myuser} friends={state.friends} friend={state.friend} changeFriend={changeFriend} content={content} updateContent={updateContent} messages={state.messages} sendMessage={sendMessage} updateModal={updateModal} users={state.users} sendFriendRequest={sendFriendRequest} requests={state.requests} sendFriendRequestResponse={sendFriendRequestResponse} friendContent={friendContent} updateFriendContent={updateFriendContent} />}
-      {state.modal && <Modal modal={state.modal} updateModal={updateModal} createRoom={createRoom} createChannel={createChannel} sendFriendInvite={sendFriendInvite} />}
-      {/* {state.modal === 'room' && <CreateRoom createRoom={createRoom} groupContent={groupContent} updateGroupContent={updateGroupContent} updateModal={updateModal} />}
-      {state.modal === 'channel' && <CreateChannel createChannel={createChannel} channelContent={channelContent} updateChannelContent={updateChannelContent} updateModal={updateModal} />}
-      {state.modal === 'friend' && <InviteFriend inviteContent={inviteContent} sendFriendInvite={sendFriendInvite} updateInviteContent={updateInviteContent} updateModal={updateModal} />} */}
-      {/* {state.modal === 'notification' && <Modal requests={state.requests} updateModal={updateModal} sendFriendRequestResponse={sendFriendRequestResponse} />} */}
+      <Room
+        myUser={myUser}
+        room={state.room}
+        channels={state.channels}
+        channel={state.channel}
+        changeChannel={changeChannel}
+        messages={state.messages}
+        sendMessage={sendMessage}
+        content={content}
+        updateContent={updateContent}
+        users={state.users}
+        changeFriend={changeFriend}
+        updateModal={updateModal} /> :
+      <Direct
+        myUser={myUser}
+        friends={state.friends}
+        friend={state.friend}
+        changeFriend={changeFriend}
+        messages={state.messages}
+        sendMessage={sendMessage}
+        content={content}
+        updateContent={updateContent}
+        requests={state.requests}
+        invites={state.invites}
+        sendFriendRequest={sendFriendRequest}
+        sendFriendResponse={sendFriendResponse}
+        respondRoomInvite={respondRoomInvite}
+        updateModal={updateModal} />}
+
+      {state.modal && <Modal modal={state.modal} updateModal={updateModal} createRoom={createRoom} createChannel={createChannel} sendRoomInvite={sendRoomInvite} />}
     </div>
   );
 };
@@ -699,11 +807,11 @@ export const getServerSideProps = async (context) => {
     };
   }
 
-  const myuser = await getUser(session.user.name);
+  const credentials = await getUser(session.user.name);
   return {
     props: {
       session,
-      myuser
+      credentials
     }
   };
 };

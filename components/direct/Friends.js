@@ -6,7 +6,7 @@ import { faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
 import MyUser from '@/components/MyUser';
 
 const Friends = (props) => {
-  const { myuser, friends, friend, changeFriend, updateModal } = props;
+  const { myUser, friends, friend, changeFriend, updateModal } = props;
   const selected = friend.id;
 
   return (
@@ -30,7 +30,7 @@ const Friends = (props) => {
           return <Friend friend={friend} changeFriend={changeFriend} key={friend.id} />
         })}
       </div>
-      <MyUser myuser={myuser} />
+      <MyUser myUser={myUser} />
     </div>
   );
 };

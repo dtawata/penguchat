@@ -1,16 +1,31 @@
 import styles from '@/styles/Default.module.css';
+import { useState } from 'react';
 import Image from 'next/image';
 
 const Default = (props) => {
-  const { friends, changeFriend, friendsSetting, friendContent, updateFriendContent, sendFriendRequest } = props;
+  const { friends, addFriend } = props;
+  const { changeFriend, sendFriendRequest } = props;
+
+  const [content, setContent] = useState('');
+
+  const updateContent = (e) => {
+    setContent(e.target.value);
+  };
+
+  const submitContent = (e) => {
+    e.preventDefault();
+    const username = content;
+    setContent('');
+    sendFriendRequest(username);
+  };
 
   return (
     <div className={styles.container}>
-      {friendsSetting === 'add_friend' &&
+      {addFriend &&
       <div className={styles.add_friend}>
         <h3 className={styles.title}>Add Friend</h3>
-        <form onSubmit={sendFriendRequest} className={styles.form}>
-          <input onChange={updateFriendContent} type='text' value={friendContent} className={styles.input} />
+        <form onSubmit={submitContent} className={styles.form}>
+          <input onChange={updateContent} className={styles.input} type='text' value={content} />
         </form>
       </div>}
       <div className={styles.friends}>
@@ -23,7 +38,8 @@ const Default = (props) => {
 };
 
 const Friend = (props) => {
-  const { friend, changeFriend } = props;
+  const { friend } = props;
+  const { changeFriend } = props;
 
   return (
     <div onClick={() => { changeFriend(friend.id); }} className={styles.friend}>

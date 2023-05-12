@@ -4,16 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faGear, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const MyUser = (props) => {
-  const { myuser } = props;
+  const { myUser } = props;
 
   return (
     <div className={styles.container}>
-      <div className={styles.myuser}>
-        <div className={styles.myuser_left}>
-          <Image className={styles.myuser_img} src={myuser.image} alt='' width='33' height='33' />
-          <div className={styles.myuser_mid}>
-            <div className={styles.myuser_username}>{myuser.username}</div>
-            <div className={styles.myuser_numbers}>#3344</div>
+      <div className={styles.myUser}>
+        <div className={styles.myUser_left}>
+          <Image className={styles.myUser_img} src={myUser.image} alt='' width='33' height='33' />
+          <div className={styles.myUser_mid}>
+            <div className={styles.myUser_username}>{myUser.username}</div>
+            <div className={styles.myUser_numbers}>#3344</div>
           </div>
         </div>
         <div className={styles.icons}>

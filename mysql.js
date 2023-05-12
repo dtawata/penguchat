@@ -8,6 +8,48 @@ const connection = mysql.createConnection({
   // connectionLimit: 100
 }).promise();
 
+// CHECKED START
+const getRoomById = async (room_id) => {
+  const queryString = 'SELECT * FROM rooms WHERE id = ?';
+  const queryArgs = [room_id];
+  const data = await connection.query(queryString, queryArgs);
+  return data[0][0];
+};
+
+const getRoomInvites = async (user_id) => {
+  const queryString = 'SELECT room_invites.*, users.username AS requester_username, rooms.name AS room_name, rooms.image AS room_image FROM room_invites INNER JOIN users ON room_invites.requester_id = users.id INNER JOIN rooms ON room_invites.room_id = rooms.id WHERE room_invites.requestee_id = ? AND room_invites.pending = 1';
+  const queryArgs = [user_id];
+  const data = await connection.query(queryString, queryArgs);
+  return data[0];
+};
+
+const addJoinedRoom = async ({ user_id, room_id }) => {
+  const queryString = 'INSERT INTO joined_rooms (user_id, room_id) VALUES ?';
+  const queryArgs = [[user_id, room_id]];
+  const data = await connection.query(queryString, [queryArgs]);
+  return data[0];
+};
+
+const addRoomInvite = async ({ requestee_id, requester_id, room_id, pending }) => {
+  const queryString = 'INSERT INTO room_invites (requestee_id, requester_id, room_id, pending) VALUES ?';
+  const queryArgs = [[requestee_id, requester_id, room_id, pending]];
+  const data = await connection.query(queryString, [queryArgs]);
+  return data[0];
+};
+
+const updateRoomInvite = async (invite_id) => {
+  const queryString = 'UPDATE room_invites SET pending = 0 WHERE id = ?';
+  const queryArgs = [invite_id];
+  const data = await connection.query(queryString, queryArgs);
+  return data[0];
+};
+// CHECKED END
+
+
+
+
+
+
 const getRooms = async (user_id) => {
   const queryString = 'SELECT rooms.* FROM rooms INNER JOIN joined_rooms ON rooms.id = joined_rooms.room_id WHERE joined_rooms.user_id = ?';
   const queryArgs = [user_id];
@@ -44,11 +86,13 @@ const addDirectMessage = async ({ user_id, room_id, content }) => {
 };
 
 const getFriendRequests = async (user_id) => {
-  const queryString = 'SELECT friend_requests.*, users.username, users.image FROM friend_requests INNER JOIN users ON friend_requests.requester_id = users.id WHERE friend_requests.requestee_id = ?';
+  const queryString = 'SELECT friend_requests.*, users.username, users.image FROM friend_requests INNER JOIN users ON friend_requests.requester_id = users.id WHERE friend_requests.requestee_id = ? AND pending = 1';
   const queryArgs = [user_id];
   const data = await connection.query(queryString, queryArgs);
   return data[0];
 };
+
+
 
 const getFriendRequest = async (requestee_id, requester_id) => {
   const queryString = 'SELECT friend_requests.*, users.username, users.image FROM friend_requests INNER JOIN users ON friend_requests.requester_id = users.id WHERE friend_requests.requestee_id = ? AND friend_requests.requester_id = ?';
@@ -99,13 +143,6 @@ const addRoom = async (room_name, user_id) => {
   return data[0];
 };
 
-const addJoinedRoom = async (user_id, room_id) => {
-  const queryString = 'INSERT INTO joined_rooms (user_id, room_id) VALUES ?';
-  const queryArgs = [[user_id, room_id]];
-  const data = await connection.query(queryString, [queryArgs]);
-  return data[0];
-};
-
 const addChannel = async (name, room_id) => {
   const queryString = 'INSERT INTO channels (name, room_id) VALUES ?';
   const queryArgs = [[name, room_id]];
@@ -113,14 +150,8 @@ const addChannel = async (name, room_id) => {
   return data[0];
 };
 
-const addRoomInvite = async (requestee_id, requester_id, room_id, pending) => {
-  const queryString = 'INSERT INTO room_invites (requestee_id, requester_id, room_id, pending) VALUES ?';
-  const queryArgs = [[requestee_id, requester_id, room_id, pending]];
-  const data = await connection.query(queryString, [queryArgs]);
-  return data[0];
-};
-
 module.exports = {
+  updateRoomInvite,
   addChannel,
   addJoinedRoom,
   addRoom,
@@ -136,5 +167,7 @@ module.exports = {
   addFriendRequest,
   addRoomInvite,
   getFriendRequests,
-  getFriendRequest
+  getFriendRequest,
+  getRoomInvites,
+  getRoomById
 };

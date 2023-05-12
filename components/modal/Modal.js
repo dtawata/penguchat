@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 
 const Modal = (props) => {
   const { modal } = props;
-  const { updateModal, createRoom, createChannel, sendFriendInvite } = props;
+  const { updateModal, createRoom, createChannel, sendRoomInvite } = props;
   const [content, setContent] = useState('');
 
   const updateContent = (e) => {
@@ -23,10 +23,12 @@ const Modal = (props) => {
       const channel_name = content;
       setContent('');
       createChannel(channel_name);
-    } else if (modal === 'invite') {
+    } else if (modal === 'room_invite') {
       const username = content;
       setContent('');
-      sendFriendInvite(username);
+      sendRoomInvite(username);
+    } else {
+      console.log('else', content);
     }
   };
 
@@ -40,7 +42,7 @@ const Modal = (props) => {
         <div onClick={() => { updateModal(false) }}>Close</div>
         {modal === 'room' && <CreateRoom content={content} updateContent={updateContent} submitContent={submitContent} />}
         {modal === 'channel' && <CreateChannel content={content} updateContent={updateContent} submitContent={submitContent} />}
-        {modal === 'friend' && <InviteFriend content={content} updateContent={updateContent} submitContent={submitContent} />}
+        {modal === 'room_invite' && <InviteFriend content={content} updateContent={updateContent} submitContent={submitContent} />}
       </div>
     </div>
   );
