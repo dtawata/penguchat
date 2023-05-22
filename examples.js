@@ -24,6 +24,13 @@ const user = {
 }
 
 // friends
+const friend = {
+  id: '2:3',
+  user_id: 3,
+  username: 'incognito',
+  image: '/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg',
+  notifications: 0
+}
 
 
 // requests

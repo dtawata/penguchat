@@ -12,7 +12,7 @@ import Modal from '@/components/modal/Modal';
 import { initializeFriends, getDirectMessages, initializeRooms, initializeChannels, updateFriendsStatus, updateRoomsChannels, getMessages, getUsers, initializeRequests, initializeInvites, initializeUsers } from '@/lib/helper/helper';
 
 const reducer = (state, action) => {
-  const { view, rooms, room, channels, channel, friends, friend, messages, users, requests, modal, invites } = action.payload;
+  const { view, direct, rooms, room, channels, channel, friends, friend, messages, users, requests, modal, invites } = action.payload;
   switch (action.type) {
     case 'initialize': {
       return {
@@ -52,6 +52,7 @@ const reducer = (state, action) => {
     case 'change_friend': {
       return {
         ...state,
+        direct,
         friends,
         friend,
         messages
@@ -103,10 +104,29 @@ const reducer = (state, action) => {
         channels
       };
     }
+    case 'update_direct': {
+      return {
+        ...state,
+        direct
+      };
+    }
     case 'receive_direct_message': {
       return {
         ...state,
         messages
+      };
+    }
+    case 'receive_direct_message_2': {
+      return {
+        ...state,
+        direct,
+        friends
+      };
+    }
+    case 'receive_direct_message_3': {
+      return {
+        ...state,
+        direct
       };
     }
     case 'update_friends': {
@@ -142,12 +162,6 @@ const reducer = (state, action) => {
         modal
       };
     }
-    case 'update_friends': {
-      return {
-        ...state,
-        friends
-      };
-    }
     case 'change_default': {
       return {
         ...state,
@@ -163,6 +177,16 @@ const reducer = (state, action) => {
         channels,
         channel
       };
+    }
+    case 'change_direct_22': {
+      return {
+        ...state,
+        view,
+        friends,
+        friend,
+        requests,
+        invites
+      }
     }
     case 'create_channel': {
       return {
@@ -207,6 +231,7 @@ const Home = (props) => {
   const [state, dispatch] = useReducer(reducer, {
     view: 'room',
     modal: false,
+    direct: { notifications: 0 },
     rooms: [],
     room: { id: null },
     channels: [],
@@ -218,12 +243,12 @@ const Home = (props) => {
     requests: [],
     invites: []
   });
-  const view = useRef('room');
+  const viewRef = useRef('room');
+  const directRef = useRef({ notifications: 0 });
   const roomsRef = useRef({});
   const roomRef = useRef({});
   const channelsRef = useRef({});
   const channelRef = useRef({});
-  const directRef = useRef({ notifications: 0 });
   const friendsRef = useRef({});
   const friendRef = useRef({});
   const messagesRef = useRef({});
@@ -274,7 +299,7 @@ const Home = (props) => {
     }
   };
 
-  const wsUpdateRoomInvite = ({ invite_id }) => {
+  const wsUpdateRoomInvite = (invite_id) => {
     delete invitesRef.current[invite_id];
     const invites = Object.values(invitesRef.current);
     dispatch({
@@ -292,11 +317,11 @@ const Home = (props) => {
     const channel = channelRef.current = channels[0];
     const messages = await getMessages({ room_id: room.id, channel_id: channel.id, messagesRef });
     const users = await getUsers({ room_id: room.id, usersRef, onlineUserIds });
-    view.current = 'room';
+    const view = viewRef.current = 'room';
     dispatch({
       type: 'initialize_room',
       payload: {
-        view: view.current,
+        view,
         rooms,
         room,
         channels,
@@ -323,11 +348,11 @@ const Home = (props) => {
     messagesRef.current[room.id] = {};
     const messages = messagesRef.current[room.id][channel.id] = [];
     const users = initializeUsers({ room_id: room.id, users: [myUser], usersRef, onlineUserIds: [myUser.id] });
-    view.current = 'room';
+    const view = viewRef.current = 'room';
     dispatch({
       type: 'change_room',
       payload: {
-        view: view.current,
+        view,
         rooms,
         room,
         channels,
@@ -391,22 +416,43 @@ const Home = (props) => {
 
   const changeDirect = async () => {
     if (!usersRef.current.direct) {
+      console.log('changeDirect 1');
       const friends = Object.values(friendsRef.current);
       socket.emit('to:server:change_direct', friends);
-    } else {
+    }
+
+    // else if () {
+
+    // }
+
+    else {
+      console.log('changeDirect 2');
+      console.log('friendsRef', {...friendsRef.current});
+      console.log('friendRef', {...friendRef.current});
       const { friend } = state;
-      if (!messagesRef.current[friend.id]) {
-        await getDirectMessages({ messagesRef, friend_id: friend.id });
+      if (!messagesRef.current[friend.room_id]) {
+        console.log('type 1');
+        const messages = await getDirectMessages({ messagesRef, room_id: friend.room_id });
+        const view = viewRef.current = 'direct';
+        // dispatch({
+        //   type: 'change_direct',
+        //   payload: {
+        //     view,
+        //     messages
+        //   }
+        // });
+      } else {
+        console.log('type 2');
+        const messages = messagesRef.current[friend.room_id].slice();
+        const view = viewRef.current = 'direct';
+        dispatch({
+          type: 'change_direct',
+          payload: {
+            view,
+            messages
+          }
+        });
       }
-      const messages = messagesRef.current[friend.id].slice();
-      view.current = 'direct';
-      dispatch({
-        type: 'change_direct',
-        payload: {
-          view: view.current,
-          messages
-        }
-      });
     }
   };
 
@@ -424,15 +470,16 @@ const Home = (props) => {
       });
       return;
     }
-    // this should be a direct.current keeping track of the notifications
-    // friendsRef.current[friend.id].notifications -= friend.notifications;
-    // friend.notifications = 0;
+    directRef.current.notifications -= friendsRef.current[friend_id].notifications;
+    friendsRef.current[friend_id].notifications = 0;
+    const direct = { ...directRef.current };
     const friends = Object.values(friendsRef.current);
     const friend = friendRef.current = friendsRef.current[friend_id];
-    const messages = await getDirectMessages({ messagesRef, friend_id: friend.id });
+    const messages = await getDirectMessages({ messagesRef, room_id: friend.room_id });
     dispatch({
       type: 'change_friend',
       payload: {
+        direct,
         friends,
         friend,
         messages
@@ -448,11 +495,11 @@ const Home = (props) => {
       const { rooms, room, channels, channel } = updateRoomsChannels({ roomsRef, roomRef, channelsRef, channelRef, room_id });
       const messages = messagesRef.current[room_id][channel.id].slice();
       const users = Object.values(usersRef.current[room_id]);
-      view.current = 'room';
+      const view = viewRef.current = 'room';
       dispatch({
         type: 'change_room',
         payload: {
-          view: view.current,
+          view,
           rooms,
           room,
           channels,
@@ -490,10 +537,12 @@ const Home = (props) => {
   };
 
   const wsInitialize = async ({ wsRooms, wsChannels, wsFriends, wsRequests, wsInvites, onlineUserIds }) => {
+    console.log('wsIntialize!');
     const friends = initializeFriends({ friends: wsFriends, friendsRef });
     const friend = friendRef.current = { id: 'default' };
     const requests = initializeRequests({ requests: wsRequests, requestsRef });
     const invites = initializeInvites({ invites: wsInvites, invitesRef });
+
 
     if (wsRooms.length) {
       const rooms = initializeRooms({ rooms: wsRooms, roomsRef });
@@ -502,11 +551,11 @@ const Home = (props) => {
       const channel = channelRef.current = channels[0];
       const messages = await getMessages({ room_id: room.id, channel_id: channel.id, messagesRef });
       const users = await getUsers({ room_id: room.id, usersRef, onlineUserIds });
-      view.current = 'room';
+      const view = viewRef.current = 'room';
       dispatch({
         type: 'initialize',
         payload: {
-          view: view.current,
+          view,
           rooms,
           room,
           channels,
@@ -520,26 +569,48 @@ const Home = (props) => {
         }
       });
     } else {
-      dispatch({
-        type: 'update_requests',
-        payload: {
-          requests,
-          invites
-        }
-      });
-      changeDirect();
+      const friends = Object.values(friendsRef.current);
+      socket.emit('to:server:change_direct2', { friends, requests, invites });
+      // dispatch({
+      //   type: 'update_requests',
+      //   payload: {
+      //     requests,
+      //     invites
+      //   }
+      // });
+      // changeDirect();
     }
   };
 
-  const wsChangeDirect = ({ wsFriends }) => {
-    usersRef.current.direct = true;
-    const friends = updateFriendsStatus(wsFriends, friendsRef);
+  const wsChangeDirect2 = ({ onlineUserIds, requests, invites }) => {
+    console.log('wsChangeDirect2');
+    // usersRef.current.direct = true;
+    const friends = updateFriendsStatus({ friendsRef, onlineUserIds });
+    console.log('friends 2', friends);
     const friend = friendRef.current;
-    view.current = 'direct';
+    const view = viewRef.current = 'direct';
+    dispatch({
+      type: 'change_direct_22',
+      payload: {
+        view,
+        friends,
+        friend,
+        requests,
+        invites
+      }
+    });
+  };
+
+  const wsChangeDirect = ({ onlineUserIds }) => {
+    console.log('wsChangeDirect');
+    usersRef.current.direct = true;
+    const friends = updateFriendsStatus({ friendsRef, onlineUserIds });
+    const friend = friendRef.current;
+    const view = viewRef.current = 'direct';
     dispatch({
       type: 'change_direct_f',
       payload: {
-        view: view.current,
+        view,
         friends,
         friend
       }
@@ -547,14 +618,15 @@ const Home = (props) => {
   };
 
   const wsChangeRoom = async ({ room_id, onlineUserIds }) => {
+    console.log('wsChangeRoom');
     const { rooms, room, channels, channel } = updateRoomsChannels({ roomsRef, roomRef, room_id, channelsRef, channelRef });
     const messages = await getMessages({ room_id: room.id, channel_id: channel.id, messagesRef });
     const users = await getUsers({ room_id: room.id, channel_id: channel.id, messagesRef, usersRef, onlineUserIds });
-    view.current = 'room';
+    const view = viewRef.current = 'room';
     dispatch({
       type: 'change_room',
       payload: {
-        view: view.current,
+        view,
         rooms,
         room,
         channels,
@@ -566,6 +638,7 @@ const Home = (props) => {
   };
 
   const sendMessage = (e) => {
+    console.log('sendMessage');
     e.preventDefault();
     if (!content) return;
     if (state.view === 'room') {
@@ -582,7 +655,7 @@ const Home = (props) => {
         username: myUser.username,
         image: myUser.image,
         user_id: myUser.id,
-        room_id: state.friend.id,
+        room_id: state.friend.room_id,
         content
       });
     }
@@ -590,9 +663,37 @@ const Home = (props) => {
   };
 
   const wsReceiveRoomMessage = ({ message }) => {
+    console.log('wsReceiveRoomMessage');
+    const view = viewRef.current;
     const room = roomRef.current;
     const channel = channelRef.current;
-    if (message.room_id === room.id && message.channel_id === channel.id) {
+    if (view === 'direct' || view === 'room' && message.room_id !== room.id ) {
+      roomsRef.current[message.room_id].notifications++;
+      const rooms = Object.values(roomsRef.current);
+      channelsRef.current[message.room_id][message.channel_id].notifications++;
+      dispatch({
+        type: 'update_notifications_r',
+        payload: {
+          rooms
+        }
+      });
+    }
+
+    else if (view === 'room' && message.room_id === room.id && message.channel_id !== channel.id) {
+      roomsRef.current[message.room_id].notifications++;
+      const rooms = Object.values(roomsRef.current);
+      channelsRef.current[message.room_id][message.channel_id].notifications++;
+      const channels = Object.values(channelsRef.current[message.room_id]);
+      dispatch({
+        type: 'update_notifications_rc',
+        payload: {
+          rooms,
+          channels
+        }
+      });
+    }
+
+    else if (view === 'room' && message.room_id === room.id && message.channel_id === channel.id) {
       messagesRef.current[room.id][channel.id].push(message);
       const messages = messagesRef.current[room.id][channel.id].slice();
       dispatch({
@@ -601,58 +702,140 @@ const Home = (props) => {
           messages
         }
       });
-    } else {
-      roomsRef.current[message.room_id].notifications++;
-      const rooms = Object.values(roomsRef.current);
-      channelsRef.current[message.room_id][message.channel_id].notifications++;
-      if (message.room_id === room.id) {
-        const channels = Object.values(channelsRef.current[message.room_id]);
-        dispatch({
-          type: 'update_notifications_rc',
-          payload: {
-            rooms,
-            channels
-          }
-        });
-      } else {
-        dispatch({
-          type: 'update_notifications_r',
-          payload: {
-            rooms
-          }
-        });
-      }
     }
+
+
+
+    // if (message.room_id === room.id && message.channel_id === channel.id) {
+    //   messagesRef.current[room.id][channel.id].push(message);
+    //   const messages = messagesRef.current[room.id][channel.id].slice();
+    //   dispatch({
+    //     type: 'receive_room_message',
+    //     payload: {
+    //       messages
+    //     }
+    //   });
+    // } else {
+    //   roomsRef.current[message.room_id].notifications++;
+    //   const rooms = Object.values(roomsRef.current);
+    //   channelsRef.current[message.room_id][message.channel_id].notifications++;
+    //   if (message.room_id === room.id) {
+    //     const channels = Object.values(channelsRef.current[message.room_id]);
+    //     dispatch({
+    //       type: 'update_notifications_rc',
+    //       payload: {
+    //         rooms,
+    //         channels
+    //       }
+    //     });
+    //   } else {
+    //     dispatch({
+    //       type: 'update_notifications_r',
+    //       payload: {
+    //         rooms
+    //       }
+    //     });
+    //   }
+    // }
   };
 
   const wsReceiveDirectMessage = ({ message }) => {
-    if (view.current === 'room') {
-      friendsRef.current[message.room_id].notifications++;
+    console.log('wsReceiveDirectMessage');
+    const view = viewRef.current;
+    const friend = friendRef.current;
+    if (view === 'room') {
+      console.log('1');
       if (messagesRef.current[message.room_id]) {
         messagesRef.current[message.room_id].push(message);
       }
-    } else {
-      const friend = friendRef.current;
-      if (message.room_id === friend.id) {
-        messagesRef.current[friend.id].push(message);
-        const messages = messagesRef.current[friend.id].slice();
-        dispatch({
-          type: 'receive_direct_message',
-          payload: {
-            messages
-          }
-        });
-      } else {
-        friendsRef.current[message.room_id].notifications++;
-        const friends = Object.values(friendsRef.current);
-        dispatch({
-          type: 'update_friends',
-          payload: {
-            friends,
-          }
-        });
-      }
+      directRef.current.notifications++;
+      const direct = { ...directRef.current };
+      // if (friendsRef.current[message.user_id].notifications) {
+      // }
+      friendsRef.current[message.user_id].notifications++;
+      dispatch({
+        type: 'receive_direct_message_3',
+        payload: {
+          direct
+        }
+      });
     }
+
+    else if (view === 'direct' && message.room_id !== friend.room_id) {
+      console.log('2');
+      console.log('2 friend', friend);
+      console.log('2 message', message);
+      if (messagesRef.current[message.room_id]) {
+        messagesRef.current[message.room_id].push(message);
+      }
+      directRef.current.notifications++;
+      const direct = { ...directRef.current };
+      friendsRef.current[message.user_id].notifications++;
+      const friends = Object.values(friendsRef.current);
+      dispatch({
+        type: 'receive_direct_message_2',
+        payload: {
+          direct,
+          friends
+        }
+      });
+    }
+
+    else if (view === 'direct' && message.room_id === friend.room_id) {
+      console.log('3');
+      messagesRef.current[message.room_id].push(message);
+      const messages = messagesRef.current[message.room_id].slice();
+      dispatch({
+        type: 'receive_direct_message',
+        payload: {
+          messages
+        }
+      });
+    }
+
+    // if (viewRef.current === 'direct') {
+    //   const friend = friendRef.current;
+    //   if (message.room_id === friend.id) {
+    //     messagesRef.current[friend.id].push(message);
+    //     const messages = messagesRef.current[friend.id].slice();
+    //     dispatch({
+    //       type: 'receive_direct_message',
+    //       payload: {
+    //         messages
+    //       }
+    //     });
+    //   }
+
+    //   if (message.room_id !== friend.id) {
+    //     directRef.current.notifications++;
+    //     const direct = { ...directRef.current };
+    //     friendsRef.current[message.room_id].notifications++;
+    //     const friends = Object.values(friendsRef.current);
+    //     dispatch({
+    //       type: 'receive_direct_message_2',
+    //       payload: {
+    //         direct,
+    //         friends
+    //       }
+    //     });
+    //   }
+    // }
+
+    // if (viewRef.current === 'room') {
+    //   directRef.current.notifications++;
+    //   const direct = { ...directRef.current };
+
+    //   friendsRef.current[message.room_id].notifications++;
+    //   if (messagesRef.current[message.room_id]) {
+    //     messagesRef.current[message.room_id].push(message);
+    //   }
+    //   dispatch({
+    //     type: 'update_direct',
+    //     payload: {
+    //       direct
+    //     }
+    //   });
+    // }
   };
 
   const wsReceiveFriendRequest = async (request) => {
@@ -667,6 +850,8 @@ const Home = (props) => {
   };
 
   const wsReceiveFriendResponse = ({ friend, request }) => {
+    console.log('wsReceiveFriendResponse');
+    friend.notifications = 0;
     friendsRef.current[friend.id] = friend;
     const friends = Object.values(friendsRef.current);
     delete requestsRef.current[request.id];
@@ -681,8 +866,9 @@ const Home = (props) => {
   };
 
   const wsUpdateUsers = ({ user, room_id }) => {
+    console.log('wsUpdateUsers');
     if (!usersRef.current[room_id]) return;
-    usersRef.current[room_id][user.id] = user;
+    usersRef.current[room_id][user.id].online = user.online;
     const room = roomRef.current;
     if (room_id !== room.id) return;
     const users = Object.values(usersRef.current[room.id]);
@@ -695,8 +881,8 @@ const Home = (props) => {
   };
 
   const wsUpdateFriends = ({ friend }) => {
-    if (!usersRef.current.direct) return;
-    friendsRef.current[friend.id] = friend;
+    console.log('wsUpdateFriends', friend.online);
+    friendsRef.current[friend.id].online = friend.online;
     const friends = Object.values(friendsRef.current);
     dispatch({
       type: 'update_friends',
@@ -714,6 +900,7 @@ const Home = (props) => {
       socket.on('to:client:change_room', wsChangeRoom);
       socket.on('to:client:update_users', wsUpdateUsers);
       socket.on('to:client:change_direct', wsChangeDirect);
+      socket.on('to:client:change_direct2', wsChangeDirect2);
       socket.on('to:client:send_friend_request', wsReceiveFriendRequest);
       socket.on('to:client:receive_friend_response', wsReceiveFriendResponse);
       socket.on('to:client:update_friends', wsUpdateFriends);
@@ -732,6 +919,7 @@ const Home = (props) => {
         socket.off('to:client:change_room', wsChangeRoom);
         socket.off('to:client:update_users', wsUpdateUsers);
         socket.off('to:client:change_direct', wsChangeDirect);
+        socket.off('to:client:change_direct2', wsChangeDirect2);
         socket.off('to:client:send_friend_request', wsReceiveFriendRequest);
         socket.off('to:client:receive_friend_response', wsReceiveFriendResponse);
         socket.off('to:client:update_friends', wsUpdateFriends);
@@ -746,7 +934,6 @@ const Home = (props) => {
   }, [socket, myUser])
 
 
-
   const updateModal = (status) => {
     dispatch({
       type: 'update_modal',
@@ -756,9 +943,14 @@ const Home = (props) => {
     });
   };
 
+  useEffect(() => {
+    console.log('test1', state.friends);
+    console.log('test2', state.friend);
+  }, [state.friends, state.friend])
+
   return (
     <div className={styles.container}>
-      <Sidebar changeDirect={changeDirect} rooms={state.rooms} room={state.room} changeRoom={changeRoom} updateModal={updateModal} />
+      <Sidebar direct={state.direct} changeDirect={changeDirect} rooms={state.rooms} room={state.room} changeRoom={changeRoom} updateModal={updateModal} />
       {state.view === 'room' ?
       <Room
         myUser={myUser}

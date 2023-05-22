@@ -109,17 +109,12 @@
 
 .friend_left {
   position: relative;
+  /* width: 20%; */
 }
 
 .friend_img {
   border-radius: 50%;
   margin-right: 5px;
-}
-
-.friend_text {
-  margin-left: 5px;
-  font-size: 15px;
-  letter-spacing: 0.5px;
 }
 
 .friend_bubble {
@@ -144,4 +139,31 @@
 
 .friend.online .friend_bubble_color {
   background-color: #209D55;
+}
+
+
+.friend_right {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 5px;
+}
+
+.friend_username {
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.friend_notifications {
+  /* position: absolute; */
+  width: 30px;
+  /* bottom: -4px; */
+  /* right: -3px; */
+  padding: 2px 4px;
+  background-color: #f23f42;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
 }

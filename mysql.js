@@ -64,8 +64,15 @@ const getChannels = async (roomIds) => {
   return data[0];
 };
 
+// const getFriends = async (user_id) => {
+//   const queryString = 'SELECT friends.room_id as id, friends.other_id as user_id, users.username, users.image FROM friends INNER JOIN users ON friends.other_id = users.id WHERE friends.user_id = ?';
+//   const queryArgs = [user_id];
+//   const data = await connection.query(queryString, queryArgs);
+//   return data[0];
+// };
+
 const getFriends = async (user_id) => {
-  const queryString = 'SELECT friends.room_id as id, friends.other_id as user_id, users.username, users.image FROM friends INNER JOIN users ON friends.other_id = users.id WHERE friends.user_id = ?';
+  const queryString = 'SELECT friends.other_id as id, friends.room_id, users.username, users.image FROM friends INNER JOIN users ON friends.other_id = users.id WHERE friends.user_id = ?';
   const queryArgs = [user_id];
   const data = await connection.query(queryString, queryArgs);
   return data[0];

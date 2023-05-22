@@ -4,13 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = (props) => {
-  const { rooms, room } = props;
+  const { direct, rooms, room } = props;
   const { changeDirect, changeRoom, updateModal } = props;
 
   return (
     <div className={styles.container}>
       <div onClick={changeDirect} className={styles.direct}>
         <Image className={styles.direct_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='55' height='55' />
+        {direct.notifications !== 0 && <div className={styles.direct_notifications}>{direct.notifications}</div>}
       </div>
       <div className={styles.line}></div>
       <div className={styles.rooms}>

@@ -38,6 +38,8 @@ const Friends = (props) => {
 const Friend = (props) => {
   const { friend, changeFriend } = props;
   const css = friend.online ? `${styles.friend} ${styles.online}` : styles.friend;
+  console.log('friend', friend);
+
 
   return (
     <div onClick={() => { changeFriend(friend.id); }} className={css}>
@@ -47,7 +49,10 @@ const Friend = (props) => {
           <div className={styles.friend_bubble_color}></div>
         </div>
       </div>
-      <div className={styles.friend_text}>{friend.username} {friend.notifications !== 0 && friend.notifications}</div>
+      <div className={styles.friend_right}>
+        <div className={styles.friend_username}>{friend.username}</div>
+        {friend.notifications !== 0 && <div className={styles.friend_notifications}>{friend.notifications}</div>}
+      </div>
     </div>
   );
 };
@@ -55,7 +60,7 @@ const Friend = (props) => {
 const Selected = (props) => {
   const { friend } = props;
   const css = friend.online ? `${styles.friend} ${styles.online} ${styles.active}` : `${styles.friend} ${styles.active}`;
-
+  console.log('friend', friend);
   return (
     <div className={css}>
       <div className={styles.friend_left}>
@@ -64,7 +69,10 @@ const Selected = (props) => {
           <div className={styles.friend_bubble_color}></div>
         </div>
       </div>
-      <div className={styles.friend_text}>{friend.username} {friend.notifications !== 0 && friend.notifications}</div>
+      <div className={styles.friend_right}>
+        <div className={styles.friend_username}>{friend.username}</div>
+        {!!friend.notifications && <div className={styles.friend_notifications}>{friend.notifications}</div>}
+      </div>
     </div>
   );
 };
