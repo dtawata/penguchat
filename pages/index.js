@@ -469,11 +469,12 @@ const Home = (props) => {
 
   const wsReceiveRoomMessage = ({ message }) => {
     console.log('wsReceiveRoomMessage');
+    console.log(message);
     const view = viewRef.current;
     const room = roomRef.current;
     const channel = channelRef.current;
     if (messagesRef.current[message.room_id]) {
-      messagesRef.current[room.id][channel.id].push(message);
+      messagesRef.current[message.room_id][message.channel_id].push(message);
     }
     if (view === 'direct' || view === 'room' && message.room_id !== room.id ) {
       roomsRef.current[message.room_id].notifications++;
