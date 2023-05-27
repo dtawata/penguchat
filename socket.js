@@ -73,6 +73,30 @@ io.on('connection', async (socket) => {
 
 
   // Checked START
+  socket.on('to:server:change_direct', async (friends) => {
+    const onlineUserIds = [];
+    for (const friend of friends) {
+      const sockets = await io.in(`direct:${friend.id}`).fetchSockets();
+      if (sockets.length) onlineUserIds.push(sockets[0].user_id);
+    }
+    socket.emit('to:client:change_direct', { onlineUserIds });
+  });
+
+  socket.on('to:server:change_direct2', async ({ friends, requests, invites }) => {
+    const onlineUserIds = [];
+    for (const friend of friends) {
+      const sockets = await io.in(`direct:${friend.id}`).fetchSockets();
+      if (sockets.length) onlineUserIds.push(sockets[0].user_id);
+    }
+    socket.emit('to:client:change_direct2', { requests, invites, onlineUserIds });
+  });
+  // Checked END
+
+
+
+
+
+
   socket.on('to:server:respond_room_invite', async ({ myUser, invite, status }) => {
     if (status) {
       await Promise.all([addJoinedRoom({
@@ -93,7 +117,6 @@ io.on('connection', async (socket) => {
     await updateRoomInvite(invite.id);
     socket.emit('to:client:update_room_invite', invite.id);
   });
-  // Checked END
 
 
 
@@ -126,23 +149,8 @@ io.on('connection', async (socket) => {
     socket.emit('to:client:create_room', { wsRoom: room, wsChannel: channel });
   });
 
-  socket.on('to:server:change_direct', async (friends) => {
-    const onlineUserIds = [];
-    for (const friend of friends) {
-      const sockets = await io.in(`direct:${friend.id}`).fetchSockets();
-      if (sockets.length) onlineUserIds.push(sockets[0].user_id);
-    }
-    socket.emit('to:client:change_direct', { onlineUserIds });
-  });
 
-  socket.on('to:server:change_direct2', async ({ friends, requests, invites }) => {
-    const onlineUserIds = [];
-    for (const friend of friends) {
-      const sockets = await io.in(`direct:${friend.id}`).fetchSockets();
-      if (sockets.length) onlineUserIds.push(sockets[0].user_id);
-    }
-    socket.emit('to:client:change_direct2', { onlineUserIds, requests, invites });
-  });
+
 
   socket.on('to:server:room:send_message', async (message) => {
     message.created_at = new Date();
