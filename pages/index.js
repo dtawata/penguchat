@@ -8,7 +8,7 @@ import Room from '@/components/room/Room';
 import Direct from '@/components/direct/Direct';
 import Modal from '@/components/modal/Modal';
 
-import { initializeFriends, getDirectMessages, initializeRooms, initializeChannels, updateFriendsStatus, updateRoomsChannels, getMessages, getUsers, initializeRequests, initializeInvites, initializeUsers } from '@/lib/helper/helper';
+import { initializeRooms, initializeChannels, initializeUsers, initializeFriends, initializeRequests, initializeInvites, getMessages, getDirectMessages, getUsers, updateFriendsStatus, updateRoomsChannels  } from '@/lib/helper';
 
 const reducer = (state, action) => {
   const { view, modal, direct, rooms, room, channels, channel, friends, friend, messages, users, requests, invites } = action.payload;

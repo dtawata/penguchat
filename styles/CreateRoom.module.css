@@ -1,4 +1,91 @@
-.container {
+
+
+.title {
+  font-size: 24px;
+  text-align: center;
+}
+
+.text {
+  margin: 15px 0;
+  color: #4d5057;
+  font-size: 15px;
+  text-align: center;
+}
+
+.title2 {
+  margin-bottom: 5px;
+  color: #4d5057;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 25px;
+  height: 80%;
+}
+
+.input {
+  width: 100%;
+  margin: 10px auto;
+  padding: 15px 10px;
+  border: none;
+  border-radius: 4px;
+  color: #444;
+  font-size: 14px;
+  background-color: #E2E5E8;
+  outline: none;
+  color: #303338;
+}
+
+.bottom {
+  margin-top: 10px;
+  padding: 12px 20px;
+  background-color: #F2F3F5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.back {
+  cursor: pointer;
+}
+
+.icons {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.icon {
+  margin: 0 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.button {
+  width: 100px;
+  padding: 8px 5px;
+  border: none;
+  border-radius: 4px;
+  color: #FCFCFE;
+  cursor: pointer;
+  font-size: 14px;
+  outline: none;
+  background-color: #5765f2;
+}
+
+/* .container {
   position: absolute;
   background-color: rgba(0,0,0,0.5);
   color: #fff;
@@ -6,9 +93,9 @@
   height: 100vh;
   display: flex;
   justify-content: center;
-}
+} */
 
-.modal {
+/* .modal {
   background-color: #fff;
   width: 700px;
   height: 450px;
@@ -17,31 +104,4 @@
   padding: 10px 15px;
   border-radius: 4px;
 }
-
-.form {
-  display: flex;
-  flex-direction: column;
-}
-
-.input {
-  width: 80%;
-  margin: 10px auto;
-  padding: 15px 10px;
-  border: none;
-  border-radius: 4px;
-  color: #444;
-  font-size: 18px;
-  /* outline: none; */
-}
-
-.button {
-  width: 80%;
-  margin: 10px auto;
-  padding: 15px 10px;
-  border: none;
-  border-radius: 4px;
-  color: #444;
-  cursor: pointer;
-  font-size: 18px;
-  outline: none;
-}
+ */

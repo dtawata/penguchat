@@ -6,21 +6,30 @@
   color: #dcdcdc;
   font-size: 14px;
   letter-spacing: 0.5px;
+  padding: 30px;
+}
+
+.title {
+  margin-bottom: 15px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .requests {
-  width: 60%;
+  margin-bottom: 20px;
 }
 
 .request {
-  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 60%;
+  margin-bottom: 10px;
   padding: 15px;
   border-radius: 4px;
   background-color: #2E3136;
   color: #d3d3d3;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .request_left {
@@ -49,19 +58,19 @@
 }
 
 .request_accept {
-  background-color: green;
   margin-right: 10px;
   padding: 3px 10px;
+  background-color: #248046;
   border-radius: 4px;
   cursor: pointer;
   text-align: center;
 }
 
 .request_reject {
-  background-color: green;
-  cursor: pointer;
   padding: 3px 10px;
+  background-color: #248046;
   border-radius: 4px;
+  cursor: pointer;
   text-align: center;
 }
 /* .container {

@@ -5,7 +5,6 @@ const Modal = (props) => {
   const { requests, updateModal, sendFriendRequestResponse } = props;
 
   return (
-    // <div onClick={closeFriends} className={styles.container}>
     <div className={styles.container}>
       <div className={styles.modal}>
         <div onClick={() => { updateModal(false); }}>Close</div>

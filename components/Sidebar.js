@@ -22,7 +22,6 @@ const Sidebar = (props) => {
       <div onClick={() => { updateModal('room'); }} className={styles.icon_container}>
         <FontAwesomeIcon icon={faPlus} className={styles.icon} />
       </div>
-      <div onClick={() => { updateModal('notification'); }}>Open</div>
     </div>
   );
 };

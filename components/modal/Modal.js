@@ -1,8 +1,8 @@
 import styles from '@/styles/Modal.module.css';
-// import styles from '@/styles/CreateChannel.module.css';
-// import styles from '@/styles/CreateRoom.module.css';
-// import styles from '@/styles/InviteFriend.module.css';
 import { useState, useEffect } from 'react';
+import CreateRoom from './CreateRoom';
+import CreateChannel from './CreateChannel';
+import InviteFriend from './InviteFriend';
 
 const Modal = (props) => {
   const { modal } = props;
@@ -28,59 +28,19 @@ const Modal = (props) => {
       setContent('');
       sendRoomInvite(username);
     } else {
-      console.log('else', content);
+      console.log('submitContent: error');
     }
   };
-
-  useEffect(() => {
-    console.log('modal', modal);
-  }, [modal])
 
   return (
     <div className={styles.container}>
       <div className={styles.modal}>
-        <div onClick={() => { updateModal(false) }}>Close</div>
+        <div onClick={() => { updateModal(false) }} className={styles.close}>X</div>
         {modal === 'room' && <CreateRoom content={content} updateContent={updateContent} submitContent={submitContent} />}
         {modal === 'channel' && <CreateChannel content={content} updateContent={updateContent} submitContent={submitContent} />}
         {modal === 'room_invite' && <InviteFriend content={content} updateContent={updateContent} submitContent={submitContent} />}
       </div>
     </div>
-  );
-};
-
-const CreateRoom = (props) => {
-  const { content } = props;
-  const { updateContent, submitContent } = props;
-
-  return (
-    <form onSubmit={submitContent} className={styles.form}>
-      <input onChange={updateContent} className={styles.input} type='text' value={content} placeholder='Room Name' />
-      <button className={styles.button} type='submit'>Submit</button>
-    </form>
-  );
-};
-
-const CreateChannel = (props) => {
-  const { content } = props;
-  const { updateContent, submitContent } = props;
-
-  return (
-    <form onSubmit={submitContent} className={styles.form}>
-      <input onChange={updateContent} className={styles.input} type='text' value={content} placeholder='Channel Name' />
-      <button className={styles.button} type='submit'>Submit</button>
-    </form>
-  );
-};
-
-const InviteFriend = (props) => {
-  const { content } = props;
-  const { updateContent, submitContent } = props;
-
-  return (
-    <form onSubmit={submitContent} className={styles.form}>
-      <input onChange={updateContent} className={styles.input} type='text' value={content} placeholder='Friend' />
-      <button className={styles.button} type='submit'>Send Invite</button>
-    </form>
   );
 };
 

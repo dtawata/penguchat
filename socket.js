@@ -219,10 +219,12 @@ io.on('connection', async (socket) => {
 
   socket.on('to:server:send_room_invite', async ({ room, requester, username }) => {
     const requestee = await getUser(username);
+    console.log('requestee', requestee);
     const { insertId } = await addRoomInvite({
       requestee_id: requestee.id,
       requester_id: requester.id,
       room_id: room.id,
+
       pending: 1
     });
     const invite = {

@@ -2,9 +2,11 @@ import styles from '@/styles/Direct.module.css';
 import { Fragment, useState } from 'react';
 import Chat from './Chat';
 import Bar from './Bar';
+import Bar2 from './Bar2';
 import Friends from './Friends';
 import Default from './Default';
-import Pending from './Pending';
+import Online from './Online';
+import Requests from './Requests';
 
 const Direct = (props) => {
   const { myUser, friends, friend, messages, content, requests, invites } = props;
@@ -28,13 +30,13 @@ const Direct = (props) => {
       <div className={styles.main}>
         <Bar updateDirectView={updateDirectView} updateAddFriend={updateAddFriend} />
         <div className={styles.flex}>
-          {directView === 'all' ?
-          <Default friends={friends} changeFriend={changeFriend} addFriend={addFriend} sendFriendRequest={sendFriendRequest} /> :
-          <Pending requests={requests} invites={invites} respondRoomInvite={respondRoomInvite} sendFriendRequest={sendFriendRequest} sendFriendResponse={sendFriendResponse} addFriend={addFriend} updateModal={updateModal} />}
+          {directView === 'all' && <Default friends={friends} changeFriend={changeFriend} addFriend={addFriend} sendFriendRequest={sendFriendRequest} />}
+          {directView === 'online' && <Online friends={friends} changeFriend={changeFriend} addFriend={addFriend} sendFriendRequest={sendFriendRequest} />}
+          {directView === 'pending' && <Requests requests={requests} invites={invites} respondRoomInvite={respondRoomInvite} sendFriendRequest={sendFriendRequest} sendFriendResponse={sendFriendResponse} addFriend={addFriend} updateModal={updateModal} />}
         </div>
       </div> :
       <div className={styles.main}>
-        <Bar updateDirectView={updateDirectView} />
+        <Bar2 friend={friend} />
         <div className={styles.flex}>
           <Chat content={content} updateContent={updateContent} messages={messages} sendMessage={sendMessage} />
         </div>

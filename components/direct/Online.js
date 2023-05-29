@@ -1,12 +1,13 @@
 import styles from '@/styles/Default.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-const Default = (props) => {
+const Online = (props) => {
   const { friends, addFriend } = props;
   const { changeFriend, sendFriendRequest } = props;
 
   const [content, setContent] = useState('');
+  const [count, setCount] = useState(0);
 
   const updateContent = (e) => {
     setContent(e.target.value);
@@ -19,6 +20,14 @@ const Default = (props) => {
     sendFriendRequest(username);
   };
 
+  useEffect(() => {
+    let temp = 0;
+    friends.forEach((friend) => {
+      friend.online && temp++;
+    });
+    setCount(temp);
+  }, [friends])
+
   return (
     <div className={styles.container}>
       {addFriend &&
@@ -29,9 +38,9 @@ const Default = (props) => {
         </form>
       </div>}
       <div className={styles.friends}>
-        <h3 className={styles.friends_count}>All Friends - {friends.length}</h3>
+        <h3 className={styles.friends_count}>Online - {count}</h3>
         {friends.map((friend) => {
-          return <Friend friend={friend} changeFriend={changeFriend} key={friend.id} />
+          if (friend.online) return <Friend friend={friend} changeFriend={changeFriend} key={friend.id} />
         })}
       </div>
     </div>
@@ -53,4 +62,4 @@ const Friend = (props) => {
   );
 };
 
-export default Default;
+export default Online;

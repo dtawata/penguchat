@@ -12,7 +12,7 @@ const Room = (props) => {
     <Fragment>
       <Channels myUser={myUser} room={room} channels={channels} channel={channel} changeChannel={changeChannel} updateModal={updateModal} />
       <div className={styles.main}>
-        <Bar />
+        <Bar channel={channel} />
         <div className={styles.flex}>
           <Chat content={content} updateContent={updateContent} messages={messages} sendMessage={sendMessage} />
           <Users users={users} changeFriend={changeFriend} />

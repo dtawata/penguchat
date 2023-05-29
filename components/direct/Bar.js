@@ -7,7 +7,7 @@ const Bar = (props) => {
   return (
     <div className={styles.container}>
       <div className={styles.flex}>
-        <div className={styles.option}>Online</div>
+        <div onClick={() => { updateDirectView('online'); }} className={styles.option}>Online</div>
         <div onClick={() => { updateDirectView('all'); }} className={styles.option}>All</div>
         <div onClick={() => { updateDirectView('pending'); }} className={styles.option}>Pending</div>
         <div onClick={updateAddFriend} className={styles.add_friend}>Add Friend</div>

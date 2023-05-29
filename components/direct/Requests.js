@@ -2,7 +2,7 @@ import styles from '@/styles/Pending.module.css';
 import { useState } from 'react';
 import Image from 'next/image';
 
-const Pending = (props) => {
+const Requests = (props) => {
   const { requests, invites, addFriend } = props;
   const { sendFriendResponse, sendFriendRequest, respondRoomInvite, updateModal } = props;
 
@@ -21,6 +21,7 @@ const Pending = (props) => {
 
   return (
     <div className={styles.container}>
+      {(requests.length === 0 && invites.length === 0) && <h3>There are no pending friend requests or room invites</h3>}
       {addFriend &&
       <div className={styles.add_friend}>
         <h3 className={styles.title}>Add Friend</h3>
@@ -28,18 +29,18 @@ const Pending = (props) => {
           <input onChange={updateContent} className={styles.input} type='text' value={content} />
         </form>
       </div>}
-      <div className={styles.requests}>
+      {requests.length > 0 && <div className={styles.requests}>
         <h3 className={styles.title}>Friend Requests</h3>
         {requests.map((request) => {
           return <Request request={request} sendFriendResponse={sendFriendResponse} key={request.id} />
         })}
-      </div>
-      <div className={styles.invites}>
+      </div>}
+      {invites.length > 0 && <div className={styles.invites}>
         <h3 className={styles.title}>Room Invites</h3>
         {invites.map((invite) => {
           return <Invite invite={invite} respondRoomInvite={respondRoomInvite} sendFriendResponse={sendFriendResponse} key={invite.id} />
         })}
-      </div>
+      </div>}
     </div>
   );
 };
@@ -78,4 +79,4 @@ const Invite = (props) => {
   );
 };
 
-export default Pending;
+export default Requests;
