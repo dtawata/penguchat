@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS untitled_chat;
-CREATE DATABASE untitled_chat;
-USE untitled_chat;
+DROP DATABASE IF EXISTS chat;
+CREATE DATABASE chat;
+USE chat;
 
 CREATE TABLE users (
   id INT NOT NULL auto_increment,

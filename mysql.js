@@ -1,12 +1,22 @@
+require('dotenv').config();
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'untitled_chat',
-  // connectionLimit: 100
+const connection = mysql.createPool({
+  host: process.env.host,
+  user: process.env.user,
+  password: process.env.password,
+  database: process.env.database,
+  waitForConnections: true,
+  connectionLimit: 100
 }).promise();
+
+// const connection = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: '',
+//   database: 'untitled_chat',
+//   // connectionLimit: 100
+// }).promise();
 
 // CHECKED START
 const getRoomById = async (room_id) => {
