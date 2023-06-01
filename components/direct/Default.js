@@ -44,7 +44,7 @@ const Friend = (props) => {
 
   return (
     <div onClick={() => { changeFriend(friend.id); }} className={styles.friend}>
-      <Image className={styles.friend_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='40' height='40' />
+      <Image className={styles.friend_img} src={`https://penguchat-users.s3.amazonaws.com/${friend.image}`} alt='' width='40' height='40' />
       <div className={styles.friend_right}>
         <div className={styles.friend_username}>{friend.username}</div>
         <div className={styles.friend_status}>{friend.online ? 'Online' : 'Offline'}</div>

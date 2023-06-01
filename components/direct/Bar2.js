@@ -8,10 +8,10 @@ const Bar = (props) => {
   return (
     <div className={styles.container}>
       <div className={styles.flex}>
-        <Image className={styles.image} src={friend.image} alt='' width='25' height='25' />
+        <Image className={styles.image} src={`https://penguchat-users.s3.amazonaws.com/${friend.image}`} alt='' width='25' height='25' />
         <div className={styles.username}>{friend.username}</div>
       </div>
-      <div onClick={signOut} className={styles.sign_out}>Sign Out</div>
+      <div onClick={() => { signOut({ callbackUrl: '/login' }); }} className={styles.sign_out}>Sign Out</div>
     </div>
   );
 };

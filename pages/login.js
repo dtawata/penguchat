@@ -6,7 +6,8 @@ import Link from 'next/link';
 const Login = (props) => {
   const [credentials, setCredentials] = useState({
     username: '',
-    password: ''
+    password: '',
+    callbackUrl: '/'
   });
 
   const handleSubmit = async (e) => {

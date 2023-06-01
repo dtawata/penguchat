@@ -10,7 +10,7 @@ const Sidebar = (props) => {
   return (
     <div className={styles.container}>
       <div onClick={changeDirect} className={styles.direct}>
-        <Image className={styles.direct_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='55' height='55' />
+        <Image className={styles.direct_img} src='https://penguchat-room.s3.amazonaws.com/default.jpg' alt='' width='55' height='55' />
         {direct.notifications !== 0 && <div className={styles.direct_notifications}>{direct.notifications}</div>}
       </div>
       <div className={styles.line}></div>
@@ -31,7 +31,7 @@ const Room = (props) => {
 
   return (
     <div onClick={() => { changeRoom(room.id); }} className={styles.room}>
-      <Image className={styles.room_img} src={room.image} alt='' width='55' height='55' />
+      <Image className={styles.room_img} src={`https://penguchat-room.s3.amazonaws.com/${room.image}`} alt='' width='55' height='55' />
       {room.notifications !== 0 && <div className={styles.room_notifications}>{room.notifications}</div>}
     </div>
   );

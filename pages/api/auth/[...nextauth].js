@@ -30,6 +30,7 @@ export default NextAuth({
     encryption: true
   },
   pages: {
-    signIn: '/login'
+    signIn: '/login',
+    signOut: '/login'
   }
 });

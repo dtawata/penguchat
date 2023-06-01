@@ -10,7 +10,7 @@ const MyUser = (props) => {
     <div className={styles.container}>
       <div className={styles.myUser}>
         <div className={styles.myUser_left}>
-          <Image className={styles.myUser_img} src={myUser.image} alt='' width='33' height='33' />
+          <Image className={styles.myUser_img} src={`https://penguchat-users.s3.amazonaws.com/${myUser.image}`} alt='' width='33' height='33' />
           <div className={styles.myUser_mid}>
             <div className={styles.myUser_username}>{myUser.username}</div>
             <div className={styles.myUser_numbers}>#3344</div>

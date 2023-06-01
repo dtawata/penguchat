@@ -20,7 +20,6 @@ io.use((socket, next) => {
 });
 
 io.on('connection', async (socket) => {
-  console.log('connecting', socket.username);
   socket.join(`direct:${socket.user_id}`);
   const [rooms, friends] = await Promise.all([getRooms(socket.user_id), getFriends(socket.user_id)]);
   for (const friend of friends) {
@@ -136,7 +135,7 @@ io.on('connection', async (socket) => {
     const room = {
       id: insertId,
       name: room_name,
-      image: '/img/default.jpg',
+      image: 'default.jpg',
       created_by: myUser.id
     }
     const temp = await addChannel('lobby', insertId);
@@ -219,7 +218,6 @@ io.on('connection', async (socket) => {
 
   socket.on('to:server:send_room_invite', async ({ room, requester, username }) => {
     const requestee = await getUser(username);
-    console.log('requestee', requestee);
     const { insertId } = await addRoomInvite({
       requestee_id: requestee.id,
       requester_id: requester.id,

@@ -7,7 +7,7 @@ const Bar = (props) => {
   return (
     <div className={styles.container}>
       <h3 className={styles.title}># {channel.name}</h3>
-      <div onClick={signOut} className={styles.sign_out}>Sign Out</div>
+      <div onClick={() => { signOut({ callbackUrl: '/login' }); }} className={styles.sign_out}>Sign Out</div>
     </div>
   );
 };

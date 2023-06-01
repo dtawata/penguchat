@@ -19,7 +19,8 @@ const Register = (props) => {
       const user = await axios.post('/api/auth/register', credentials);
       signIn('credentials', {
         username: credentials.username,
-        password: credentials.password
+        password: credentials.password,
+        callbackUrl: '/'
       });
     } catch(error) {
       console.error('register.js error', error.response.data);

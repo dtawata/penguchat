@@ -51,7 +51,7 @@ const Request = (props) => {
   return (
     <div className={styles.request}>
       <div className={styles.request_left}>
-        <Image className={styles.request_image} src={request.image} alt='' width='30' height='30' />
+        <Image className={styles.request_image} src={`https://penguchat-users.s3.amazonaws.com/${request.image}`} alt='' width='30' height='30' />
         <div className={styles.request_message}><span className={styles.request_username}>{request.username}</span> has sent a friend request.</div>
       </div>
       <div className={styles.request_buttons}>
@@ -68,7 +68,7 @@ const Invite = (props) => {
   return (
     <div className={styles.request}>
       <div className={styles.request_left}>
-        <Image className={styles.request_image} src={invite.room_image} alt='' width='30' height='30' />
+        <Image className={styles.request_image} src={`https://penguchat-room.s3.amazonaws.com/${invite.room_image}`} alt='' width='30' height='30' />
         <div className={styles.request_message}><span className={styles.request_username}>{invite.requester_username}</span> has invited you to join <span className={styles.request_username}>{invite.room_name}</span>.</div>
       </div>
       <div className={styles.request_buttons}>

@@ -10,14 +10,14 @@ CREATE TABLE users (
   lname VARCHAR(255) NOT NULL,
   username VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  image VARCHAR(255) DEFAULT '/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg',
+  image VARCHAR(255) DEFAULT 'user1.jpg',
   PRIMARY KEY (id)
 );
 
 CREATE TABLE rooms (
   id INT NOT NULL auto_increment,
   name VARCHAR(255) NOT NULL,
-  image VARCHAR(255) NULL DEFAULT '/img/default.jpg',
+  image VARCHAR(255) NULL DEFAULT 'default.jpg',
   created_by INT,
   PRIMARY KEY (id),
   FOREIGN KEY (created_by) REFERENCES users(id)

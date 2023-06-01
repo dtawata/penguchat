@@ -38,13 +38,11 @@ const Friends = (props) => {
 const Friend = (props) => {
   const { friend, changeFriend } = props;
   const css = friend.online ? `${styles.friend} ${styles.online}` : styles.friend;
-  console.log('friend', friend);
-
 
   return (
     <div onClick={() => { changeFriend(friend.id); }} className={css}>
       <div className={styles.friend_left}>
-        <Image className={styles.friend_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='30' height='30' />
+        <Image className={styles.friend_img} src={`https://penguchat-users.s3.amazonaws.com/${friend.image}`} alt='' width='30' height='30' />
         <div className={styles.friend_bubble}>
           <div className={styles.friend_bubble_color}></div>
         </div>
@@ -60,11 +58,11 @@ const Friend = (props) => {
 const Selected = (props) => {
   const { friend } = props;
   const css = friend.online ? `${styles.friend} ${styles.online} ${styles.active}` : `${styles.friend} ${styles.active}`;
-  console.log('friend', friend);
+
   return (
     <div className={css}>
       <div className={styles.friend_left}>
-        <Image className={styles.friend_img} src={friend.image} alt='' width='30' height='30' />
+        <Image className={styles.friend_img} src={`https://penguchat-users.s3.amazonaws.com/${friend.image}`} alt='' width='30' height='30' />
         <div className={styles.friend_bubble}>
           <div className={styles.friend_bubble_color}></div>
         </div>

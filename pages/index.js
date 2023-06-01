@@ -253,7 +253,6 @@ const Home = (props) => {
   };
 
   const wsInitialize = async ({ wsRooms, wsChannels, wsFriends, wsRequests, wsInvites, onlineUserIds }) => {
-    console.log('wsIntialize');
     const friends = initializeFriends({ friends: wsFriends, friendsRef });
     const friend = friendRef.current = { id: 'default' };
     const requests = initializeRequests({ requests: wsRequests, requestsRef });
@@ -323,7 +322,6 @@ const Home = (props) => {
   };
 
   const wsChangeDirect = ({ onlineUserIds }) => {
-    console.log('wsChangeDirect');
     usersRef.current.direct = true;
     const view = viewRef.current = 'direct';
     const friends = updateFriendsStatus({ friendsRef, onlineUserIds });
@@ -366,7 +364,6 @@ const Home = (props) => {
   };
 
   const wsChangeRoom = async ({ room_id, onlineUserIds }) => {
-    console.log('wsChangeRoom');
     const view = viewRef.current = 'room';
     const { rooms, room, channels, channel } = updateRoomsChannels({ roomsRef, roomRef, room_id, channelsRef, channelRef });
     const messages = await getMessages({ room_id: room.id, channel_id: channel.id, messagesRef });
@@ -442,7 +439,6 @@ const Home = (props) => {
   };
 
   const sendMessage = (e) => {
-    console.log('sendMessage');
     e.preventDefault();
     if (!content) return;
     if (state.view === 'room') {
@@ -468,8 +464,6 @@ const Home = (props) => {
   };
 
   const wsReceiveRoomMessage = ({ message }) => {
-    console.log('wsReceiveRoomMessage');
-    console.log(message);
     const view = viewRef.current;
     const room = roomRef.current;
     const channel = channelRef.current;
@@ -512,7 +506,6 @@ const Home = (props) => {
   };
 
   const wsReceiveDirectMessage = ({ message }) => {
-    console.log('wsReceiveDirectMessage');
     const view = viewRef.current;
     const friend = friendRef.current;
     if (messagesRef.current[message.room_id]) {
@@ -673,7 +666,6 @@ const Home = (props) => {
   };
 
   const wsReceiveFriendResponse = ({ friend, request }) => {
-    console.log('wsReceiveFriendResponse');
     friend.notifications = 0;
     friendsRef.current[friend.id] = friend;
     const friends = Object.values(friendsRef.current);
@@ -700,7 +692,6 @@ const Home = (props) => {
   };
 
   const wsUpdateUsers = ({ user, room_id }) => {
-    console.log('wsUpdateUsers');
     if (!usersRef.current[room_id]) return;
     usersRef.current[room_id][user.id].online = user.online;
     const room = roomRef.current;
@@ -715,7 +706,6 @@ const Home = (props) => {
   };
 
   const wsUpdateFriends = ({ friend }) => {
-    console.log('wsUpdateFriends', friend.online);
     friendsRef.current[friend.id].online = friend.online;
     const friends = Object.values(friendsRef.current);
     dispatch({

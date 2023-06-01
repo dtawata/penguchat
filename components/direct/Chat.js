@@ -37,7 +37,7 @@ const Message = (props) => {
   return (
     <div className={styles.message}>
       <div className={styles.message_left}>
-        <Image className={styles.message_image} src={message.image} alt='' width='40' height='40' />
+        <Image className={styles.message_image} src={`https://penguchat-users.s3.amazonaws.com/${message.image}`} alt='' width='40' height='40' />
       </div>
       <div className={styles.message_right}>
         <div className={styles.flex}>

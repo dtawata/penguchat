@@ -28,7 +28,7 @@ const Online = (props) => {
     // <div onClick={() => { changeFriend(friend); }} className={css}>
     <div className={css}>
       <div className={styles.user_left}>
-        <Image className={styles.user_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='30' height='30' />
+        <Image className={styles.user_img} src={`https://penguchat-users.s3.amazonaws.com/${user.image}`} alt='' width='30' height='30' />
         <div className={styles.user_bubble}>
           <div className={styles.user_bubble_color}></div>
         </div>
@@ -46,7 +46,7 @@ const Offline = (props) => {
     // <div onClick={() => { changeFriend(friend); }} className={css}>
     <div className={css}>
       <div className={styles.user_left}>
-        <Image className={styles.user_img} src='/img/kier-in-sight-2iy6ohGsGAc-unsplash.jpg' alt='' width='30' height='30' />
+        <Image className={styles.user_img} src={`https://penguchat-users.s3.amazonaws.com/${user.image}`} alt='' width='30' height='30' />
         <div className={styles.user_bubble}>
           <div className={styles.user_bubble_color}></div>
         </div>
