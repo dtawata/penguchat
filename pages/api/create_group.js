@@ -6,7 +6,7 @@ const Handler = async (req, res) => {
   const room = {
     id: insertId,
     name: group_name,
-    image: '/img/default.jpg',
+    image: 'default.jpg',
     created_by: myUser.id
   }
   res.send(room);

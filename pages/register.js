@@ -16,11 +16,12 @@ const Register = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log('hello trying')
       const user = await axios.post('/api/auth/register', credentials);
       signIn('credentials', {
         username: credentials.username,
         password: credentials.password,
-        callbackUrl: '/'
+        callbackUrl: 'http://ec2-3-95-38-165.compute-1.amazonaws.com'
       });
     } catch(error) {
       console.error('register.js error', error.response.data);

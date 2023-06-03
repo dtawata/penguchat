@@ -7,7 +7,7 @@ const Login = (props) => {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
-    callbackUrl: '/'
+    callbackUrl: 'http://ec2-3-95-38-165.compute-1.amazonaws.com'
   });
 
   const handleSubmit = async (e) => {

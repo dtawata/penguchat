@@ -4,6 +4,7 @@ import { verifyPassword } from '../../../lib/bcrypt';
 import { getPassword } from '../../../lib/mysql';
 
 export default NextAuth({
+  site: process.env.NEXTAUTH_URL,
   providers: [
     CredentialsProvider({
     id: 'credentials',
@@ -24,6 +25,18 @@ export default NextAuth({
       }
     }})
   ],
+  // callbacks: {
+  //   async redirect({ url, baseUrl }) {
+  //     console.log('redirect url', url)
+  //     console.log('redirect base', baseUrl);
+  //     return 'http://ec2-3-95-38-165.compute-1.amazonaws.com';
+  //     // Allows relative callback URLs
+  //     if (url.startsWith("/")) return `${baseUrl}${url}`
+  //     // Allows callback URLs on the same origin
+  //     else if (new URL(url).origin === baseUrl) return url
+  //     return baseUrl
+  //   }
+  // },
   secret: 'test',
   jwt: {
     secret: 'test',

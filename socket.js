@@ -117,18 +117,6 @@ io.on('connection', async (socket) => {
     socket.emit('to:client:update_room_invite', invite.id);
   });
 
-
-
-
-
-
-
-
-
-
-
-
-
   socket.on('to:server:create_room', async ({ myUser, room_name }) => {
     const { insertId } = await addRoom(room_name, myUser.id);
     await addJoinedRoom({ user_id: myUser.id, room_id: insertId });
@@ -273,7 +261,7 @@ io.on('connection', async (socket) => {
   });
 });
 
-const port = 3003;
+const port = 3010;
 server.listen(port, () => {
   console.log('Listening on http://localhost:' + port);
 });
