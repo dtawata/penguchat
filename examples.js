@@ -77,61 +77,11 @@ const direct = {
   content: 'dude'
 };
 
-
-// const connection = mysql.createConnection({
-// host: '127.0.0.1',
-// user: 'root',
-// password: '',
-// database: 'chat',
-// // connectionLimit: 100
-// }).promise();
-
-//const connection = mysql.createPool({
-//  host: 'chat-3.c5ry7cdnhvzm.us-east-1.rds.amazonaws.com',
-//  user: 'admin',
-//  password: 'CXaZ2SzgSrOk3q731ZPJ',
-//  database: 'chat',
-//  waitForConnections: true,
-//  connectionLimit: 100
-//}).promise();
-
-// const connection = mysql.createConnection({
-//   host: '127.0.0.1',
-//   user: 'root',
-//   password: '',
-//   database: 'chat'
-// }).promise();
-
-// const connection = mysql.createPool({
-//  host: process.env.host,
-//   user: process.env.user,
-//   password: process.env.password,
-//   database: process.env.database,
-//   waitForConnections: true,
-//   connectionLimit: 100
-// }).promise();
-
-// const connection = mysql.createPool({
-//   host: 'chat-3.c5ry7cdnhvzm.us-east-1.rds.amazonaws.com',
-//   user: 'admin',
-//   password: 'CXaZ2SzgSrOk3q731ZPJ',
-//   database: 'chat',
-//   waitForConnections: true,
-//   connectionLimit: 100
-// }).promise();
-
-// const connection = mysql.createConnection({
-//   host: '127.0.0.1',
-//   user: 'root',
-//   password: '',addUser
-//   database: 'chat'
-// }).promise();
-
-// const connection = mysql.createPool({
-//   host: "pengu-chat.c5ry7cdnhvzm.us-east-1.rds.amazonaws.com",
-//   user: "admin",
-//   password: "CXaZ2SzgSrOk3q731ZPJ",
-//   database: "chat",
-//   waitForConnections: true,
-//   connectionLimit: 100
-// }).promise();
+const connection = mysql.createPool({
+  host: process.env.host,
+  user: process.env.user,
+  password: process.env.password,
+  database: process.env.database,
+  waitForConnections: true,
+  connectionLimit: 100
+}).promise();
