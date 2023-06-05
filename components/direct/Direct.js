@@ -10,7 +10,7 @@ import Requests from './Requests';
 
 const Direct = (props) => {
   const { myUser, friends, friend, messages, content, requests, invites } = props;
-  const { changeFriend, sendMessage, updateContent, sendFriendRequest, sendFriendResponse, respondRoomInvite, updateModal } = props;
+  const { changeFriend, sendMessage, updateContent, sendFriendRequest, respondFriendRequest, respondRoomInvite, updateModal } = props;
 
   const [directView, setDirectView] = useState('all');
   const [addFriend, setAddFriend] = useState(false);
@@ -32,7 +32,7 @@ const Direct = (props) => {
         <div className={styles.flex}>
           {directView === 'all' && <Default friends={friends} changeFriend={changeFriend} addFriend={addFriend} sendFriendRequest={sendFriendRequest} />}
           {directView === 'online' && <Online friends={friends} changeFriend={changeFriend} addFriend={addFriend} sendFriendRequest={sendFriendRequest} />}
-          {directView === 'pending' && <Requests requests={requests} invites={invites} respondRoomInvite={respondRoomInvite} sendFriendRequest={sendFriendRequest} sendFriendResponse={sendFriendResponse} addFriend={addFriend} updateModal={updateModal} />}
+          {directView === 'pending' && <Requests requests={requests} invites={invites} respondRoomInvite={respondRoomInvite} sendFriendRequest={sendFriendRequest} respondFriendRequest={respondFriendRequest} addFriend={addFriend} updateModal={updateModal} />}
         </div>
       </div> :
       <div className={styles.main}>
@@ -45,26 +45,4 @@ const Direct = (props) => {
   );
 };
 
-const Test = (props) => {
-  const { myUser, friends, friend, changeFriend, content, updateContent, messages, sendMessage, updateModal, users, sendFriendRequest, updateFriendContent, friendContent, addFriend, updateDirectView, friendsSetting, directView } = props;
-
-  return (
-    <Fragment>
-    {directView === 'all' ?
-      <div className={styles.main}>
-        <Bar addFriend={addFriend} updateDirectView={updateDirectView} />
-        <div className={styles.flex}>
-          <Default friends={friends} changeFriend={changeFriend} friendsSetting={friendsSetting} friendContent={friendContent} updateFriendContent={updateFriendContent} sendFriendRequest={sendFriendRequest} />
-        </div>
-      </div> :
-      <div className={styles.main}>
-        <Bar addFriend={addFriend} updateDirectView={updateDirectView} />
-        <div className={styles.flex}>
-          <div>Hello</div>
-          {/* <Default friends={friends} changeFriend={changeFriend} friendsSetting={friendsSetting} friendContent={friendContent} updateFriendContent={updateFriendContent} sendFriendRequest={sendFriendRequest} /> */}
-        </div>
-      </div>}
-    </Fragment>
-  );
-}
 export default Direct;

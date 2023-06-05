@@ -21,15 +21,8 @@ io.use((socket, next) => {
 
 io.on('connection', async (socket) => {
   socket.join(`direct:${socket.user_id}`);
-  const [rooms, friends] = await Promise.all([getRooms(socket.user_id), getFriends(socket.user_id)]);
+  const [rooms, invites, friends, requests] = await Promise.all([getRooms(socket.user_id), getRoomInvites(socket.user_id), getFriends(socket.user_id), getFriendRequests(socket.user_id)]);
   for (const friend of friends) {
-    // const temp = {
-    //   id: friend.id,
-    //   user_id: socket.user_id,
-    //   username: socket.username,
-    //   image: socket.image,
-    //   online: true
-    // };
     const temp = {
       id: socket.user_id,
       username: socket.username,
@@ -49,8 +42,7 @@ io.on('connection', async (socket) => {
       online: true,
     };
     for (const room of rooms) {
-      // socket.to(room.id).emit('to:client:update_users', { wsUserId: socket.user_id, wsRoomId: room.id, wsStatus: true });
-      socket.to(room.id).emit('to:client:update_users', { user, room_id: room.id });
+      socket.to(room.id).emit('to:client:update_users', { room_id: room.id, user });
       socket.join(room.id);
       roomIds.push(room.id);
     }
@@ -61,13 +53,25 @@ io.on('connection', async (socket) => {
     for (const onlineUser of onlineUsers) {
       onlineUserIds.push(onlineUser.user_id);
     }
-    const requests = await getFriendRequests(socket.user_id);
-    const invites = await getRoomInvites(socket.user_id);
-    socket.emit('to:client:initialize', { wsRooms: rooms, wsChannels: channels, wsFriends: friends, wsRequests: requests, wsInvites: invites, onlineUserIds });
+    socket.emit('to:client:initialize', {
+      wsRooms: rooms,
+      wsChannels: channels,
+      wsInvites: invites,
+      wsFriends: friends,
+      wsRequests: requests,
+      onlineUserIds
+    });
   } else {
-    const [requests, invites] = await Promise.all([getFriendRequests(socket.user_id), getRoomInvites(socket.user_id)]);
-    socket.emit('to:client:initialize', { wsRooms: rooms, wsChannels: [], wsFriends: friends, userIds: [], wsRequests: requests, wsInvites: invites });
+    socket.emit('to:client:initialize', {
+      wsRooms: rooms,
+      wsChannels: [],
+      wsInvites: invites,
+      wsFriends: friends,
+      wsRequests: requests,
+      onlineUserIds: []
+    });
   }
+
 
 
 
@@ -176,7 +180,7 @@ io.on('connection', async (socket) => {
     socket.to(`direct:${user.id}`).emit('to:client:send_friend_request', request);
   });
 
-  socket.on('to:server:send_friend_response', async ({ request, status }) => {
+  socket.on('to:server:respond_friend_request', async ({ request, status }) => {
     if (status) {
       const room_id = `${Math.min(request.requestee_id, request.requester_id)}:${Math.max(request.requestee_id, request.requester_id)}`;
       await Promise.all([addFriend(request.requestee_id, request.requester_id, room_id), addFriend(request.requester_id, request.requestee_id, room_id), updateFriendRequest(request.id)]);

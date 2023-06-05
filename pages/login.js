@@ -2,12 +2,13 @@ import styles from '@/styles/Login.module.css';
 import React, { useState } from 'react';
 import { getSession, signIn } from 'next-auth/react';
 import Link from 'next/link';
+import axios from 'axios';
 
 const Login = (props) => {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
-    callbackUrl: 'http://ec2-3-95-38-165.compute-1.amazonaws.com'
+    callbackUrl: process.env.host
   });
 
   const handleSubmit = async (e) => {
@@ -28,15 +29,46 @@ const Login = (props) => {
     });
   };
 
+  const createDemo = async () => {
+    const random = Math.floor(Math.random() * 100000000);
+    const demoCredentials = {
+      email: `demo-${random}@gmail.com`,
+      username: `demo-${random}`,
+      password: 'password',
+      fname: `demo-${random}`,
+      lname: `demo-${random}`
+    };
+    const user = await axios.post('/api/auth/register', demoCredentials);
+    const temp = {
+      username: demoCredentials.username,
+      password: demoCredentials.password,
+      callbackUrl: process.env.host
+    }
+    await signIn('credentials', temp);
+  };
+
   return (
     <div className={styles.container}>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <h2 className={styles.title}>Welcome Back!</h2>
-        <input onChange={handleChange} className={styles.input} name='username' type='text' placeholder='Username' required />
-        <input onChange={handleChange} className={styles.input} name='password' type='password' placeholder='Password' required />
-        <button className={styles.button}>Sign In</button>
-        <Link className={styles.link} href='/register' passHref>Register</Link>
-      </form>
+      <div className={styles.bar}>
+        <div className={styles.logo}>penguchat</div>
+        <div className={styles.options}>
+          <div className={`${styles.option} ${styles.active}`}>Log In</div>
+          <div className={styles.option}><Link className={styles.option_link} href='/register' passHref>Sign Up</Link></div>
+        </div>
+      </div>
+      <div className={styles.login}>
+        <button onClick={createDemo} className={styles.demo}>Try a demo account for quick access!</button>
+        <h3 className={styles.title}>Welcome back!</h3>
+        <div className={styles.subtitle}>We're so excited to see you again!</div>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <label className={styles.label} htmlFor='username'>Email or Username <span className={styles.asterisk}>*</span></label>
+          <input onChange={handleChange} className={styles.input} id='username' name='username' type='text' value={credentials.username} placeholder='Username' required />
+          <label className={styles.label} htmlFor='password'>Password <span className={styles.asterisk}>*</span></label>
+          <input onChange={handleChange} className={styles.input} id='password' name='password' type='password' value={credentials.password} placeholder='Password' required />
+          <button className={styles.button}>Log In</button>
+        </form>
+        <div className={styles.register}>Need an account? <Link className={styles.link} href='/register' passHref>Register</Link></div>
+      </div>
     </div>
   );
 };

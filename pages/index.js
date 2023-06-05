@@ -1,13 +1,12 @@
 import styles from '@/styles/Home.module.css'
 import { useState, useRef, useEffect, useReducer } from 'react';
-import { getSession, signOut } from 'next-auth/react';
-import { getUser } from '../lib/mysql';
+import { getSession } from 'next-auth/react';
 import { io } from 'socket.io-client';
+import { getUser } from '@/lib/mysql';
 import Sidebar from '@/components/Sidebar';
-import Room from '@/components/room/Room';
 import Direct from '@/components/direct/Direct';
+import Room from '@/components/room/Room';
 import Modal from '@/components/modal/Modal';
-
 import { initializeRooms, initializeChannels, initializeUsers, initializeFriends, initializeRequests, initializeInvites, getMessages, getDirectMessages, getUsers, updateFriendsStatus, updateRoomsChannels  } from '@/lib/helper';
 
 const reducer = (state, action) => {
@@ -227,12 +226,12 @@ const Home = (props) => {
     room: { id: null },
     channels: [],
     channel: { id: null },
+    invites: [],
     friends: [],
     friend: { id: 'default' },
-    messages: [],
-    users: [],
     requests: [],
-    invites: []
+    messages: [],
+    users: []
   });
   const viewRef = useRef('room');
   const directRef = useRef({ notifications: 0 });
@@ -252,7 +251,7 @@ const Home = (props) => {
     setContent(e.target.value);
   };
 
-  const wsInitialize = async ({ wsRooms, wsChannels, wsFriends, wsRequests, wsInvites, onlineUserIds }) => {
+  const wsInitialize = async ({ wsRooms, wsChannels, wsInvites, wsFriends, wsRequests, onlineUserIds }) => {
     const friends = initializeFriends({ friends: wsFriends, friendsRef });
     const friend = friendRef.current = { id: 'default' };
     const requests = initializeRequests({ requests: wsRequests, requestsRef });
@@ -268,19 +267,7 @@ const Home = (props) => {
       const users = await getUsers({ room_id: room.id, usersRef, onlineUserIds });
       dispatch({
         type: 'initialize',
-        payload: {
-          view,
-          rooms,
-          room,
-          channels,
-          channel,
-          friends,
-          friend,
-          messages,
-          users,
-          requests,
-          invites
-        }
+        payload: { view, rooms, room, channels, channel, invites, friends, friend, requests, messages, users }
       });
     }
   };
@@ -398,12 +385,7 @@ const Home = (props) => {
     const messages = messagesRef.current[room.id][channel.id].slice();
     dispatch({
       type: 'change_channel',
-      payload: {
-        rooms,
-        channels,
-        channel,
-        messages
-      }
+      payload: { rooms, channels, channel, messages }
     });
   };
 
@@ -450,8 +432,7 @@ const Home = (props) => {
         channel_id: state.channel.id,
         content
       });
-    }
-    else {
+    } else {
       socket.emit('to:server:direct:send_message', {
         user_id: myUser.id,
         username: myUser.username,
@@ -661,8 +642,8 @@ const Home = (props) => {
     });
   };
 
-  const sendFriendResponse = ({ request, status }) => {
-    socket.emit('to:server:send_friend_response', { request, status });
+  const respondFriendRequest = ({ request, status }) => {
+    socket.emit('to:server:respond_friend_request', { request, status });
   };
 
   const wsReceiveFriendResponse = ({ friend, request }) => {
@@ -792,12 +773,12 @@ const Home = (props) => {
         channels={state.channels}
         channel={state.channel}
         changeChannel={changeChannel}
+        changeFriend={changeFriend}
         messages={state.messages}
         sendMessage={sendMessage}
         content={content}
         updateContent={updateContent}
         users={state.users}
-        changeFriend={changeFriend}
         updateModal={updateModal} /> :
       <Direct
         myUser={myUser}
@@ -808,11 +789,11 @@ const Home = (props) => {
         sendMessage={sendMessage}
         content={content}
         updateContent={updateContent}
-        requests={state.requests}
         invites={state.invites}
-        sendFriendRequest={sendFriendRequest}
-        sendFriendResponse={sendFriendResponse}
         respondRoomInvite={respondRoomInvite}
+        requests={state.requests}
+        sendFriendRequest={sendFriendRequest}
+        respondFriendRequest={respondFriendRequest}
         updateModal={updateModal} />}
 
       {state.modal && <Modal modal={state.modal} updateModal={updateModal} createRoom={createRoom} createChannel={createChannel} sendRoomInvite={sendRoomInvite} />}

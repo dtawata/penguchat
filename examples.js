@@ -85,3 +85,8 @@ const connection = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 100
 }).promise();
+
+  // pages: {
+  //   signIn: '/login',
+  //   signOut: '/login'
+  // }
