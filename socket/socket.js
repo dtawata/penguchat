@@ -9,6 +9,10 @@ const io = new Server(server, {
   }
 });
 
+app.use('/health', (req, res) => {
+  res.status(200).send();
+});
+
 const { getRooms, getUser, addFriendRequest, getChannels, getFriends, addRoomMessage, addDirectMessage, getFriendRequests, addFriend, getFriendRequest, getUserById, updateFriendRequest, addRoom, addJoinedRoom, addChannel, addRoomInvite, getRoomInvites, updateRoomInvite, getRoomById } = require('./mysql');
 
 io.use((socket, next) => {

@@ -1,5 +1,5 @@
 {
-  "name": "pengu-chat",
+  "name": "penguchat",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "chat": "nodemon socket/socket.js",
-    "test": "nodemon socket/sockettest.js"
+    "chat": "nodemon socket/socket.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
