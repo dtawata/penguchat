@@ -9,7 +9,9 @@ const nextConfig = {
     host: process.env.host,
     user: process.env.user,
     password: process.env.password,
-    database: process.env.database
+    database: process.env.database,
+    socket: process.env.socket,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL
   }
 }
 

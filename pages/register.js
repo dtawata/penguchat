@@ -25,8 +25,7 @@ const Register = (props) => {
       const user = await axios.post('/api/auth/register', credentials);
       signIn('credentials', {
         username: credentials.username,
-        password: credentials.password,
-        // callbackUrl: 'http://ec2-3-95-38-165.compute-1.amazonaws.com'
+        password: credentials.password
       });
     } catch(error) {
       console.error('register.js error', error.response.data);
@@ -54,8 +53,7 @@ const Register = (props) => {
     const user = await axios.post('/api/auth/register', demoCredentials);
     const temp = {
       username: demoCredentials.username,
-      password: demoCredentials.password,
-      callbackUrl: process.env.host
+      password: demoCredentials.password
     }
     await signIn('credentials', temp);
   };

@@ -759,7 +759,7 @@ const Home = (props) => {
   }, [socket, myUser])
 
   useEffect(() => {
-    const connection = io('http://localhost:3010/', { autoConnect: false });
+    const connection = io(process.env.socket, { autoConnect: false });
     setSocket(connection);
   }, [])
 

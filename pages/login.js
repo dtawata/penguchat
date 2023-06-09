@@ -7,8 +7,7 @@ import axios from 'axios';
 const Login = (props) => {
   const [credentials, setCredentials] = useState({
     username: '',
-    password: '',
-    callbackUrl: process.env.host
+    password: ''
   });
 
   const handleSubmit = async (e) => {
@@ -41,8 +40,7 @@ const Login = (props) => {
     const user = await axios.post('/api/auth/register', demoCredentials);
     const temp = {
       username: demoCredentials.username,
-      password: demoCredentials.password,
-      callbackUrl: process.env.host
+      password: demoCredentials.password
     }
     await signIn('credentials', temp);
   };
@@ -59,7 +57,7 @@ const Login = (props) => {
       <div className={styles.login}>
         <button onClick={createDemo} className={styles.demo}>Try a demo account for quick access!</button>
         <h3 className={styles.title}>Welcome back!</h3>
-        <div className={styles.subtitle}>We're so excited to see you again!</div>
+        <div className={styles.subtitle}>Were so excited to see you again!</div>
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label} htmlFor='username'>Email or Username <span className={styles.asterisk}>*</span></label>
           <input onChange={handleChange} className={styles.input} id='username' name='username' type='text' value={credentials.username} placeholder='Username' required />
