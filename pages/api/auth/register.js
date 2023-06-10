@@ -1,21 +1,21 @@
-import { hashPassword } from "../../../lib/bcrypt";
-import { addUser, addJoinedRoom, addFriends } from '../../../lib/mysql';
+import { hashPassword } from '@/lib/bcrypt';
+import { getEmail, getUsername, addUser } from '@/lib/mysql';
 
 const Handler = async (req, res) => {
   try {
-    const { password } = req.body;
+    const { email, username, password } = req.body;
+    const emailExists = await getEmail(email);
+    if (emailExists) throw new Error('emailError:Email is already used.');
+    const usernameExists = await getUsername(username);
+    if (usernameExists) throw new Error('usernameError:Username is taken.');
     const hashedPassword = await hashPassword(password);
-    const user = await addUser({
-      ...req.body,
-      password: hashedPassword
-    });
-    // await Promise.all([addJoinedRoom(user.insertId, 1), addJoinedRoom(user.insertId, 2), addJoinedRoom(user.insertId, 3)]);
-    // for (let i = 1; i < user.insertId; i++) {
-    //   await Promise.all([addFriends(user.insertId, i, `${i}:${user.insertId}`), addFriends(i, user.insertId, `${i}:${user.insertId}`)]);
-    // }
-    res.status(200).send('success');
+    await addUser({ ...req.body, password: hashedPassword });
+    res.status(200).send('New account created!');
   } catch(error) {
-    res.status(400).send(error);
+    const index = error.message.indexOf(':');
+    const type = error.message.slice(0, index);
+    const message = error.message.slice(index + 1);
+    res.status(400).send({ type, message });
   }
 };
 

@@ -167,6 +167,15 @@
   background-color: #4751c4;
 }
 
+.error {
+  margin: -5px 0 25px 0;
+  color:#ffd38c;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 /* .form {
   display: flex;
   flex-direction: column;

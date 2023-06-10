@@ -7,10 +7,12 @@ import axios from 'axios';
 const Register = (props) => {
   const [credentials, setCredentials] = useState({
     email: '',
-    username: '',
-    password: '',
+    emailError: null,
     fname: '',
-    lname: ''
+    lname: '',
+    username: '',
+    usernameError: null,
+    password: ''
   });
 
   const [dob, setDob] = useState({ year: null, month: null, date: null });
@@ -22,13 +24,20 @@ const Register = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const user = await axios.post('/api/auth/register', credentials);
+      await axios.post('/api/auth/register', credentials);
       signIn('credentials', {
         username: credentials.username,
         password: credentials.password
       });
     } catch(error) {
-      console.error('register.js error', error.response.data);
+      setCredentials((prevCredentials) => {
+        return {
+          ...prevCredentials,
+          emailError: null,
+          usernameError: null,
+          [error.response.data.type]: error.response.data.message
+        };
+      });
     }
   };
 
@@ -45,10 +54,10 @@ const Register = (props) => {
     const random = Math.floor(Math.random() * 100000000);
     const demoCredentials = {
       email: `demo-${random}@gmail.com`,
-      username: `demo-${random}`,
-      password: 'password',
       fname: `demo-${random}`,
-      lname: `demo-${random}`
+      lname: `demo-${random}`,
+      username: `demo-${random}`,
+      password: 'password'
     };
     const user = await axios.post('/api/auth/register', demoCredentials);
     const temp = {
@@ -73,12 +82,14 @@ const Register = (props) => {
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label} htmlFor='email'>Email</label>
           <input onChange={handleChange} className={styles.input} id='email' name='email' type='text' value={credentials.email} placeholder='' required />
+          {credentials.emailError && <div className={styles.error}>{credentials.emailError}</div>}
           <label className={styles.label} htmlFor='fname'>First Name</label>
           <input onChange={handleChange} className={styles.input} id='fname' name='fname' type='text' value={credentials.fname} placeholder='' required />
           <label className={styles.label} htmlFor='lname'>Last Name</label>
           <input onChange={handleChange} className={styles.input} id='lname' name='lname' type='text' value={credentials.lname} placeholder='' required />
           <label className={styles.label} htmlFor='username'>Username</label>
           <input onChange={handleChange} className={styles.input} id='username' name='username' type='text' value={credentials.username} placeholder='' required />
+          {credentials.usernameError && <div className={styles.error}>{credentials.usernameError}</div>}
           <label className={styles.label} htmlFor='password'>Password</label>
           <input onChange={handleChange} className={styles.input} id='password' name='password' type='password' value={credentials.password} placeholder='' required />
           <label className={styles.label}>Date of Birth</label>
