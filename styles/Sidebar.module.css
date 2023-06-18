@@ -109,3 +109,9 @@
   font-size: 12px;
   text-align: center;
 }
+
+@media screen and (max-width: 600px) {
+  .container {
+    display: none;
+  }
+}

@@ -101,3 +101,9 @@
 .user.online .user_bubble_color {
   background-color: #209D55;
 }
+
+@media screen and (max-width: 600px) {
+  .container {
+    display: none;
+  }
+}

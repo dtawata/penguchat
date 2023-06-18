@@ -6,3 +6,18 @@
   display: flex;
   height: calc(100vh - 44px);
 }
+
+@media screen and (max-width: 600px) {
+  .container {
+    justify-content: flex-start;
+  }
+
+  .bar {
+    display: none;
+  }
+
+  .login {
+    width: 90%;
+    margin: 120px 0 60px 0;
+  }
+}
