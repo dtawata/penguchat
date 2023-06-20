@@ -3,13 +3,12 @@ import { Fragment, useState } from 'react';
 import Chat from './Chat';
 import Bar from './Bar';
 import Bar2 from './Bar2';
-import Friends from './Friends';
 import Default from './Default';
 import Online from './Online';
 import Requests from './Requests';
 
 const Direct = (props) => {
-  const { myUser, friends, friend, messages, content, requests, invites } = props;
+  const { friends, friend, messages, content, requests, invites } = props;
   const { changeFriend, sendMessage, updateContent, sendFriendRequest, respondFriendRequest, respondRoomInvite, updateModal } = props;
 
   const [directView, setDirectView] = useState('all');
@@ -25,9 +24,8 @@ const Direct = (props) => {
 
   return (
     <Fragment>
-      <Friends myUser={myUser} friends={friends} friend={friend} changeFriend={changeFriend} updateModal={updateModal} />
       {friend.id === 'default' ?
-      <div className={styles.main}>
+      <div className={styles.container}>
         <Bar updateDirectView={updateDirectView} updateAddFriend={updateAddFriend} />
         <div className={styles.flex}>
           {directView === 'all' && <Default friends={friends} changeFriend={changeFriend} addFriend={addFriend} sendFriendRequest={sendFriendRequest} />}
@@ -35,10 +33,10 @@ const Direct = (props) => {
           {directView === 'pending' && <Requests requests={requests} invites={invites} respondRoomInvite={respondRoomInvite} sendFriendRequest={sendFriendRequest} respondFriendRequest={respondFriendRequest} addFriend={addFriend} updateModal={updateModal} />}
         </div>
       </div> :
-      <div className={styles.main}>
+      <div className={styles.container}>
         <Bar2 friend={friend} />
         <div className={styles.flex}>
-          <Chat content={content} updateContent={updateContent} messages={messages} sendMessage={sendMessage} />
+          <Chat messages={messages} sendMessage={sendMessage} content={content} updateContent={updateContent} />
         </div>
       </div>}
     </Fragment>

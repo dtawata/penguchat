@@ -9,6 +9,7 @@
 html, body {
   color: #444;
   font-family: "Roboto", sans-serif;
+  overflow: hidden;
 }
 
 li {

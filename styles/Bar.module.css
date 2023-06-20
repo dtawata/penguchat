@@ -10,6 +10,10 @@
   color: #fff;
 }
 
+.toggle {
+  display: none;
+}
+
 .flex {
   display: flex;
   align-items: center;
@@ -42,14 +46,11 @@
   cursor: pointer;
   font-weight: 700;
 }
-/*
 
-.title {
-  font-weight: 700;
-  letter-spacing: 1px;
+@media screen and (max-width: 600px) {
+  .toggle {
+    display: block;
+    margin-right: 10px;
+    cursor: pointer;
+  }
 }
-
-
-
-
- */

@@ -1,24 +1,20 @@
 import styles from '@/styles/Room.module.css';
-import { Fragment } from 'react';
-import Channels from './Channels';
 import Bar from './Bar';
 import Chat from './Chat';
 import Users from './Users';
 
 const Room = (props) => {
-  const { myUser, room, channels, channel, changeChannel, content, updateContent, messages, sendMessage, users, changeFriend, updateModal } = props;
+  const { channel, messages, content, users } = props;
+  const { sendMessage, updateContent, changeFriend, openSidebar } = props;
 
   return (
-    <Fragment>
-      <Channels myUser={myUser} room={room} channels={channels} channel={channel} changeChannel={changeChannel} updateModal={updateModal} />
-      <div className={styles.main}>
-        <Bar channel={channel} />
-        <div className={styles.flex}>
-          <Chat content={content} updateContent={updateContent} messages={messages} sendMessage={sendMessage} />
-          <Users users={users} changeFriend={changeFriend} />
-        </div>
+    <div className={styles.container}>
+      <Bar channel={channel} openSidebar={openSidebar} />
+      <div className={styles.flex}>
+        <Chat content={content} updateContent={updateContent} messages={messages} sendMessage={sendMessage} />
+        <Users users={users} changeFriend={changeFriend} />
       </div>
-    </Fragment>
+    </div>
   );
 };
 

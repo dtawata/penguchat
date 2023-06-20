@@ -2,14 +2,13 @@ import styles from '@/styles/Channels.module.css';
 import { Fragment } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag, faPlus } from '@fortawesome/free-solid-svg-icons';
-import MyUser from '@/components/MyUser';
 
 const Channels = (props) => {
   const { myUser, room, channels, channel, changeChannel, updateModal } = props;
   const selected = channel.id;
 
   return (
-    <div className={styles.container}>
+    <Fragment>
       <div className={styles.bar}>
         <h3 className={styles.title}>{room.name}</h3>
       </div>
@@ -28,10 +27,10 @@ const Channels = (props) => {
           <div className={styles.update_text}>Invite Friends</div>
         </div>}
       </div>
-      <MyUser myUser={myUser} />
-    </div>
+    </Fragment>
   );
 };
+
 
 const Channel = (props) => {
   const { channel, selected, changeChannel } = props;

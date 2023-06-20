@@ -3,10 +3,12 @@ import { useState, useRef, useEffect, useReducer } from 'react';
 import { getSession } from 'next-auth/react';
 import { io } from 'socket.io-client';
 import { getUser } from '@/lib/mysql';
-import Sidebar from '@/components/Sidebar';
-import Direct from '@/components/direct/Direct';
-import Room from '@/components/room/Room';
+import Column1 from '@/components/column1';
+import Column2 from '@/components/column2';
+import Direct from '@/components/direct';
+import Room from '@/components/room';
 import Modal from '@/components/modal/Modal';
+
 import { initializeRooms, initializeChannels, initializeUsers, initializeFriends, initializeRequests, initializeInvites, getMessages, getDirectMessages, getUsers, updateFriendsStatus, updateRoomsChannels  } from '@/lib/helper';
 
 const reducer = (state, action) => {
@@ -763,25 +765,44 @@ const Home = (props) => {
     setSocket(connection);
   }, [])
 
+  const [css, setCss] = useState(`${styles.container}`);
+
+  const openSidebar = () => {
+    if (css === `${styles.container}`) setCss(`${styles.container} ${styles.active}`);
+    else setCss(`${styles.container}`);
+  };
+
   return (
-    <div className={styles.container}>
-      <Sidebar direct={state.direct} changeDirect={changeDirect} rooms={state.rooms} room={state.room} changeRoom={changeRoom} updateModal={updateModal} />
-      {state.view === 'room' ?
-      <Room
-        myUser={myUser}
+    <div className={css}>
+      <Column1
+      direct={state.direct}
+      changeDirect={changeDirect}
+      rooms={state.rooms}
+      room={state.room}
+      changeRoom={changeRoom}
+      updateModal={updateModal} />
+      <Column2
+        view={state.view}
         room={state.room}
         channels={state.channels}
         channel={state.channel}
         changeChannel={changeChannel}
+        friends={state.friends}
+        friend={state.friend}
+        changeFriend={changeFriend}
+        updateModal={updateModal}
+        myUser={myUser} />
+      {state.view === 'room' ?
+      <Room
+        channel={state.channel}
         changeFriend={changeFriend}
         messages={state.messages}
         sendMessage={sendMessage}
         content={content}
         updateContent={updateContent}
         users={state.users}
-        updateModal={updateModal} /> :
+        openSidebar={openSidebar} /> :
       <Direct
-        myUser={myUser}
         friends={state.friends}
         friend={state.friend}
         changeFriend={changeFriend}
@@ -795,7 +816,6 @@ const Home = (props) => {
         sendFriendRequest={sendFriendRequest}
         respondFriendRequest={respondFriendRequest}
         updateModal={updateModal} />}
-
       {state.modal && <Modal modal={state.modal} updateModal={updateModal} createRoom={createRoom} createChannel={createChannel} sendRoomInvite={sendRoomInvite} />}
     </div>
   );

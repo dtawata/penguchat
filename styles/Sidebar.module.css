@@ -1,10 +1,11 @@
 .container {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 75px;
-  background-color: #1e1f22;
+  width: 75px;
   padding: 20px 0;
+  background-color: #1e1f22;
 }
 
 .direct {
@@ -13,6 +14,10 @@
   position: relative;
   width: 100%;
   cursor: pointer;
+}
+
+.direct:hover .direct_img {
+  border-radius: 30%;
 }
 
 .direct_img {
@@ -33,10 +38,6 @@
   color: #fff;
   font-size: 12px;
   text-align: center;
-}
-
-.direct:hover .direct_img {
-  border-radius: 30%;
 }
 
 .line {
@@ -61,14 +62,28 @@
   cursor: pointer;
 }
 
+.room:hover .room_img {
+  border-radius: 30%;
+}
+
 .room_img {
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.4s ease-in-out;
 }
 
-.room:hover .room_img {
-  border-radius: 30%;
+.room_notifications {
+  position: absolute;
+  width: 30px;
+  bottom: -4px;
+  right: -3px;
+  padding: 2px 4px;
+  background-color: #f23f42;
+  border: 5px solid #202225;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
 }
 
 .icon_container {
@@ -92,26 +107,9 @@
   color: #fff;
   font-size: 16px;
 }
-/* End of Reviewed */
-
-
-
-.room_notifications {
-  position: absolute;
-  width: 30px;
-  bottom: -4px;
-  right: -3px;
-  padding: 2px 4px;
-  background-color: #f23f42;
-  border: 5px solid #202225;
-  border-radius: 20px;
-  color: #fff;
-  font-size: 12px;
-  text-align: center;
-}
 
 @media screen and (max-width: 600px) {
   .container {
-    display: none;
+    width: 25%;
   }
 }

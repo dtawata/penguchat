@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-const Sidebar = (props) => {
+const Column1 = (props) => {
   const { direct, rooms, room } = props;
   const { changeDirect, changeRoom, updateModal } = props;
 
@@ -37,4 +37,4 @@ const Room = (props) => {
   );
 };
 
-export default Sidebar;
+export default Column1;
