@@ -9,7 +9,7 @@
 html, body {
   color: #444;
   font-family: "Roboto", sans-serif;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 li {
@@ -19,4 +19,8 @@ li {
 img {
   display: block;
   max-width: 100%;
+}
+
+#__next {
+  height: 100%;
 }

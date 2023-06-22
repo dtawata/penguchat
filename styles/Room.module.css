@@ -1,5 +1,4 @@
 .container {
-  flex-shrink: 0;
   flex-grow: 1;
   width: 100%;
 }
@@ -10,4 +9,7 @@
 }
 
 @media screen and (max-width: 600px) {
+  .container {
+    flex-shrink: 0;
+  }
 }
