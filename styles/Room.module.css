@@ -1,11 +1,13 @@
 .container {
-  flex-grow: 1;
+  /* flex-grow: 1; */
   width: 100%;
+  height: 100%;
 }
 
 .flex {
   display: flex;
-  height: calc(100vh - 44px);
+  height: 100%;
+  /* height: calc(100vh - 44px); */
 }
 
 @media screen and (max-width: 600px) {
