@@ -9,18 +9,20 @@ const Chat = (props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.messages}>
-        {messages.map((message) => {
-          if (username !== message.username) {
-            username = message.username;
+      <div className={styles.scroller}>
+        <div className={styles.messages}>
+          {messages.map((message) => {
+            if (username !== message.username) {
+              username = message.username;
+              date_time = DateTime.fromISO(message.created_at);
+              return <Message message={message} key={message.id} />
+            }
+            const seconds = DateTime.fromISO(message.created_at).diff(date_time, ['seconds']).toObject().seconds;
             date_time = DateTime.fromISO(message.created_at);
+            if (seconds < 240) return <MessageAlt message={message} key={message.id} />
             return <Message message={message} key={message.id} />
-          }
-          const seconds = DateTime.fromISO(message.created_at).diff(date_time, ['seconds']).toObject().seconds;
-          date_time = DateTime.fromISO(message.created_at);
-          if (seconds < 240) return <MessageAlt message={message} key={message.id} />
-          return <Message message={message} key={message.id} />
-        })}
+          })}
+        </div>
       </div>
       <div className={styles.chat_bot}>
         <form onSubmit={sendMessage} className={styles.form}>

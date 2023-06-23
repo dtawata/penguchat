@@ -13,7 +13,7 @@ const MyUser = (props) => {
           <Image className={styles.myUser_img} src={`https://penguchat-users.s3.amazonaws.com/${myUser.image}`} alt='' width='33' height='33' />
           <div className={styles.myUser_mid}>
             <div className={styles.myUser_username}>{myUser.username}</div>
-            <div className={styles.myUser_numbers}>#3344</div>
+            <div className={styles.myUser_numbers}>Online</div>
           </div>
         </div>
         <div className={styles.icons}>
