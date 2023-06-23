@@ -51,7 +51,8 @@
 @media screen and (max-width: 600px) {
   .toggle {
     display: block;
-    margin-right: 10px;
+    margin-right: 15px;
     cursor: pointer;
+    font-size: 18px;
   }
 }

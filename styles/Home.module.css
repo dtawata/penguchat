@@ -7,9 +7,9 @@
 
 @media screen and (max-width: 600px) {
   .container {
-    -ms-transform: translateX(-80%);
-    -webkit-transform: translateX(-80%);
-    transform: translateX(-80%);
+    -ms-transform: translateX(-85%);
+    -webkit-transform: translateX(-85%);
+    transform: translateX(-85%);
   }
 
   .container.active {
