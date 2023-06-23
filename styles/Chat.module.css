@@ -12,7 +12,7 @@
 .messages {
   flex-grow: 1;
   width: calc(100% - 10px);
-  height: calc(100vh - 139px);
+  /* height: calc(100% - 139px); */
   margin-top: 15px;
   overflow-y: scroll;
 }
