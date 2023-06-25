@@ -815,7 +815,8 @@ const Home = (props) => {
         requests={state.requests}
         sendFriendRequest={sendFriendRequest}
         respondFriendRequest={respondFriendRequest}
-        updateModal={updateModal} />}
+        updateModal={updateModal}
+        openSidebar={openSidebar} />}
       {state.modal && <Modal modal={state.modal} updateModal={updateModal} createRoom={createRoom} createChannel={createChannel} sendRoomInvite={sendRoomInvite} />}
     </div>
   );

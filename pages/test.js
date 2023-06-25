@@ -1,28 +1,24 @@
 import styles from '@/styles/Login.module.css';
 import React, { useState } from 'react';
 import { getSession, signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 
 const Login = (props) => {
-  const { push } = useRouter();
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
-    error: '',
     redirect: false
   });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    signIn('credentials', credentials).then(({ error, ok }) => {
-      if (ok) {
-        push('/');
-      } else {
-        setCredentials({ ...credentials, error });
-      }
-    });
+    try {
+      e.preventDefault();
+      const temp = await signIn('credentials', credentials);
+    } catch(error) {
+      console.log('failed', error);
+      // console.log('login.js error', error.response.data);
+    }
   };
 
   const handleChange = (e) => {
@@ -53,7 +49,21 @@ const Login = (props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.bar}>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        {/* <label>Hello</label> */}
+        {/* <input type='text' name='username' /> */}
+        <input type="text" name="fffusername" />
+        {/* <label className={styles.label} htmlFor='username'>Email or Username <span className={styles.asterisk}>*</span></label> */}
+        {/* <input onChange={handleChange} type='text' /> */}
+        {/* <input onChange={handleChange} className={styles.input} id='username' name='username' type='text' value={credentials.username} placeholder='Username' required /> */}
+        <button className={styles.button}>Log In</button>
+      </form>
+      {/* <form onSubmit={handleSubmit} className={styles.form}>
+          <label className={styles.label} htmlFor='password'>Password <span className={styles.asterisk}>*</span></label>
+          <input onChange={handleChange} className={styles.input} id='password' name='password' type='password' value={credentials.password} placeholder='Password' required />
+          <button className={styles.button}>Log In</button>
+        </form> */}
+      {/* <div className={styles.bar}>
         <div className={styles.logo}>penguchat</div>
         <div className={styles.options}>
           <div className={`${styles.option} ${styles.active}`}>Log In</div>
@@ -64,7 +74,6 @@ const Login = (props) => {
         <button onClick={createDemo} className={styles.demo}>Try a demo account for quick access!</button>
         <h3 className={styles.title}>Welcome back!</h3>
         <div className={styles.subtitle}>Were so excited to see you again!</div>
-        <div className={styles.error}>{credentials.error}</div>
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label} htmlFor='username'>Email or Username <span className={styles.asterisk}>*</span></label>
           <input onChange={handleChange} className={styles.input} id='username' name='username' type='text' value={credentials.username} placeholder='Username' required />
@@ -73,7 +82,7 @@ const Login = (props) => {
           <button className={styles.button}>Log In</button>
         </form>
         <div className={styles.register}>Need an account? <Link className={styles.link} href='/register' passHref>Register</Link></div>
-      </div>
+      </div> */}
     </div>
   );
 };

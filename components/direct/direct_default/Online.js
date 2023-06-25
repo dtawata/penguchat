@@ -30,13 +30,6 @@ const Online = (props) => {
 
   return (
     <div className={styles.container}>
-      {addFriend &&
-      <div className={styles.add_friend}>
-        <h3 className={styles.title}>Add Friend</h3>
-        <form onSubmit={submitContent} className={styles.form}>
-          <input onChange={updateContent} className={styles.input} type='text' value={content} />
-        </form>
-      </div>}
       <div className={styles.friends}>
         <h3 className={styles.friends_count}>Online - {count}</h3>
         {friends.map((friend) => {

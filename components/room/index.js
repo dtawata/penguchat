@@ -1,6 +1,6 @@
 import styles from '@/styles/Room.module.css';
 import Bar from './Bar';
-import Chat from './Chat';
+import Chat from '@/components/Chat';
 import Users from './Users';
 
 const Room = (props) => {

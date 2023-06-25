@@ -1,15 +1,16 @@
 import styles from '@/styles/Direct.module.css';
 import { Fragment, useState } from 'react';
-import Chat from './Chat';
-import Bar from './Bar';
-import Bar2 from './Bar2';
-import Default from './Default';
-import Online from './Online';
-import Requests from './Requests';
+import Chat from '@/components/Chat';
+import Bar from './direct_default/Bar';
+import Default from './direct_default/Default';
+import Online from './direct_default/Online';
+import Requests from './direct_default/Requests';
+import DirectDefault from './direct_default';
+import DirectChat from './direct_chat';
 
 const Direct = (props) => {
   const { friends, friend, messages, content, requests, invites } = props;
-  const { changeFriend, sendMessage, updateContent, sendFriendRequest, respondFriendRequest, respondRoomInvite, updateModal } = props;
+  const { changeFriend, sendMessage, updateContent, sendFriendRequest, respondFriendRequest, respondRoomInvite, updateModal, openSidebar } = props;
 
   const [directView, setDirectView] = useState('all');
   const [addFriend, setAddFriend] = useState(false);
@@ -25,20 +26,26 @@ const Direct = (props) => {
   return (
     <Fragment>
       {friend.id === 'default' ?
-      <div className={styles.container}>
-        <Bar updateDirectView={updateDirectView} updateAddFriend={updateAddFriend} />
-        <div className={styles.flex}>
-          {directView === 'all' && <Default friends={friends} changeFriend={changeFriend} addFriend={addFriend} sendFriendRequest={sendFriendRequest} />}
-          {directView === 'online' && <Online friends={friends} changeFriend={changeFriend} addFriend={addFriend} sendFriendRequest={sendFriendRequest} />}
-          {directView === 'pending' && <Requests requests={requests} invites={invites} respondRoomInvite={respondRoomInvite} sendFriendRequest={sendFriendRequest} respondFriendRequest={respondFriendRequest} addFriend={addFriend} updateModal={updateModal} />}
-        </div>
-      </div> :
-      <div className={styles.container}>
-        <Bar2 friend={friend} />
-        <div className={styles.flex}>
-          <Chat messages={messages} sendMessage={sendMessage} content={content} updateContent={updateContent} />
-        </div>
-      </div>}
+      <DirectDefault
+      directView={directView}
+      updateDirectView={updateDirectView}
+      updateAddFriend={updateAddFriend}
+      friends={friends}
+      changeFriend={changeFriend}
+      addFriend={addFriend}
+      sendFriendRequest={sendFriendRequest}
+      requests={requests}
+      invites={invites}
+      respondRoomInvite={respondRoomInvite}
+      respondFriendRequest={respondFriendRequest}
+      updateModal={updateModal} /> :
+      <DirectChat
+        friend={friend}
+        openSidebar={openSidebar}
+        messages={messages}
+        sendMessage={sendMessage}
+        content={content}
+        updateContent={updateContent} /> }
     </Fragment>
   );
 };

@@ -12,7 +12,7 @@ const Friends = (props) => {
   return (
     <Fragment>
       <div className={styles.bar}>
-        <div onClick={() => { updateModal(true); }} className={styles.input}>Find or start a conversation</div>
+        <div className={styles.input}>Find or start a conversation</div>
       </div>
       <div className={styles.friends}>
         {selected === 'default' ?

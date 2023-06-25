@@ -9,7 +9,8 @@ const Handler = async (req, res) => {
     const usernameExists = await getUsername(username);
     if (usernameExists) throw new Error('usernameError:Username is taken.');
     const hashedPassword = await hashPassword(password);
-    await addUser({ ...req.body, password: hashedPassword });
+    const random = Math.floor(Math.random() * 8 + 1);
+    await addUser({ ...req.body, password: hashedPassword, image: `user${random}.jpg` });
     res.status(200).send('New account created!');
   } catch(error) {
     const index = error.message.indexOf(':');
