@@ -8,6 +8,7 @@ import Column2 from '@/components/column2';
 import Direct from '@/components/direct';
 import Room from '@/components/room';
 import Modal from '@/components/modal';
+import { useRouter } from 'next/navigation';
 
 import { initializeRooms, initializeChannels, initializeUsers, initializeFriends, initializeRequests, initializeInvites, getMessages, getDirectMessages, getUsers, updateFriendsStatus, updateRoomsChannels  } from '@/lib/helper';
 
@@ -212,6 +213,7 @@ const reducer = (state, action) => {
 };
 
 const Home = (props) => {
+  const { push } = useRouter();
   const { session, credentials } = props;
   const [socket, setSocket] = useState(null);
   const [myUser, setMyUser] = useState({
@@ -722,6 +724,9 @@ const Home = (props) => {
   };
 
   useEffect(() => {
+    if (!session || !credentials) {
+      push('https://google.com/');
+    }
     if (socket) {
       socket.on('to:client:initialize', wsInitialize);
       socket.on('to:client:room:receive_message', wsReceiveRoomMessage);
@@ -826,7 +831,9 @@ export default Home;
 
 export const getServerSideProps = async (context) => {
   const session = await getSession(context);
+  console.log('session', session);
   if (!session) {
+    console.log('no session');
     return {
       redirect: {
         destination: '/login',
