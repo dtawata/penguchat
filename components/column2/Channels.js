@@ -41,16 +41,20 @@ const Channel = (props) => {
       <div className={`${styles.channel} ${styles.active}`}>
         <div className={styles.flex}>
           <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
-          <div className={styles.channel_text}>{channel.name} {channel.notifications !== 0 && channel.notifications}</div>
+          <div className={styles.channel_text}>{channel.name}</div>
         </div>
+        {channel.notifications !== 0 ?
+        <div className={styles.channel_notifications}>{channel.notifications}</div> :
+        <div className={styles.filler}></div>}
       </div> :
       <div onClick={() => { changeChannel(channel.id); }} className={styles.channel}>
         <div className={styles.flex}>
           <FontAwesomeIcon icon={faHashtag} className={styles.channel_icon} />
           <div className={styles.channel_text}>{channel.name}</div>
         </div>
-        {/* <div className={styles.channel_notifications}>{channel.notifications}</div> */}
-        {channel.notifications !== 0 && <div className={styles.channel_notifications}>{channel.notifications}</div>}
+        {channel.notifications !== 0 ?
+        <div className={styles.channel_notifications}>{channel.notifications}</div> :
+        <div className={styles.filler}></div>}
       </div>}
     </Fragment>
   );

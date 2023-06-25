@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "dev-chat": "nodemon socket/socket.js",
-    "chat": "node socket/socket.js"
+    "chat": "nodemon socket/socket.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

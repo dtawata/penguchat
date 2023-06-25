@@ -126,12 +126,14 @@ io.on('connection', async (socket) => {
   });
 
   socket.on('to:server:create_room', async ({ myUser, room_name }) => {
-    const { insertId } = await addRoom(room_name, myUser.id);
+    const random = Math.floor(Math.random() * 4 + 1);
+    const image = `room${random}.jpg`;
+    const { insertId } = await addRoom(room_name, myUser.id, image);
     await addJoinedRoom({ user_id: myUser.id, room_id: insertId });
     const room = {
       id: insertId,
       name: room_name,
-      image: 'default.jpg',
+      image,
       created_by: myUser.id
     }
     const temp = await addChannel('lobby', insertId);

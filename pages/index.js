@@ -7,7 +7,7 @@ import Column1 from '@/components/column1';
 import Column2 from '@/components/column2';
 import Direct from '@/components/direct';
 import Room from '@/components/room';
-import Modal from '@/components/modal/Modal';
+import Modal from '@/components/modal';
 
 import { initializeRooms, initializeChannels, initializeUsers, initializeFriends, initializeRequests, initializeInvites, getMessages, getDirectMessages, getUsers, updateFriendsStatus, updateRoomsChannels  } from '@/lib/helper';
 

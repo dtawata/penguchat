@@ -55,4 +55,20 @@
     cursor: pointer;
     font-size: 18px;
   }
+  .option {
+    font-size: 12px;
+    margin: 0 5px;
+    padding: 2px;
+
+  }
+  .add_friend {
+    margin: 0 5px;
+    font-size: 12px;
+    background-color: transparent;
+    padding: 2px;
+  }
+
+  .sign_out {
+    font-size: 12px;
+  }
 }
