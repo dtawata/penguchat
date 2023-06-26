@@ -1,9 +1,10 @@
 import styles from '@/styles/Login.module.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const Login = (props) => {
   const { push } = useRouter();
@@ -41,7 +42,8 @@ const Login = (props) => {
       username: `demo-${random}`,
       password: 'password',
       fname: `demo-${random}`,
-      lname: `demo-${random}`
+      lname: `demo-${random}`,
+      demo: true
     };
     const user = await axios.post('/api/auth/register', demoCredentials);
     const temp = {

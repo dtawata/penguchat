@@ -9,6 +9,7 @@ import Direct from '@/components/direct';
 import Room from '@/components/room';
 import Modal from '@/components/modal';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 import { initializeRooms, initializeChannels, initializeUsers, initializeFriends, initializeRequests, initializeInvites, getMessages, getDirectMessages, getUsers, updateFriendsStatus, updateRoomsChannels  } from '@/lib/helper';
 
@@ -724,9 +725,6 @@ const Home = (props) => {
   };
 
   useEffect(() => {
-    if (!session || !credentials) {
-      push('https://google.com/');
-    }
     if (socket) {
       socket.on('to:client:initialize', wsInitialize);
       socket.on('to:client:room:receive_message', wsReceiveRoomMessage);

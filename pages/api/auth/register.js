@@ -1,16 +1,19 @@
 import { hashPassword } from '@/lib/bcrypt';
-import { getEmail, getUsername, addUser } from '@/lib/mysql';
+import { getEmail, getUsername, addUser, addJoinedRoom } from '@/lib/mysql';
 
 const Handler = async (req, res) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, username, password, demo } = req.body;
     const emailExists = await getEmail(email);
     if (emailExists) throw new Error('emailError:Email is already used.');
     const usernameExists = await getUsername(username);
     if (usernameExists) throw new Error('usernameError:Username is taken.');
     const hashedPassword = await hashPassword(password);
     const random = Math.floor(Math.random() * 8 + 1);
-    await addUser({ ...req.body, password: hashedPassword, image: `user${random}.jpg` });
+    const { insertId } = await addUser({ ...req.body, password: hashedPassword, image: `user${random}.jpg` });
+    if (demo) {
+      await addJoinedRoom(insertId, 1);
+    }
     res.status(200).send('New account created!');
   } catch(error) {
     const index = error.message.indexOf(':');

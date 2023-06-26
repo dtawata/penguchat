@@ -92,3 +92,19 @@ CREATE TABLE room_invites (
   FOREIGN KEY (requester_id) REFERENCES users(id),
   FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
+
+  id INT NOT NULL auto_increment,
+  name VARCHAR(255) NOT NULL,
+  image VARCHAR(255) NULL DEFAULT 'default.jpg',
+  created_by INT,
+
+INSERT INTO rooms (name) VALUES
+('Demo Lobby');
+
+INSERT INTO channels (name, room_id) VALUES
+('lobby', 1),
+('music', 1),
+('sports', 1),
+('traveling', 1);
+
+
