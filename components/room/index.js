@@ -1,4 +1,4 @@
-import styles from '@/styles/Room.module.css';
+import styles from '@/styles/room/Room.module.css';
 import Bar from './Bar';
 import Chat from '@/components/Chat';
 import Users from './Users';

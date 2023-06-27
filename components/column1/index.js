@@ -1,4 +1,4 @@
-import styles from '@/styles/Sidebar.module.css';
+import styles from '@/styles/column1/Column1.module.css';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';

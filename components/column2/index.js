@@ -1,7 +1,7 @@
-import styles from '@/styles/Channels.module.css';
+import styles from '@/styles/column2/Column2.module.css';
 import Channels from './Channels';
 import Friends from './Friends'
-import MyUser from '@/components/MyUser';
+import MyUser from './MyUser';
 
 const Column2 = (props) => {
   const { view, room, channels, channel, friends, friend, myUser } = props;

@@ -1,4 +1,4 @@
-import styles from '@/styles/Users.module.css';
+import styles from '@/styles/room/Users.module.css';
 import Image from 'next/image';
 
 const Users = (props) => {
@@ -25,7 +25,6 @@ const Online = (props) => {
   const css = user.online ? `${styles.user} ${styles.online}` : styles.user;
 
   return (
-    // <div onClick={() => { changeFriend(friend); }} className={css}>
     <div className={css}>
       <div className={styles.user_left}>
         <Image className={styles.user_img} src={`https://penguchat-users.s3.amazonaws.com/${user.image}`} alt='' width='30' height='30' />
@@ -43,7 +42,6 @@ const Offline = (props) => {
   const css = user.online ? `${styles.user} ${styles.online}` : styles.user;
 
   return (
-    // <div onClick={() => { changeFriend(friend); }} className={css}>
     <div className={css}>
       <div className={styles.user_left}>
         <Image className={styles.user_img} src={`https://penguchat-users.s3.amazonaws.com/${user.image}`} alt='' width='30' height='30' />

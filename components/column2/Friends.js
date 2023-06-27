@@ -1,4 +1,4 @@
-import styles from '@/styles/Friends.module.css';
+import styles from '@/styles/column2/Friends.module.css';
 import Image from 'next/image';
 import { faMessage, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

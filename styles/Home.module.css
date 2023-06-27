@@ -17,11 +17,5 @@
     -webkit-transform: translateX(0);
     transform: translateX(0);
     /* overflow: hidden; */
-    animation: 1.4s delay-overflow;
   }
-
-  @keyframes delay-overflow {
-    to { overflow: hidden; }
-  }
-
 }

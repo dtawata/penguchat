@@ -8,8 +8,6 @@ import Column2 from '@/components/column2';
 import Direct from '@/components/direct';
 import Room from '@/components/room';
 import Modal from '@/components/modal';
-import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 
 import { initializeRooms, initializeChannels, initializeUsers, initializeFriends, initializeRequests, initializeInvites, getMessages, getDirectMessages, getUsers, updateFriendsStatus, updateRoomsChannels  } from '@/lib/helper';
 
@@ -214,7 +212,6 @@ const reducer = (state, action) => {
 };
 
 const Home = (props) => {
-  const { push } = useRouter();
   const { session, credentials } = props;
   const [socket, setSocket] = useState(null);
   const [myUser, setMyUser] = useState({
@@ -238,6 +235,7 @@ const Home = (props) => {
     messages: [],
     users: []
   });
+  const [container, setContainer] = useState(`${styles.container}`);
   const viewRef = useRef('room');
   const directRef = useRef({ notifications: 0 });
   const roomsRef = useRef({});
@@ -250,10 +248,10 @@ const Home = (props) => {
   const usersRef = useRef({});
   const requestsRef = useRef({});
   const invitesRef = useRef({});
-  const [content, setContent] = useState('');
 
-  const updateContent = (e) => {
-    setContent(e.target.value);
+  const openSidebar = () => {
+    if (container === `${styles.container}`) setContainer(`${styles.container} ${styles.active}`);
+    else setContainer(`${styles.container}`);
   };
 
   const wsInitialize = async ({ wsRooms, wsChannels, wsInvites, wsFriends, wsRequests, onlineUserIds }) => {
@@ -276,6 +274,7 @@ const Home = (props) => {
       });
     }
   };
+
 
   const changeDirect = async () => {
     const { friend } = state;
@@ -425,6 +424,116 @@ const Home = (props) => {
     }
   };
 
+  const updateModal = (status) => {
+    dispatch({
+      type: 'update_modal',
+      payload: {
+        modal: status
+      }
+    });
+  };
+
+  const createRoom = async (room_name) => {
+    socket.emit('to:server:create_room', {
+      room_name,
+      myUser
+    });
+    updateModal(false);
+  };
+
+  const wsCreateRoom = ({ wsRoom, wsChannel }) => {
+    const view = viewRef.current = 'room';
+    const rooms = initializeRooms({ rooms: [wsRoom], roomsRef });
+    const room = roomRef.current = roomsRef.current[wsRoom.id];
+    const channels = initializeChannels({ room_id: room.id, channels: [wsChannel], channelsRef });
+    const channel = channelRef.current = channels[0];
+    messagesRef.current[room.id] = {};
+    const messages = messagesRef.current[room.id][channel.id] = [];
+    const users = initializeUsers({ room_id: room.id, users: [myUser], usersRef, onlineUserIds: [myUser.id] });
+    dispatch({
+      type: 'change_room',
+      payload: {
+        view,
+        rooms,
+        room,
+        channels,
+        channel,
+        messages,
+        users
+      }
+    });
+  };
+
+  const createChannel = async (channel_name) => {
+    socket.emit('to:server:create_channel', {
+      room_id: state.room.id,
+      channel_name
+    });
+    updateModal(false);
+  };
+
+  const wsCreateChannel = (channel) => {
+    const channels = initializeChannels({ room_id: channel.room_id, channels: [channel], channelsRef });
+    dispatch({
+      type: 'create_channel',
+      payload: {
+        modal: false,
+        channels
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('to:client:initialize', wsInitialize);
+      socket.on('to:client:room:receive_message', wsReceiveRoomMessage);
+      socket.on('to:client:direct:receive_message', wsReceiveDirectMessage);
+      socket.on('to:client:change_room', wsChangeRoom);
+      socket.on('to:client:update_users', wsUpdateUsers);
+      socket.on('to:client:change_direct', wsChangeDirect);
+      socket.on('to:client:send_friend_request', wsReceiveFriendRequest);
+      socket.on('to:client:receive_friend_response', wsReceiveFriendResponse);
+      socket.on('to:client:update_friends', wsUpdateFriends);
+      socket.on('to:client:create_room', wsCreateRoom);
+      socket.on('to:client:create_channel', wsCreateChannel);
+      socket.on('to:client:receive_room_invite', wsReceiveRoomInvite);
+      socket.on('to:client:respond_room_invite', wsRespondRoomInvite);
+      socket.on('to:client:joined_room', wsJoinedRoom);
+      socket.on('to:client:update_room_invite', wsUpdateRoomInvite);
+      socket.auth = myUser;
+      socket.connect();
+      return () => {
+        socket.off('to:client:initialize', wsInitialize);
+        socket.off('to:client:room:receive_message', wsReceiveRoomMessage);
+        socket.off('to:client:direct:receive_message', wsReceiveDirectMessage);
+        socket.off('to:client:change_room', wsChangeRoom);
+        socket.off('to:client:update_users', wsUpdateUsers);
+        socket.off('to:client:change_direct', wsChangeDirect);
+        socket.off('to:client:send_friend_request', wsReceiveFriendRequest);
+        socket.off('to:client:receive_friend_response', wsReceiveFriendResponse);
+        socket.off('to:client:update_friends', wsUpdateFriends);
+        socket.off('to:client:create_room', wsCreateRoom);
+        socket.off('to:client:create_channel', wsCreateChannel);
+        socket.off('to:client:receive_room_invite', wsReceiveRoomInvite);
+        socket.off('to:client:respond_room_invite', wsRespondRoomInvite);
+        socket.off('to:client:joined_room', wsJoinedRoom);
+        socket.off('to:client:update_room_invite', wsUpdateRoomInvite);
+      };
+    }
+  }, [socket, myUser])
+
+  useEffect(() => {
+    const connection = io(process.env.socket, { autoConnect: false });
+    setSocket(connection);
+  }, [])
+
+
+  const [content, setContent] = useState('');
+
+  const updateContent = (e) => {
+    setContent(e.target.value);
+  };
+
   const sendMessage = (e) => {
     e.preventDefault();
     if (!content) return;
@@ -528,65 +637,6 @@ const Home = (props) => {
         }
       });
     }
-  };
-
-  const createRoom = async (room_name) => {
-    socket.emit('to:server:create_room', {
-      room_name,
-      myUser
-    });
-    updateModal(false);
-  };
-
-  const wsCreateRoom = ({ wsRoom, wsChannel }) => {
-    const view = viewRef.current = 'room';
-    const rooms = initializeRooms({ rooms: [wsRoom], roomsRef });
-    const room = roomRef.current = roomsRef.current[wsRoom.id];
-    const channels = initializeChannels({ room_id: room.id, channels: [wsChannel], channelsRef });
-    const channel = channelRef.current = channels[0];
-    messagesRef.current[room.id] = {};
-    const messages = messagesRef.current[room.id][channel.id] = [];
-    const users = initializeUsers({ room_id: room.id, users: [myUser], usersRef, onlineUserIds: [myUser.id] });
-    dispatch({
-      type: 'change_room',
-      payload: {
-        view,
-        rooms,
-        room,
-        channels,
-        channel,
-        messages,
-        users
-      }
-    });
-  };
-
-  const createChannel = async (channel_name) => {
-    socket.emit('to:server:create_channel', {
-      room_id: state.room.id,
-      channel_name
-    });
-    updateModal(false);
-  };
-
-  const wsCreateChannel = (channel) => {
-    const channels = initializeChannels({ room_id: channel.room_id, channels: [channel], channelsRef });
-    dispatch({
-      type: 'create_channel',
-      payload: {
-        modal: false,
-        channels
-      }
-    });
-  };
-
-  const updateModal = (status) => {
-    dispatch({
-      type: 'update_modal',
-      payload: {
-        modal: status
-      }
-    });
   };
 
   const sendRoomInvite = (username) => {
@@ -724,59 +774,9 @@ const Home = (props) => {
     });
   };
 
-  useEffect(() => {
-    if (socket) {
-      socket.on('to:client:initialize', wsInitialize);
-      socket.on('to:client:room:receive_message', wsReceiveRoomMessage);
-      socket.on('to:client:direct:receive_message', wsReceiveDirectMessage);
-      socket.on('to:client:change_room', wsChangeRoom);
-      socket.on('to:client:update_users', wsUpdateUsers);
-      socket.on('to:client:change_direct', wsChangeDirect);
-      socket.on('to:client:send_friend_request', wsReceiveFriendRequest);
-      socket.on('to:client:receive_friend_response', wsReceiveFriendResponse);
-      socket.on('to:client:update_friends', wsUpdateFriends);
-      socket.on('to:client:create_room', wsCreateRoom);
-      socket.on('to:client:create_channel', wsCreateChannel);
-      socket.on('to:client:receive_room_invite', wsReceiveRoomInvite);
-      socket.on('to:client:respond_room_invite', wsRespondRoomInvite);
-      socket.on('to:client:joined_room', wsJoinedRoom);
-      socket.on('to:client:update_room_invite', wsUpdateRoomInvite);
-      socket.auth = myUser;
-      socket.connect();
-      return () => {
-        socket.off('to:client:initialize', wsInitialize);
-        socket.off('to:client:room:receive_message', wsReceiveRoomMessage);
-        socket.off('to:client:direct:receive_message', wsReceiveDirectMessage);
-        socket.off('to:client:change_room', wsChangeRoom);
-        socket.off('to:client:update_users', wsUpdateUsers);
-        socket.off('to:client:change_direct', wsChangeDirect);
-        socket.off('to:client:send_friend_request', wsReceiveFriendRequest);
-        socket.off('to:client:receive_friend_response', wsReceiveFriendResponse);
-        socket.off('to:client:update_friends', wsUpdateFriends);
-        socket.off('to:client:create_room', wsCreateRoom);
-        socket.off('to:client:create_channel', wsCreateChannel);
-        socket.off('to:client:receive_room_invite', wsReceiveRoomInvite);
-        socket.off('to:client:respond_room_invite', wsRespondRoomInvite);
-        socket.off('to:client:joined_room', wsJoinedRoom);
-        socket.off('to:client:update_room_invite', wsUpdateRoomInvite);
-      };
-    }
-  }, [socket, myUser])
-
-  useEffect(() => {
-    const connection = io(process.env.socket, { autoConnect: false });
-    setSocket(connection);
-  }, [])
-
-  const [css, setCss] = useState(`${styles.container}`);
-
-  const openSidebar = () => {
-    if (css === `${styles.container}`) setCss(`${styles.container} ${styles.active}`);
-    else setCss(`${styles.container}`);
-  };
-
   return (
-    <div className={css}>
+    <div className={container}>
+
       <Column1
       direct={state.direct}
       changeDirect={changeDirect}
@@ -829,9 +829,7 @@ export default Home;
 
 export const getServerSideProps = async (context) => {
   const session = await getSession(context);
-  console.log('session', session);
   if (!session) {
-    console.log('no session');
     return {
       redirect: {
         destination: '/login',

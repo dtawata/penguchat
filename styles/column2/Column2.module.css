@@ -1,0 +1,14 @@
+.container {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  height: 100%;
+  background-color: #2a2d31;
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    width: 60%;
+  }
+}

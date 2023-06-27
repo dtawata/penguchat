@@ -23,8 +23,7 @@
 
 .direct_img {
   border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .direct_notifications {
@@ -69,8 +68,7 @@
 
 .room_img {
   border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .room_notifications {
@@ -96,7 +94,7 @@
   background-color: #2a2d31;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .icon_container:hover {
