@@ -1,4 +1,4 @@
-import styles from '@/styles/CreateChannel.module.css';
+import styles from '@/styles/modal/CreateChannel.module.css';
 
 const CreateChannel = (props) => {
   const { content } = props;

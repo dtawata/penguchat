@@ -1,4 +1,4 @@
-import styles from '@/styles/CreateRoom.module.css';
+import styles from '@/styles/modal/CreateRoom.module.css';
 import Image from 'next/image';
 
 const CreateRoom = (props) => {

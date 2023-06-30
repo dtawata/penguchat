@@ -1,4 +1,4 @@
-import styles from '@/styles/Default.module.css';
+import styles from '@/styles/column3/default/Default.module.css';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 

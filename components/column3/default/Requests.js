@@ -1,4 +1,4 @@
-import styles from '@/styles/Pending.module.css';
+import styles from '@/styles/column3/default/Pending.module.css';
 import { useState } from 'react';
 import Image from 'next/image';
 

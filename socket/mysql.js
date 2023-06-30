@@ -138,7 +138,6 @@ const updateFriendRequest = async (request_id) => {
 };
 
 const addRoom = async (room_name, user_id, image) => {
-  console.log('working?');
   const queryString = 'INSERT INTO rooms (name, created_by, image) VALUES ?';
   const queryArgs = [[room_name, user_id, image]];
   const data = await connection.query(queryString, [queryArgs]);

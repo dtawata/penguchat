@@ -1,4 +1,4 @@
-import styles from '@/styles/AddFriend.module.css';
+import styles from '@/styles/column3/default/AddFriend.module.css';
 import { useState } from 'react';
 
 const AddFriend = (props) => {

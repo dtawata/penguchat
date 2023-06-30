@@ -1,10 +1,10 @@
-import styles from '@/styles/Bar.module.css';
+import styles from '@/styles/column3/default/Bar.module.css';
 import { signOut } from 'next-auth/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 const Bar = (props) => {
-  const { channel, openSidebar } = props;
+  const { updateDirectView, openSidebar, updateAddFriend } = props;
 
   return (
     <div className={styles.container}>
@@ -12,7 +12,10 @@ const Bar = (props) => {
         <div onClick={openSidebar} className={styles.toggle}>
           <FontAwesomeIcon icon={faBars} className={styles.icon} />
         </div>
-        <h3 className={styles.title}># {channel.name}</h3>
+        <div onClick={() => { updateDirectView('online'); }} className={styles.option}>Online</div>
+        <div onClick={() => { updateDirectView('all'); }} className={styles.option}>All</div>
+        <div onClick={() => { updateDirectView('pending'); }} className={styles.option}>Pending</div>
+        <div onClick={() => { updateDirectView('add'); }} className={styles.add_friend}>Add Friend</div>
       </div>
       <div onClick={() => { signOut({ callbackUrl: '/login' }); }} className={styles.sign_out}>Sign Out</div>
     </div>

@@ -1,18 +1,18 @@
-import styles from '@/styles/room/Room.module.css';
+import styles from '@/styles/column3/Room.module.css';
 import Bar from './Bar';
-import Chat from '@/components/Chat';
+import Chat from './Chat';
 import Users from './Users';
 
 const Room = (props) => {
-  const { channel, messages, content, users } = props;
+  const { view, channel, friend, messages, content, users } = props;
   const { sendMessage, updateContent, changeFriend, openSidebar } = props;
 
   return (
     <div className={styles.container}>
-      <Bar channel={channel} openSidebar={openSidebar} />
+      <Bar view={view} channel={channel} friend={friend} openSidebar={openSidebar} />
       <div className={styles.flex}>
-        <Chat content={content} updateContent={updateContent} messages={messages} sendMessage={sendMessage} />
-        <Users users={users} changeFriend={changeFriend} />
+        <Chat messages={messages} sendMessage={sendMessage} content={content} updateContent={updateContent} />
+        {view === 'room' && <Users users={users} changeFriend={changeFriend} />}
       </div>
     </div>
   );

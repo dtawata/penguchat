@@ -1,4 +1,4 @@
-import styles from '@/styles/Chat.module.css';
+import styles from '@/styles/column3/Chat.module.css';
 import Image from 'next/image';
 import { DateTime } from 'luxon';
 

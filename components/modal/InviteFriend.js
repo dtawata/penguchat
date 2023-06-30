@@ -1,4 +1,4 @@
-import styles from '@/styles/InviteFriend.module.css';
+import styles from '@/styles/modal/InviteFriend.module.css';
 
 const InviteFriend = (props) => {
   const { content } = props;

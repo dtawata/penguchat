@@ -1,4 +1,4 @@
-import styles from '@/styles/room/Users.module.css';
+import styles from '@/styles/column3/Users.module.css';
 import Image from 'next/image';
 
 const Users = (props) => {

@@ -5,8 +5,8 @@ import { io } from 'socket.io-client';
 import { getUser } from '@/lib/mysql';
 import Column1 from '@/components/column1';
 import Column2 from '@/components/column2';
-import Direct from '@/components/direct';
-import Room from '@/components/room';
+import Column3 from '@/components/column3';
+import Default from '@/components/column3/default';
 import Modal from '@/components/modal';
 
 import { initializeRooms, initializeChannels, initializeUsers, initializeFriends, initializeRequests, initializeInvites, getMessages, getDirectMessages, getUsers, updateFriendsStatus, updateRoomsChannels  } from '@/lib/helper';
@@ -250,6 +250,7 @@ const Home = (props) => {
   const invitesRef = useRef({});
 
   const openSidebar = () => {
+    console.log('sidebar');
     if (container === `${styles.container}`) setContainer(`${styles.container} ${styles.active}`);
     else setContainer(`${styles.container}`);
   };
@@ -728,7 +729,7 @@ const Home = (props) => {
   };
 
   const wsUpdateUsers = ({ user, room_id }) => {
-    if (!usersRef.current[room_id]) return;
+    if (!usersRef.current[room_id] || user.id === myUser.id) return;
     usersRef.current[room_id][user.id].online = user.online;
     const room = roomRef.current;
     if (room_id !== room.id) return;
@@ -776,7 +777,6 @@ const Home = (props) => {
 
   return (
     <div className={container}>
-
       <Column1
       direct={state.direct}
       changeDirect={changeDirect}
@@ -785,41 +785,40 @@ const Home = (props) => {
       changeRoom={changeRoom}
       updateModal={updateModal} />
       <Column2
-        view={state.view}
-        room={state.room}
-        channels={state.channels}
-        channel={state.channel}
-        changeChannel={changeChannel}
-        friends={state.friends}
-        friend={state.friend}
-        changeFriend={changeFriend}
-        updateModal={updateModal}
-        myUser={myUser} />
-      {state.view === 'room' ?
-      <Room
-        channel={state.channel}
-        changeFriend={changeFriend}
-        messages={state.messages}
-        sendMessage={sendMessage}
-        content={content}
-        updateContent={updateContent}
-        users={state.users}
-        openSidebar={openSidebar} /> :
-      <Direct
-        friends={state.friends}
-        friend={state.friend}
-        changeFriend={changeFriend}
-        messages={state.messages}
-        sendMessage={sendMessage}
-        content={content}
-        updateContent={updateContent}
-        invites={state.invites}
-        respondRoomInvite={respondRoomInvite}
-        requests={state.requests}
-        sendFriendRequest={sendFriendRequest}
-        respondFriendRequest={respondFriendRequest}
-        updateModal={updateModal}
-        openSidebar={openSidebar} />}
+      view={state.view}
+      room={state.room}
+      channels={state.channels}
+      channel={state.channel}
+      changeChannel={changeChannel}
+      friends={state.friends}
+      friend={state.friend}
+      changeFriend={changeFriend}
+      updateModal={updateModal}
+      myUser={myUser} />
+      {((state.view === 'room') || (state.view === 'direct' && state.friend.id !== 'default')) &&
+      <Column3
+      view={state.view}
+      channel={state.channel}
+      friends={state.friends}
+      friend={state.friend}
+      changeFriend={changeFriend}
+      messages={state.messages}
+      sendMessage={sendMessage}
+      content={content}
+      updateContent={updateContent}
+      users={state.users}
+      openSidebar={openSidebar} />}
+      {(state.view === 'direct' && state.friend.id === 'default') &&
+      <Default
+      openSidebar={openSidebar}
+      friends={state.friends}
+      requests={state.requests}
+      invites={state.invites}
+      respondRoomInvite={respondRoomInvite}
+      sendFriendRequest={sendFriendRequest}
+      respondFriendRequest={respondFriendRequest}
+      updateModal={updateModal}
+      changeFriend={changeFriend} />}
       {state.modal && <Modal modal={state.modal} updateModal={updateModal} createRoom={createRoom} createChannel={createChannel} sendRoomInvite={sendRoomInvite} />}
     </div>
   );
