@@ -10,7 +10,7 @@ const Bar = (props) => {
     <div className={styles.container}>
       <div className={styles.flex}>
         <div onClick={openSidebar} className={styles.toggle}>
-          <FontAwesomeIcon icon={faBars} className={styles.icon} />
+          <FontAwesomeIcon icon={faBars} className={styles.toggle_icon} />
         </div>
         <div onClick={() => { updateDirectView('online'); }} className={styles.option}>Online</div>
         <div onClick={() => { updateDirectView('all'); }} className={styles.option}>All</div>
